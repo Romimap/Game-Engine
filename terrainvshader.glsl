@@ -15,7 +15,7 @@ out vec3 v_normal;
 //! [0]
 void main()
 {
-    float height = 1. - texture2D(heightmap, a_texcoord).r;
+    float height = texture2D(heightmap, a_texcoord).r;
     v_height = height;
 
     // Calculate vertex position in screen space

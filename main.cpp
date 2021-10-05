@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 
 #ifndef QT_NO_OPENGL
     GameObject gameobject;
-    TerrainWidget terrainWidget(0, ":/montagne.png");
+    TerrainWidget terrainWidget(0, ":/Heightmap_Mountain.png");
     gameobject.AddComponent(terrainWidget);
     gameobject.Enable();
 

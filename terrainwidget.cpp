@@ -24,7 +24,7 @@ TerrainWidget::~TerrainWidget () {
 
 void TerrainWidget::timerEvent(QTimerEvent *) {
     // Update rotation
-    _azimuth += 1;
+    _azimuth += 0.1;
     _elevation = 45;
     _rotation = QQuaternion::fromAxisAndAngle(QVector3D(0, 1, 0), _azimuth);
     _rotation = QQuaternion::fromAxisAndAngle(QVector3D(1, 0, 0), _elevation) * _rotation;
