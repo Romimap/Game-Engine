@@ -5,25 +5,16 @@
 
 class GameObject;
 class Component {
-    //MEMBERS
 private:
     GameObject* _parent;
-
-    //CONSTRUCTORS
 public:
-    Component();
+    Component(GameObject* parent);
 
-    //GETTERS SETTERS
-public:
-    void SetParent (GameObject* parent);
+    virtual void Start();
+    virtual void Update(float delta);
 
-    //METHODS
-public:
-    virtual void Update (float);
-    virtual void Enable ();
-    virtual void Disable ();
-    virtual void Start ();
-
+protected:
+    GameObject* GetParent() {return _parent;}
 };
 
 #endif // COMPONENT_H

@@ -4,19 +4,28 @@ TARGET = gameengine
 TEMPLATE = app
 
 SOURCES += main.cpp \
+    aabb.cpp \
+    camera.cpp \
     component.cpp \
+    engine.cpp \
     gameobject.cpp \
+    glmesh.cpp \
+    material.cpp \
+    meshcollider.cpp \
+    rotatorcomponent.cpp \
     transform.cpp
 
-SOURCES += \
-    geometryengine.cpp \
-    terrainwidget.cpp
-
 HEADERS += \
+    aabb.h \
+    camera.h \
+    collider.h \
     component.h \
+    engine.h \
     gameobject.h \
-    geometryengine.h \
-    terrainwidget.h \
+    glmesh.h \
+    material.h \
+    meshcollider.h \
+    rotatorcomponent.h \
     transform.h
 
 RESOURCES += \
@@ -26,3 +35,6 @@ RESOURCES += \
 # install
 target.path = $$[YOUR_PATH]
 INSTALLS += target
+
+DISTFILES += \
+    Suzanne.obj

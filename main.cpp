@@ -54,14 +54,13 @@
 #include <QWidget>
 #include <QTimer>
 
-#ifndef QT_NO_OPENGL
-#include "mainwidget.h"
-#include "terrainwidget.h"
 #include "gameobject.h"
-#endif
+#include "engine.h"
+#include "glmesh.h"
+#include "material.h"
+#include "rotatorcomponent.h"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
     QSurfaceFormat format;
@@ -71,17 +70,31 @@ int main(int argc, char *argv[])
     app.setApplicationName("TP1 et 2");
     app.setApplicationVersion("0.1");
 
+    GameObject root;
+    root.NAME = "root";
 
+    Camera camera(&root);
+    camera.NAME = "camera";
+    camera.GetTransform()->SetPosition(0, 0, -4);
+    camera.GetTransform()->SetRotation(0, 0, 0);
+    camera.GetTransform()->SetScale(1, 1, 1);
 
-#ifndef QT_NO_OPENGL
-    GameObject gameobject;
-    TerrainWidget terrainWidget(0, ":/Heightmap_Mountain.png");
-    gameobject.AddComponent(terrainWidget);
-    gameobject.Enable();
+    Engine engine;
+    engine.show();
 
-#else
-    QLabel note("OpenGL Support required");
-    note.show();
-#endif
+    GameObject box(&root);
+    box.NAME = "box";
+    box.GetTransform()->SetPosition(0, 0, 0);
+    box.GetTransform()->SetRotation(0, 0, 0);
+    box.GetTransform()->SetScale(1, 1, 1);
+
+    RotatorComponent rotator(&box);
+
+    Material* material = new Material();
+    GLMesh* mesh = new GLMesh("/home/romimap/Documents/git/QT/Suzanne.obj");
+    RenderData renderData(material, mesh);
+
+    box.SetRenderData(&renderData);
+
     return app.exec();
 }

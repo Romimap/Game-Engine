@@ -1,25 +1,13 @@
 #include "component.h"
-class Component;
 
-
-Component::Component() : _parent(nullptr) {}
-
-void Component::SetParent(GameObject *parent) {
-    _parent = parent;
-}
-
-void Component::Start() {
-
+Component::Component(GameObject* parent) : _parent(parent) {
+    _parent->AddComponent(this);
 }
 
 void Component::Update(float delta) {
 
 }
 
-void Component::Enable() {
-
-}
-
-void Component::Disable() {
+void Component::Start() {
 
 }
