@@ -1,4 +1,4 @@
-#include "src/header/camera.h"
+#include "camera.h"
 
 Camera* Camera::ActiveCamera = nullptr;
 

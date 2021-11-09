@@ -1,4 +1,4 @@
-#include "src/header/rotatorcomponent.h"
+#include "rotatorcomponent.h"
 
 RotatorComponent::RotatorComponent(GameObject* parent) : Component(parent) {
 

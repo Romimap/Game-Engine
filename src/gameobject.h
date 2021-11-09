@@ -1,10 +1,10 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include "src/header/transform.h"
-#include "src/header/component.h"
-#include "src/header/aabb.h"
-#include "src/header/collider.h"
+#include "transform.h"
+#include "component.h"
+#include "aabb.h"
+#include "collider.h"
 
 #include <qquaternion.h>
 #include <qvector3d.h>
@@ -19,7 +19,7 @@ class Component;
 
 class GameObject {
     //MEMBERS
-private:
+protected:
     ///The AABB that contains the collider of that gameobject AND all children, in global space
     AABB* _globalAABB = nullptr;
     ///The AABB that contains the collider of that gameobject, in global space

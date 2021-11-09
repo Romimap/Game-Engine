@@ -1,4 +1,4 @@
-#include "src/header/gameobject.h"
+#include "gameobject.h"
 #include <math.h>
 
 GameObject* GameObject::Root = nullptr;

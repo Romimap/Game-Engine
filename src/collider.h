@@ -1,7 +1,7 @@
 #ifndef COLLIDER_H
 #define COLLIDER_H
 
-#include"src/header/aabb.h"
+#include"aabb.h"
 
 class GameObject;
 

@@ -48,7 +48,7 @@
 **
 ****************************************************************************/
 
-#include "src/header/glmesh.h"
+#include "glmesh.h"
 
 #include <iostream>
 #include <fstream>

@@ -1,4 +1,4 @@
-#include "src/header/aabb.h"
+#include "aabb.h"
 
 
 AABB::AABB() {}

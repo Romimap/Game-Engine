@@ -1,10 +1,10 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "src/header/glmesh.h"
-#include "src/header/material.h"
-#include "src/header/gameobject.h"
-#include "src/header/camera.h"
+#include "glmesh.h"
+#include "material.h"
+#include "gameobject.h"
+#include "camera.h"
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_3_1>

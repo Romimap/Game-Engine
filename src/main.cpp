@@ -54,11 +54,11 @@
 #include <QWidget>
 #include <QTimer>
 
-#include "src/header/gameobject.h"
-#include "src/header/engine.h"
-#include "src/header/glmesh.h"
-#include "src/header/material.h"
-#include "src/header/rotatorcomponent.h"
+#include "gameobject.h"
+#include "engine.h"
+#include "glmesh.h"
+#include "material.h"
+#include "rotatorcomponent.h"
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);

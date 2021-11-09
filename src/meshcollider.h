@@ -1,7 +1,7 @@
 #ifndef MESHCOLLIDER_H
 #define MESHCOLLIDER_H
 
-#include "src/header/collider.h"
+#include "collider.h"
 
 #include <vector>
 #include <QVector3D>

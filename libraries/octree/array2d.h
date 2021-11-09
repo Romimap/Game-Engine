@@ -18,7 +18,7 @@
 #ifndef ARRAY2D_H
 #define ARRAY2D_H
 
-#include "libraries/octree/array.h"
+#include "array.h"
 
 template< typename T >
 class Array2D : public Array<T,2>

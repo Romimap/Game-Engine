@@ -49,7 +49,7 @@
  * this value.
  */
 
-#include "octree/octree.h"
+#include "octree.h"
 
 template< typename T, int AS >
 Octree<T,AS>::Octree( int size, const T& emptyValue )

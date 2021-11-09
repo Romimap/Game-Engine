@@ -1,7 +1,7 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
-#include "src/header/gameobject.h"
+#include "gameobject.h"
 
 #include <QVector3D>
 #include <QQuaternion>

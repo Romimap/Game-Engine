@@ -1,4 +1,4 @@
-#include "src/header/meshcollider.h"
+#include "meshcollider.h"
 
 #include <fstream>
 #include <string>

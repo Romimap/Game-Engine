@@ -10,25 +10,31 @@ SOURCES += src/main.cpp \
     src/engine.cpp \
     src/gameobject.cpp \
     src/glmesh.cpp \
+    src/cubecollider.cpp \
+    src/octreedata.cpp \
     src/material.cpp \
     src/meshcollider.cpp \
     src/octreecollider.cpp \
+    src/octreegameobject.cpp \
     src/rotatorcomponent.cpp \
     src/transform.cpp
 
 HEADERS += \
-    src/header/aabb.h \
-    src/header/camera.h \
-    src/header/collider.h \
-    src/header/component.h \
-    src/header/engine.h \
-    src/header/gameobject.h \
-    src/header/glmesh.h \
-    src/header/material.h \
-    src/header/meshcollider.h \
-    src/header/rotatorcomponent.h \
-    src/header/octreecollider.h \
-    src/header/transform.h \
+    src/aabb.h \
+    src/camera.h \
+    src/collider.h \
+    src/component.h \
+    src/cubecollider.h \
+    src/engine.h \
+    src/gameobject.h \
+    src/glmesh.h \
+    src/material.h \
+    src/meshcollider.h \
+    src/octreedata.h \
+    src/octreegameobject.h \
+    src/rotatorcomponent.h \
+    src/octreecollider.h \
+    src/transform.h \
     libraries/octree/array.h \
     libraries/octree/array2d.h \
     libraries/octree/numtraits.h \

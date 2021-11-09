@@ -1,7 +1,7 @@
 #ifndef ROTATORCOMPONENT_H
 #define ROTATORCOMPONENT_H
 
-#include "src/header/component.h"
+#include "component.h"
 
 class RotatorComponent : public Component
 {

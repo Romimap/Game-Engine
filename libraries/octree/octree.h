@@ -18,8 +18,9 @@
 #ifndef OCTREE_H
 #define OCTREE_H
 
-#include "libraries/octree/array2d.h"
-#include "libraries/octree/point3d.h"
+#include "array2d.h"
+#include "point3d.h"
+
 
 #include <algorithm>
 #include <cassert>
@@ -27,8 +28,7 @@
 #include <ostream>
 
 template< typename T, int AS = 1 >
-class Octree
-{
+class Octree {
 public:
     Octree( int size, const T& emptyValue = T(0) );
     Octree( const Octree<T,AS>& o );
