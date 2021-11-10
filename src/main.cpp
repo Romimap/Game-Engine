@@ -58,7 +58,10 @@
 #include "engine.h"
 #include "glmesh.h"
 #include "material.h"
-#include "rotatorcomponent.h"
+#include "components/playercontrollercomponent.h"
+#include "components/rigidbodycomponent.h"
+
+#include "cubecollider.h"
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
@@ -82,19 +85,42 @@ int main(int argc, char *argv[]) {
     Engine engine;
     engine.show();
 
-    GameObject box(&root);
-    box.NAME = "box";
-    box.GetTransform()->SetPosition(0, 0, 0);
-    box.GetTransform()->SetRotation(0, 0, 0);
-    box.GetTransform()->SetScale(1, 1, 1);
+    GameObject monkeyA(&root);
+    monkeyA.NAME = "MonkeyA";
+    monkeyA.GetTransform()->SetPosition(-1, 0, 0);
+    monkeyA.GetTransform()->SetRotation(0, 0, 0);
+    monkeyA.GetTransform()->SetScale(1, 1, 1);
 
-    RotatorComponent rotator(&box);
 
-    Material* material = new Material();
-    GLMesh* mesh = new GLMesh("/home/romimap/Documents/git/QT/misc/Suzanne.obj");
-    RenderData renderData(material, mesh);
+    GameObject monkeyBParentParent(&root);
+    monkeyBParentParent.NAME = "MonkeyBParent";
+    monkeyBParentParent.GetTransform()->SetPosition(0, 0, 0);
+    monkeyBParentParent.GetTransform()->SetRotation(350, -380, 90);
+    monkeyBParentParent.GetTransform()->SetScale(1, 1, 1);
 
-    box.SetRenderData(&renderData);
+    GameObject monkeyBParent(&monkeyBParentParent);
+    monkeyBParent.NAME = "MonkeyBParent";
+    monkeyBParent.GetTransform()->SetPosition(0, 0, 0);
+    monkeyBParent.GetTransform()->SetRotation(40, 40, 40);
+    monkeyBParent.GetTransform()->SetScale(1, 1, 1);
+
+    GameObject monkeyB(&root);
+    monkeyB.NAME = "MonkeyB";
+    monkeyB.GetTransform()->SetPosition(1, 0, 0);
+    monkeyB.GetTransform()->SetRotation(40, 40, 40);
+    monkeyB.GetTransform()->SetScale(1, 1, 1);
+
+    CubeCollider* cubeColliderMonkeyA = new CubeCollider(2, 2, 2);
+    monkeyA.SetCollider(cubeColliderMonkeyA);
+    CubeCollider* cubeColliderMonkeyB = new CubeCollider(2, 2, 2);
+    monkeyB.SetCollider(cubeColliderMonkeyB);
+
+    PlayerControllerComponent playerController(&monkeyA);
+    RigidBodyComponent rigidBodyComponent(1, &monkeyB);
+
+    RenderData renderDataMonkey(new Material(), new GLMesh("/home/romimap/Documents/git/QT/misc/Cube.obj"));
+    monkeyA.SetRenderData(&renderDataMonkey);
+    monkeyB.SetRenderData(&renderDataMonkey);
 
     return app.exec();
 }

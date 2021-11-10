@@ -1,5 +1,5 @@
 #include "octreecollider.h"
 
-OctreeCollider::OctreeCollider(GameObject* parent, OctreeData* octree) : Collider(parent) {
+OctreeCollider::OctreeCollider(OctreeData* octree) {
     _octree = octree;
 }

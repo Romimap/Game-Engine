@@ -56,10 +56,10 @@ protected:
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void paintGL() override;
-    void Draw(GameObject* root);
-    void Start();
-    void Update(double deltaTime);
-    void Collisions();
+    void Draw(GameObject* current);
+    void Start(GameObject* current);
+    void Update(GameObject* current, double deltaTime);
+    void Collisions(GameObject* current);
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
 };

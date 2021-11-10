@@ -12,7 +12,7 @@ private:
     OctreeData* _octree;
 
 public:
-    OctreeCollider(GameObject* parent, OctreeData* octree);
+    OctreeCollider(OctreeData* octree);
 };
 
 #endif // OCTREECOLLIDER_H

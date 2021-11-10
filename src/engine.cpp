@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "inputmanager.h"
 
 Engine* Engine::Singleton = nullptr;
 
@@ -21,7 +22,7 @@ void Engine::initializeGL() {
 
 
     // Initialize the gameobjects already present in the tree
-    Start();
+    Start(GameObject::Root);
 
     //Start timer
     _beginTime = std::chrono::system_clock::now();
@@ -53,12 +54,18 @@ void Engine::paintGL() {
     double deltaTime = deltaTimeDuration.count();
     _lastTime = _currentTime;
 
+    // Set InputManager Data
+    InputManager::NextFrame();
+
+    // Compute Collisions
+    GameObject::Root->RefreshAABB();
+    Collisions(GameObject::Root);
+
+    // Update GameObjects
+    Update(GameObject::Root, deltaTime);
+
     // Draw GameObjects
     Draw(GameObject::Root);
-    // Compute Collisions
-    Collisions();
-    // Update GameObjects
-    Update(deltaTime);
 
     update();
 }
@@ -91,25 +98,42 @@ void Engine::Draw(GameObject* current) {
     }
 }
 
-void Engine::Start() {
-    GameObject::Root->Start();
+void Engine::Start(GameObject* current) {
+    if (!current->Enabled()) return;
+
+    current->Start();
+    for (GameObject* child : *current->GetChildren()) {
+        Start(child);
+    }
 }
 
-void Engine::Update(double deltaTime) {
-    GameObject::Root->Update(deltaTime);
+void Engine::Update(GameObject* current, double deltaTime) {
+    if (!current->Enabled()) return;
+
+    current->Update(deltaTime);
+    for (GameObject* child : *current->GetChildren()) {
+        Update(child, deltaTime);
+    }
 }
 
-void Engine::Collisions() {
-    GameObject::Root->RefreshAABB();
-    GameObject::Root->Collisions(GameObject::Root);
+void Engine::Collisions(GameObject* current) {
+    if (current->Enabled()) {
+        if (current->GetPersonalGlobalAABB() != nullptr) current->Collisions(GameObject::Root);
+        for (GameObject* child : *current->GetChildren()) {
+            Collisions(child);
+        }
+    }
 }
-
 
 void Engine::keyPressEvent(QKeyEvent *event) {
-    qDebug((char*)event->text().cbegin());
+    if (!event->isAutoRepeat()){
+        InputManager::Press(event->key());
+    }
 }
 
 void Engine::keyReleaseEvent(QKeyEvent *event) {
-    qDebug((char*)event->text().cbegin());
+    if (!event->isAutoRepeat()){
+        InputManager::Resease(event->key());
+    }
 }
 

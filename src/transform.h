@@ -19,7 +19,7 @@ private:
     //CONSTRUCTORS
 public:
     Transform(GameObject* gameObject);
-
+    Transform(Transform* transform, GameObject* gameObject);
     Transform(QVector3D position, QQuaternion rotation, QVector3D scale, GameObject* gameObject);
 
     //GETTERS / SETTERS
@@ -39,9 +39,12 @@ public:
 private:
     QMatrix4x4 LocalTransformMatrix ();
 
+
 public:
     void Translate (QVector3D translation);
     void Translate (float x, float y, float z);
+    void GlobalTranslate (QVector3D translation);
+    void GlobalTranslate (float x, float y, float z);
     void Rotate (QQuaternion rotation);
     void Rotate (QVector3D eulerRotation);
     void Rotate (float x, float y, float z);
@@ -49,6 +52,7 @@ public:
     void Scale (float x, float y, float z);
     void Scale (float s);
     QMatrix4x4 TransformMatrix ();
+
 };
 
 #endif // TRANSFORM_H

@@ -1,4 +1,4 @@
-#include "src/header/material.h"
+#include "src/material.h"
 
 Material::Material() {
     // Load cube.png image

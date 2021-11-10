@@ -12,7 +12,7 @@ private:
     std::vector<int>* _indices;
 
 public:
-    MeshCollider(char* path, GameObject* parent);
+    MeshCollider(char* path);
     ~MeshCollider() override {}
 
 public:

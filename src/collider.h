@@ -1,12 +1,15 @@
 #ifndef COLLIDER_H
 #define COLLIDER_H
 
-#include"aabb.h"
+#include "aabb.h"
+#include <QMatrix4x4>
 
 class GameObject;
-
+class PlaneCollider;
+class CubeCollider;
 
 struct CollisionData {
+    bool collision;
     QVector3D position;
     QVector3D normal;
     GameObject* a;
@@ -21,8 +24,7 @@ public:
     GameObject* _parent;
 
 public:
-    Collider(GameObject* parent) {
-        _parent = parent;
+    Collider() {
     }
     virtual ~Collider() {
 
@@ -30,6 +32,15 @@ public:
 
 public:
     virtual void SetAABB () {}
+    virtual GameObject* GetParent() {return _parent;}
+    virtual CollisionData Collision(Collider* other) {
+        qDebug("COLLISION VIRTUAL");
+        CollisionData collisionData;
+        collisionData.collision = false;
+        return collisionData;
+    }
+
+
 };
 
 #endif // COLLIDER_H

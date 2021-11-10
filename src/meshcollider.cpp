@@ -19,7 +19,7 @@ std::vector<std::string> MeshCollider::split (std::string s, std::string delimit
     return res;
 }
 
-MeshCollider::MeshCollider(char* path, GameObject* parent) : Collider(parent) {
+MeshCollider::MeshCollider(char* path) {
     _vertices = new std::vector<QVector3D*>();
     _indices = new std::vector<int>();
 

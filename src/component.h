@@ -2,6 +2,7 @@
 #define COMPONENT_H
 
 #include "gameobject.h"
+#include "collider.h"
 
 class GameObject;
 class Component {
@@ -10,8 +11,9 @@ private:
 public:
     Component(GameObject* parent);
 
-    virtual void Start();
-    virtual void Update(float delta);
+    virtual void Start(){}
+    virtual void Update(float delta){}
+    virtual void Collision(CollisionData* collisionData){}
 
 protected:
     GameObject* GetParent() {return _parent;}

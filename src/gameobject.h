@@ -1,4 +1,4 @@
-#ifndef GAMEOBJECT_H
+            #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
 #include "transform.h"
@@ -53,6 +53,9 @@ public:
     void SetRenderData(RenderData* renderData);
     void AddComponent (Component* component);
     void SetCollider (Collider* collider);
+    Collider* GetCollider() {return _collider;}
+    AABB* GetGlobalAABB() {return _globalAABB;}
+    AABB* GetPersonalGlobalAABB() {return _personalGlobalAABB;}
 
     //METHODS
 public:

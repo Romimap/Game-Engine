@@ -4,7 +4,7 @@
 GameObject* GameObject::Root = nullptr;
 
 GameObject::GameObject(GameObject* parent) : _parent(parent) {
-    if (parent == nullptr) {
+    if (parent == nullptr && Root == nullptr) {
         Root = this;
     }
 
@@ -72,15 +72,24 @@ void GameObject::Update (float delta) {
 }
 
 void GameObject::Collisions(GameObject* current) {
-    if (!current->Enabled() || current->_globalAABB == nullptr) //We wont explore this branch if the branch is disabled or if there is nothing to collide with
-        return;
-
-    if (_personalGlobalAABB->intersect(*current->_globalAABB)) { //We are "Colliding" with that branch, check current and its children !
-        if (current != this && current->_personalGlobalAABB != nullptr && _personalGlobalAABB->intersect(*current->_personalGlobalAABB)) { //Current collision
-            //TODO, do a collision calculation, then send a collision signal containing a CollisionData...
-        }
-        for (GameObject* child : *current->GetChildren()) { //Possible children collision
-            Collisions(child);
+    qDebug("a");
+    if (current->Enabled() && current->_globalAABB != nullptr) { //We can collide with this branch
+        if (_personalGlobalAABB->intersect(*current->_globalAABB)) { //We are "Colliding" with that branch, check current and its children !
+            if (current != this && current->_personalGlobalAABB != nullptr && _personalGlobalAABB->intersect(*current->_personalGlobalAABB)) { //Current collision
+                CollisionData collisionData = _collider->Collision(current->GetCollider());
+                //qDebug("%s", ("Possible Collision between " + NAME + " and " + current->NAME).c_str());
+                if (collisionData.collision) {
+                    qDebug("%s", (collisionData.a->NAME + " is colliding with " + collisionData.b->NAME).c_str());
+                    //NOTE: now if A collide with B, only A is notified as B will be computed later
+                    //Possible optimisation : notify A and B, and mark that collision as solved. When we test B to A, skip the test
+                    for (Component* c : *_components) {
+                        c->Collision(&collisionData);
+                    }
+                }
+            }
+            for (GameObject* child : *current->GetChildren()) { //Possible children collision
+                Collisions(child);
+            }
         }
     }
 }
@@ -130,6 +139,7 @@ void GameObject::RefreshAABB() {
         //Save the _personalGlobalAABB for collision check
         if (_personalGlobalAABB != nullptr) delete _personalGlobalAABB;
         _personalGlobalAABB = new AABB(min, max);
+        //qDebug("%s", ("For " + NAME + ", personalAABB is " + std::to_string(_personalGlobalAABB->_min.x()) + ", " + std::to_string(_personalGlobalAABB->_min.y()) + ", " + std::to_string(_personalGlobalAABB->_min.z()) + " : " + std::to_string(_personalGlobalAABB->_max.x()) + ", " + std::to_string(_personalGlobalAABB->_max.y()) + ", " + std::to_string(_personalGlobalAABB->_max.z())).c_str());
     }
 
     //Finally, we do that recursively for each child. The _globalAABB of a game object contains itself and all children
@@ -150,5 +160,6 @@ void GameObject::RefreshAABB() {
     if (min.x() < max.x()) {
         delete _globalAABB;
         _globalAABB = new AABB(min, max);
+        //qDebug("%s", ("For " + NAME + ", globalAABB is " + std::to_string(_globalAABB->_min.x()) + ", " + std::to_string(_globalAABB->_min.y()) + ", " + std::to_string(_globalAABB->_min.z()) + " : " + std::to_string(_globalAABB->_max.x()) + ", " + std::to_string(_globalAABB->_max.y()) + ", " + std::to_string(_globalAABB->_max.z())).c_str());
     }
 }

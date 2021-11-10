@@ -8,6 +8,13 @@ Transform::Transform(GameObject* gameObject) {
     _gameObject = gameObject;
 }
 
+Transform::Transform(Transform* transform, GameObject* gameObject) {
+    _position = transform->GetPosition();
+    _rotation = transform->GetRotation();
+    _scale = transform->GetScale();
+    _gameObject = gameObject;
+}
+
 Transform::Transform(QVector3D position, QQuaternion rotation, QVector3D scale, GameObject* gameObject) :
     _position(position),
     _rotation(rotation),
@@ -73,7 +80,28 @@ void Transform::Translate (QVector3D translation) {
 }
 
 void Transform::Translate (float x, float y, float z) {
-    _position += QVector3D(x, y, z);
+    Translate(QVector3D(x, y, z));
+}
+
+
+void Transform::GlobalTranslate (QVector3D translation) {
+    QMatrix4x4 localMatrix;
+    localMatrix.setToIdentity();
+
+    GameObject* parent = _gameObject->GetParent();
+    while (parent != nullptr) {
+        QMatrix4x4 parentMatrix;
+        parentMatrix.setToIdentity();
+        parentMatrix.rotate(parent->GetTransform()->GetRotation());
+        localMatrix = parentMatrix * localMatrix;
+        parent = parent->GetParent();
+    }
+
+    _position -= localMatrix.inverted() * translation;
+}
+
+void Transform::GlobalTranslate (float x, float y, float z) {
+    Translate(QVector3D(x, y, z));
 }
 
 void Transform::Rotate (QQuaternion rotation) {

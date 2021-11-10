@@ -15,7 +15,6 @@ struct OctreeSpaceValues {
 };
 
 struct OctreeRenderData {
-    QOpenGLTexture
 };
 
 class OctreeData {

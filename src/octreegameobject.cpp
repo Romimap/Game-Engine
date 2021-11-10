@@ -2,5 +2,5 @@
 
 OctreeGameObject::OctreeGameObject(int size) : GameObject() {
     _octree = new OctreeData(size);
-    _collider = new OctreeCollider(this, _octree);
+    SetCollider(new OctreeCollider(_octree));
 }
