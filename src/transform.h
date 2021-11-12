@@ -52,6 +52,12 @@ public:
     void Scale (float x, float y, float z);
     void Scale (float s);
     QMatrix4x4 TransformMatrix ();
+    void Lerp (Transform* a, float t) {
+        _position = t * a->GetPosition() + (1 - t) * _position;
+        _rotation = QQuaternion::nlerp(_rotation, a->GetRotation(), t);
+        _scale =  t * a->GetScale() + (1 - t) * _scale;
+    }
+
 
 };
 

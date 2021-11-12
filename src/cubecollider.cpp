@@ -1,5 +1,9 @@
 #include "cubecollider.h"
 #include <xmmintrin.h>
+#include <math.h>
+#include <map>
+
+#define projectToPlane(p, o, n) p-(QVector3D::dotProduct(n,p-o))*n
 
 CubeCollider::CubeCollider(float x, float y, float z) : _size(QVector3D(x * 0.5, y * 0.5, z * 0.5)) {
     CubeCollider::SetAABB();
@@ -9,8 +13,14 @@ void CubeCollider::SetAABB() {
     _localAABB = AABB(-_size, _size);
 }
 
+//QVector3D projectToPlane (QVector3D& p, QVector3D& o, QVector3D& n) {
+//    return p - (QVector3D::dotProduct(n, p - o)) * n;
+//}
+
+//TODO: implement separation by calculating overlaps, could check the axis with the smalest distance to the current plane
 CollisionData CubeCollider::Collision(Collider* other) {
     CollisionData collisionData;
+    collisionData.collision = false;
 
     if (typeid(*other) == typeid(CubeCollider)) {
 
@@ -95,7 +105,13 @@ CollisionData CubeCollider::Collision(Collider* other) {
         bList[6] = &b7;
         bList[7] = &b8;
 
-        //IF all points of the other cube are not on the same side of c, no collision
+        //If all points of the other cube are not on the same side of c, no collision
+        //If not, the separation plane & overlap distance will be processed
+
+        //NOTE: might need to store the opposite of the normal if it points the wrong direction, the idea is for it to point from A to B
+
+        QVector3D separationNormal;
+        float overlapDistance = MAXFLOAT;
 
         for (int i = 2; i < 7; i++) {
             QVector3D& v0 = *aPath[i - 1];
@@ -115,11 +131,11 @@ CollisionData CubeCollider::Collision(Collider* other) {
             for (int j = 0; j < 8; j++) {
                 float current = a*bList[j]->x() + b*bList[j]->y() + c*bList[j]->z() - d;
                 if (opposite * current > 0) {
-                    //TODO: fill the CollisionData struct
-                    collisionData.a = _parent;
-                    collisionData.b = other->_parent;
-                    collisionData.collision = true;
-                    return collisionData;
+                    float planeDistance = bList[j]->distanceToPlane(v0, n);
+                    if (planeDistance < overlapDistance) {
+                        overlapDistance = planeDistance;
+                        separationNormal = n;
+                    }
                 }
             }
         }
@@ -142,17 +158,161 @@ CollisionData CubeCollider::Collision(Collider* other) {
             for (int j = 0; j < 8; j++) {
                 float current = a*aList[j]->x() + b*aList[j]->y() + c*aList[j]->z() - d;
                 if (opposite * current > 0) {
-                    //TODO: fill the CollisionData struct
-                    collisionData.a = _parent;
-                    collisionData.b = other->_parent;
-                    collisionData.collision = true;
-                    return collisionData;
+                    float planeDistance = bList[j]->distanceToPlane(v0, n);
+                    if (planeDistance < overlapDistance) {
+                        overlapDistance = planeDistance;
+                        separationNormal = n;
+                    }
                 }
             }
         }
+
+        //If a collision occured, store the separation direction & distance, then process the collision normal & position
+        if (overlapDistance < MAXFLOAT) {
+            collisionData.collision = true;
+            collisionData.overlapDistance = overlapDistance;
+            collisionData.separationNormal = separationNormal;
+
+            // Here we have to check the vertex that is the closer to the other cube.
+            // The collision will be either on :
+            // The closest vertex
+            // one of the 3 closest edges (incident to the closest vertex)
+            // one of the 3 closest faces (              //              )
+            // Not sure about that but i have the intuition that it should work for cubes.
+
+            // To Test (from A to B) :
+            //  - Vertex -> Face
+            //  - Edge -> Edge
+            //  - Face -> Vertex
+            // Too rare to occur, it will be detected as an Edge -> Edge or Vertex -> Face and thats okay :
+            //  - Vertex -> Vertex
+            //  - Vertex -> Edge
+            //  - Edge -> Vertex
+            //  - Face -> Face
+
+            QVector3D aCenter;
+            aCenter = aTransform * aCenter;
+
+            QVector3D bCenter;
+            bCenter = bTransform * bCenter;
+
+            std::map<float, int> aSorter;
+            std::map<float, int> bSorter;
+            for (int i = 0; i < 8; i++) {
+                aSorter.insert(std::pair<float, int>((*aList[i] - bCenter).lengthSquared(), i));
+                bSorter.insert(std::pair<float, int>((*bList[i] - aCenter).lengthSquared(), i));
+            }
+
+            QVector3D aClosest, bClosest, normal;
+            float minDistance = MAXFLOAT;
+
+            int aMinIndex = aSorter.begin()->second;
+            int bMinIndex = bSorter.begin()->second;
+            QVector3D& aMin = *aList[aMinIndex];
+            QVector3D& bMin = *bList[bMinIndex];
+
+            QVector3D& aMinX = *aList[aMinIndex xor 0b001];
+            QVector3D& aMinY = *aList[aMinIndex xor 0b010];
+            QVector3D& aMinZ = *aList[aMinIndex xor 0b100];
+
+            QVector3D& bMinX = *bList[bMinIndex xor 0b001];
+            QVector3D& bMinY = *bList[bMinIndex xor 0b010];
+            QVector3D& bMinZ = *bList[bMinIndex xor 0b100];
+
+
+
+            //Face YZ
+            QVector3D bYZn = QVector3D::crossProduct(bMinY - bMin, bMinZ - bMin).normalized();
+            QVector3D aToBYZ = projectToPlane(aMin, bMin, bYZn);
+            if (QVector3D::dotProduct(bMinY - bMin, aToBYZ - bMin) > 0 && QVector3D::dotProduct(bMinZ - bMin, aToBYZ - bMin) > 0 ) {
+                float distance = (aToBYZ - aMin).lengthSquared();
+                if (distance < minDistance) {
+                    aClosest = aMin;
+                    bClosest = aToBYZ;
+                    normal = bYZn;
+                    minDistance = distance;
+                }
+            }
+            QVector3D aYZn = QVector3D::crossProduct(aMinY - aMin, aMinZ - aMin).normalized();
+            QVector3D bToAYZ = projectToPlane(bMin, aMin, aYZn);
+            if (QVector3D::dotProduct(aMinY - aMin, bToAYZ - aMin) > 0 && QVector3D::dotProduct(aMinZ - aMin, bToAYZ - aMin) > 0 ) {
+                float distance = (bToAYZ - bMin).lengthSquared();
+                if (distance < minDistance) {
+                    bClosest = bMin;
+                    aClosest = bToAYZ;
+                    normal = aYZn;
+                    minDistance = distance;
+                }
+            }
+
+            //Face XZ
+            QVector3D bXZn = QVector3D::crossProduct(bMinX - bMin, bMinZ - bMin).normalized();
+            QVector3D aToBXZ = projectToPlane(aMin, bMin, bXZn);
+            if (QVector3D::dotProduct(bMinX - bMin, aToBXZ - bMin) > 0 && QVector3D::dotProduct(bMinZ - bMin, aToBXZ - bMin) > 0 ) {
+                float distance = (aToBXZ - aMin).lengthSquared();
+                if (distance < minDistance) {
+                    aClosest = aMin;
+                    bClosest = aToBXZ;
+                    normal = bXZn;
+                    minDistance = distance;
+                }
+            }
+            QVector3D aXZn = QVector3D::crossProduct(aMinX - aMin, aMinZ - aMin).normalized();
+            QVector3D bToAXZ = projectToPlane(bMin, aMin, aXZn);
+            if (QVector3D::dotProduct(aMinX - aMin, bToAXZ - aMin) > 0 && QVector3D::dotProduct(aMinZ - aMin, bToAXZ - aMin) > 0 ) {
+                float distance = (bToAXZ - bMin).lengthSquared();
+                if (distance < minDistance) {
+                    bClosest = bMin;
+                    aClosest = bToAXZ;
+                    normal = aXZn;
+                    minDistance = distance;
+                }
+            }
+
+            //Face XY
+            QVector3D bXYn = QVector3D::crossProduct(bMinX - bMin, bMinY - bMin).normalized();
+            QVector3D aToBXY = projectToPlane(aMin, bMin, bXYn);
+            if (QVector3D::dotProduct(bMinX - bMin, aToBXY - bMin) > 0 && QVector3D::dotProduct(bMinY - bMin, aToBXY - bMin) > 0 ) {
+                float distance = (aToBXY - aMin).lengthSquared();
+                if (distance < minDistance) {
+                    aClosest = aMin;
+                    bClosest = aToBXY;
+                    normal = bXYn;
+                    minDistance = distance;
+                }
+            }
+            QVector3D aXYn = QVector3D::crossProduct(aMinX - aMin, aMinY - aMin).normalized();
+            QVector3D bToAXY = projectToPlane(bMin, aMin, aXYn);
+            if (QVector3D::dotProduct(aMinX - aMin, bToAXY - aMin) > 0 && QVector3D::dotProduct(aMinY - aMin, bToAXY - aMin) > 0 ) {
+                float distance = (bToAXY - bMin).lengthSquared();
+                if (distance < minDistance) {
+                    bClosest = bMin;
+                    aClosest = bToAXY;
+                    normal = aXYn;
+                    minDistance = distance;
+                }
+            }
+
+
+            //TODO
+            //EDGE aXY bXY
+
+            //EDGE aXY bXZ
+            //EDGE aXY bYZ
+            //EDGE aXZ bXY
+            //EDGE aXZ bXZ
+            //EDGE aXZ bYZ
+            //EDGE aYZ bXY
+            //EDGE aYZ bXZ
+            //EDGE aYZ bYZ
+
+
+            collisionData.aPosition = aClosest;
+            collisionData.bPosition = bClosest;
+            collisionData.normal = normal;
+        }
     }
 
-    collisionData.collision = false;
     return collisionData;
 }
 

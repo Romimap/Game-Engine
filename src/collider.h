@@ -10,8 +10,14 @@ class CubeCollider;
 
 struct CollisionData {
     bool collision;
-    QVector3D position;
+
+    QVector3D aPosition;
+    QVector3D bPosition;
     QVector3D normal;
+
+    QVector3D separationNormal;
+    float overlapDistance;
+
     GameObject* a;
     GameObject* b;
 };
