@@ -7,5 +7,10 @@
         <file>rock.png</file>
         <file>snowrocks.png</file>
         <file>montagne.png</file>
+        <file>defaultnormal.png</file>
+        <file>default.png</file>
+        <file>r.png</file>
+        <file>g.png</file>
+        <file>b.png</file>
     </qresource>
 </RCC>

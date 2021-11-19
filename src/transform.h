@@ -6,59 +6,49 @@
 #include <QVector3D>
 #include <QQuaternion>
 #include <QMatrix4x4>
+#include <QVector4D>
+#include "math.h"
 
 class GameObject;
 class Transform {
-    //MEMBERS
 private:
-    QVector3D _position;
-    QQuaternion _rotation;
-    QVector3D _scale;
+    QMatrix4x4 _positionMatrix;
+    QMatrix4x4 _rotationMatrix;
+    QMatrix4x4 _scaleMatrix;
+
     GameObject* _gameObject;
 
-    //CONSTRUCTORS
 public:
-    Transform(GameObject* gameObject);
-    Transform(Transform* transform, GameObject* gameObject);
-    Transform(QVector3D position, QQuaternion rotation, QVector3D scale, GameObject* gameObject);
+    Transform (GameObject* gameObject);
 
-    //GETTERS / SETTERS
-public:
-    QVector3D GetPosition ();
-    void SetPosition (QVector3D position);
+    Transform (Transform* transform, GameObject* gameObject);
+
+    QVector3D Forward ();
+    QVector3D Up ();
+    QVector3D Right ();
+
+    void Translate (QVector3D t);
+    void GlobalTranslate (QVector3D t);
+
+    void SetPosition (QVector3D t);
     void SetPosition (float x, float y, float z);
-    QQuaternion GetRotation ();
-    void SetRotation (QQuaternion rotation);
-    void SetRotation (QVector3D eulerRotation);
+    QVector3D GetPosition ();
+    QVector3D GetGlobalPosition ();
+
+
+    void Rotate (QQuaternion t);
+    void RotateAround (float t, QVector3D a);
+    void SetRotation (QQuaternion t);
     void SetRotation (float x, float y, float z);
-    QVector3D GetScale ();
-    void SetScale (QVector3D scale);
+    QQuaternion GetRotation();
+
+    void Scale (QVector3D t);
+    void Scale (float x, float y, float z);
+    void SetScale (QVector3D t);
     void SetScale (float x, float y, float z);
 
-    //METHODS
-private:
     QMatrix4x4 LocalTransformMatrix ();
-
-
-public:
-    void Translate (QVector3D translation);
-    void Translate (float x, float y, float z);
-    void GlobalTranslate (QVector3D translation);
-    void GlobalTranslate (float x, float y, float z);
-    void Rotate (QQuaternion rotation);
-    void Rotate (QVector3D eulerRotation);
-    void Rotate (float x, float y, float z);
-    void Scale (QVector3D scale);
-    void Scale (float x, float y, float z);
-    void Scale (float s);
-    QMatrix4x4 TransformMatrix ();
-    void Lerp (Transform* a, float t) {
-        _position = t * a->GetPosition() + (1 - t) * _position;
-        _rotation = QQuaternion::nlerp(_rotation, a->GetRotation(), t);
-        _scale =  t * a->GetScale() + (1 - t) * _scale;
-    }
-
-
+    QMatrix4x4 GlobalTransformMatrix ();
 };
 
 #endif // TRANSFORM_H

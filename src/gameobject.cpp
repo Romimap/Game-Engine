@@ -28,6 +28,10 @@ bool GameObject::Enabled () {
 Transform* GameObject::GetTransform () {
     return _transform;
 }
+///Dont forget to free t
+void GameObject::SetTransform(Transform* t) {
+    _transform = new Transform(t, this);
+}
 GameObject* GameObject::GetParent () {
     return _parent;
 }
@@ -53,9 +57,6 @@ void GameObject::Disable () {//TODO
 }
 
 void GameObject::Start () {
-    for (GameObject* child : *_children) {
-        child->Start();
-    }
     for (Component* component : *_components) {
         component->Start();
     }
@@ -63,27 +64,30 @@ void GameObject::Start () {
 }
 
 void GameObject::Update (float delta) {
-    for (GameObject* child : *_children) {
-        child->Update(delta);
-    }
     for (Component* component : *_components) {
         component->Update(delta);
     }
 }
 
+void GameObject::FixedUpdate (float delta) {
+    for (Component* component : *_components) {
+        component->FixedUpdate(delta);
+    }
+}
+
 void GameObject::Collisions(GameObject* current) {
-    qDebug("a");
     if (current->Enabled() && current->_globalAABB != nullptr) { //We can collide with this branch
+        //qDebug("%s", ("Testing " + NAME + " - " + current->NAME).c_str());
         if (_personalGlobalAABB->intersect(*current->_globalAABB)) { //We are "Colliding" with that branch, check current and its children !
+            //qDebug("%s", (NAME + " is colliding with the " + current->NAME + " branch").c_str());
             if (current != this && current->_personalGlobalAABB != nullptr && _personalGlobalAABB->intersect(*current->_personalGlobalAABB)) { //Current collision
-                CollisionData collisionData = _collider->Collision(current->GetCollider());
-                //qDebug("%s", ("Possible Collision between " + NAME + " and " + current->NAME).c_str());
-                if (collisionData.collision) {
-                    qDebug("%s", (collisionData.a->NAME + " is colliding with " + collisionData.b->NAME).c_str());
+                //qDebug("%s", (NAME + " is colliding with " + current->NAME + " (aabb)").c_str());
+                if (_collider->Collision(current->GetCollider())) {
+                    //qDebug("%s", (NAME + " is colliding with " + current->NAME).c_str());
                     //NOTE: now if A collide with B, only A is notified as B will be computed later
                     //Possible optimisation : notify A and B, and mark that collision as solved. When we test B to A, skip the test
                     for (Component* c : *_components) {
-                        c->Collision(&collisionData);
+                        c->Collision(current->GetCollider());
                     }
                 }
             }
@@ -103,6 +107,7 @@ void GameObject::AddComponent(Component *component) {
 }
 
 void GameObject::RefreshAABB() {
+    qDebug("%s", ("Refreshing AABB (" + NAME + ")").c_str());
     QVector3D min( 100000000,  100000000,  100000000);
     QVector3D max(-100000000, -100000000, -100000000);
     if (_collider != nullptr) {
@@ -122,7 +127,7 @@ void GameObject::RefreshAABB() {
 
         //Then we transform that local cube into a world Cube
         for (QVector3D& point : cube) {
-            point = _transform->TransformMatrix() * point;
+            point = _transform->GlobalTransformMatrix() * point;
         }
 
         //we process a new AABB on that cube. This is an aproximation but way faster than processing an AABB on a mesh each frame. That new AABB will be in global space
@@ -162,4 +167,11 @@ void GameObject::RefreshAABB() {
         _globalAABB = new AABB(min, max);
         //qDebug("%s", ("For " + NAME + ", globalAABB is " + std::to_string(_globalAABB->_min.x()) + ", " + std::to_string(_globalAABB->_min.y()) + ", " + std::to_string(_globalAABB->_min.z()) + " : " + std::to_string(_globalAABB->_max.x()) + ", " + std::to_string(_globalAABB->_max.y()) + ", " + std::to_string(_globalAABB->_max.z())).c_str());
     }
+}
+
+template <typename T> Component* GameObject::GetComponent() {
+    for(Component* c : *_components) {
+        if (typeid (*c) == typeid (T)) return c;
+    }
+    return nullptr;
 }

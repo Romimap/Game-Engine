@@ -62,22 +62,26 @@ struct VertexData {
 };
 
 //! [0]
-GLMesh::GLMesh(char* path)
-    : indexBuf(QOpenGLBuffer::IndexBuffer) {
+GLMesh::GLMesh(char* lod0, char* lod1)
+    : indexBuf(QOpenGLBuffer::IndexBuffer), indexBufLow(QOpenGLBuffer::IndexBuffer) {
     initializeOpenGLFunctions();
 
     // Generate 2 VBOs
     arrayBuf.create();
     indexBuf.create();
+    arrayBufLow.create();
+    indexBufLow.create();
 
     // Initializes cube geometry and transfers it to VBOs
-    initMesh(path);
-
+    initMesh(lod0, &arrayBuf, &indexBuf);
+    initMesh(lod1, &arrayBufLow, &indexBufLow);
 }
 
 GLMesh::~GLMesh() {
     arrayBuf.destroy();
     indexBuf.destroy();
+    arrayBufLow.destroy();
+    indexBufLow.destroy();
 }
 //! [0]
 
@@ -118,7 +122,7 @@ std::vector<std::string> split (std::string s, std::string delimiter) {
    |_______|   ;_|_|_/    :_;_;_;_:
     [=====]
 */
-void GLMesh::initMesh(char *path) {
+void GLMesh::initMesh(char *path, QOpenGLBuffer* arrayBuffer, QOpenGLBuffer* indexBuffer) {
     std::vector<QVector3D> pos;
     std::vector<QVector3D> nrm;
     std::vector<QVector2D> uv;
@@ -199,22 +203,30 @@ void GLMesh::initMesh(char *path) {
 
 //! [1]
     // Transfer vertex data to VBO 0
-    arrayBuf.bind();
-    arrayBuf.allocate(&vertexArray.front(), vertexArray.size() * sizeof(VertexData));
+    arrayBuffer->bind();
+    arrayBuffer->allocate(&vertexArray.front(), vertexArray.size() * sizeof(VertexData));
 
     // Transfer index data to VBO 1
-    indexBuf.bind();
-    indexBuf.allocate(&indexArray.front(), indexArray.size() * sizeof(GLushort));
+    indexBuffer->bind();
+    indexBuffer->allocate(&indexArray.front(), indexArray.size() * sizeof(GLushort));
 //! [1]
 }
 
 //! [2]
 
 
-void GLMesh::draw(QOpenGLShaderProgram *program) {
+void GLMesh::draw(QOpenGLShaderProgram *program, float distance) {
     // Tell OpenGL which VBOs to use
-    arrayBuf.bind();
-    indexBuf.bind();
+    int size = 0;
+    if (distance < 5) {
+        arrayBuf.bind();
+        indexBuf.bind();
+        size = indexBuf.size();
+    } else {
+        arrayBufLow.bind();
+        indexBufLow.bind();
+        size = indexBufLow.size();
+    }
 
     // Offset for position
     quintptr offset = 0;
@@ -241,6 +253,8 @@ void GLMesh::draw(QOpenGLShaderProgram *program) {
     program->setAttributeBuffer(texcoordLocation, GL_FLOAT, offset, 2, sizeof(VertexData));
 
     // Draw cube geometry using indices from VBO 1
-    glDrawElements(GL_TRIANGLES, indexBuf.size(), GL_UNSIGNED_SHORT, 0); //Careful update indicesNumber when creating new geometry
+    glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_SHORT, 0); //Careful update indicesNumber when creating new geometry
+
+
 }
 //! [2]

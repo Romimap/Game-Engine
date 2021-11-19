@@ -13,7 +13,8 @@ public:
 
     virtual void Start(){}
     virtual void Update(float delta){}
-    virtual void Collision(CollisionData* collisionData){}
+    virtual void FixedUpdate(float delta){}
+    virtual void Collision(Collider* other){}
 
 protected:
     GameObject* GetParent() {return _parent;}

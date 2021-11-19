@@ -16,7 +16,7 @@ public:
     float y() {return _size.y();}
     float z() {return _size.z();}
 
-    CollisionData Collision(Collider* other) override;
+    bool Collision(Collider* other) override;
 
 
 };

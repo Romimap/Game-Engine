@@ -1,8 +1,13 @@
 #include "src/material.h"
+#include <QOpenGLFunctions_3_1>
 
-Material::Material() {
+Material::Material(char* colorPath, char* normalPath, char* vshaderPath, char* fshaderPath) {
     // Load cube.png image
-    color = new QOpenGLTexture(QImage(":/cube.png").mirrored());
+    if (colorPath != nullptr) color = new QOpenGLTexture(QImage(colorPath).mirrored());
+    else color = new QOpenGLTexture(QImage(":/default.png"));
+
+    if (normalPath != nullptr) normal = new QOpenGLTexture(QImage(normalPath).mirrored());
+    else normal = new QOpenGLTexture(QImage(":/defaultnormal.png"));
 
     // Set nearest filtering mode for texture minification
     color->setMinificationFilter(QOpenGLTexture::Nearest);
@@ -15,10 +20,10 @@ Material::Material() {
     color->setWrapMode(QOpenGLTexture::Repeat);
 
     // Compile vertex shader
-    program.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vshader.glsl");
+    program.addShaderFromSourceFile(QOpenGLShader::Vertex, vshaderPath);
 
     // Compile fragment shader
-    program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fshader.glsl");
+    program.addShaderFromSourceFile(QOpenGLShader::Fragment, fshaderPath);
 
     // Link shader pipeline
     program.link();

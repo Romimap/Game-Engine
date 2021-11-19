@@ -42,9 +42,12 @@ private:
     QMatrix4x4 _projection;
     std::chrono::time_point<std::chrono::system_clock> _beginTime;
     std::chrono::time_point<std::chrono::system_clock> _lastTime;
+    double _fixedDeltaTime;
+    double _fixedUpdateLen = 1./60.;
 
 public:
     static Engine* Singleton;
+    int tick = 0;
 
 public:
     Engine();
@@ -59,6 +62,7 @@ protected:
     void Draw(GameObject* current);
     void Start(GameObject* current);
     void Update(GameObject* current, double deltaTime);
+    void FixedUpdate(GameObject* current, double deltaTime);
     void Collisions(GameObject* current);
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;

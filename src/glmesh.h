@@ -57,16 +57,21 @@
 
 class GLMesh : protected QOpenGLFunctions_3_1 {
 public:
-    GLMesh(char* path);
+    GLMesh(char* lod0, char* lod1);
     virtual ~GLMesh();
 
-    void draw(QOpenGLShaderProgram *program);
+    void draw(QOpenGLShaderProgram *program, float distance);
 
 private:
-    void initMesh(char* path);
+    void initMesh(char* lod0, QOpenGLBuffer* arrayBuffer, QOpenGLBuffer* indexBuffer);
 
+    //LOD0
     QOpenGLBuffer arrayBuf;
     QOpenGLBuffer indexBuf;
+
+    //LOD1
+    QOpenGLBuffer arrayBufLow;
+    QOpenGLBuffer indexBufLow;
 
 };
 

@@ -47,6 +47,7 @@ public:
 public:
     bool Enabled ();
     Transform* GetTransform ();
+    void SetTransform (Transform* t);
     GameObject* GetParent ();
     std::vector<GameObject*>* GetChildren();
     RenderData* GetRenderData();
@@ -56,6 +57,7 @@ public:
     Collider* GetCollider() {return _collider;}
     AABB* GetGlobalAABB() {return _globalAABB;}
     AABB* GetPersonalGlobalAABB() {return _personalGlobalAABB;}
+    template<typename  T> Component* GetComponent ();
 
     //METHODS
 public:
@@ -63,6 +65,7 @@ public:
     void Disable ();
     void Start ();
     void Update (float delta);
+    void FixedUpdate (float delta);
     void Collisions(GameObject* current);
     void RefreshAABB();
 

@@ -8,20 +8,6 @@ class GameObject;
 class PlaneCollider;
 class CubeCollider;
 
-struct CollisionData {
-    bool collision;
-
-    QVector3D aPosition;
-    QVector3D bPosition;
-    QVector3D normal;
-
-    QVector3D separationNormal;
-    float overlapDistance;
-
-    GameObject* a;
-    GameObject* b;
-};
-
 class Collider {
 public:
     /// The AABB that contains that collider, but in local space, should not be used as is.
@@ -39,14 +25,10 @@ public:
 public:
     virtual void SetAABB () {}
     virtual GameObject* GetParent() {return _parent;}
-    virtual CollisionData Collision(Collider* other) {
+    virtual bool Collision(Collider* other) {
         qDebug("COLLISION VIRTUAL");
-        CollisionData collisionData;
-        collisionData.collision = false;
-        return collisionData;
+        return false;
     }
-
-
 };
 
 #endif // COLLIDER_H

@@ -7,8 +7,9 @@
 class Material {
 public:
     QOpenGLTexture* color;
+    QOpenGLTexture* normal;
     QOpenGLShaderProgram program;
-    Material();
+    Material(char* colorPath, char* normalPath, char* vshaderPath, char* fshaderPath);
 };
 
 #endif // MATERIAL_H

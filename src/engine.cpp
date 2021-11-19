@@ -17,9 +17,12 @@ void Engine::initializeGL() {
     glEnable(GL_DEPTH_TEST);
 
     // Enable back face culling
-    //glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     qDebug("initializeGL ->");
 
+    // Initialize the input manager
+    InputManager::SampleMousePosition();
+    InputManager::NextFrame();
 
     // Initialize the gameobjects already present in the tree
     Start(GameObject::Root);
@@ -27,6 +30,7 @@ void Engine::initializeGL() {
     //Start timer
     _beginTime = std::chrono::system_clock::now();
     _lastTime = _beginTime;
+    _fixedDeltaTime = 0;
 }
 
 void Engine::resizeGL(int w, int h) {
@@ -50,9 +54,13 @@ void Engine::paintGL() {
 
     //Time
     std::chrono::time_point<std::chrono::system_clock> _currentTime = std::chrono::system_clock::now();
-    std::chrono::duration<double> deltaTimeDuration = _lastTime - _currentTime;
+    std::chrono::duration<double> deltaTimeDuration = _currentTime - _lastTime;
     double deltaTime = deltaTimeDuration.count();
+    _fixedDeltaTime += deltaTime;
     _lastTime = _currentTime;
+
+    //Inputs
+    InputManager::SampleMousePosition();
 
     // Set InputManager Data
     InputManager::NextFrame();
@@ -63,9 +71,18 @@ void Engine::paintGL() {
 
     // Update GameObjects
     Update(GameObject::Root, deltaTime);
+    while (_fixedDeltaTime > _fixedUpdateLen) {
+        _fixedDeltaTime -= _fixedUpdateLen;
+        FixedUpdate(GameObject::Root, _fixedUpdateLen);
+    }
 
     // Draw GameObjects
     Draw(GameObject::Root);
+
+    tick++;
+    qDebug("%f", _fixedDeltaTime);
+    qDebug("%f", deltaTime);
+
 
     update();
 }
@@ -74,11 +91,13 @@ void Engine::Draw(GameObject* current) {
     // Clear color and depth buffer
     RenderData* renderData = current->GetRenderData();
     if (renderData != nullptr) {
-        renderData->_material->color->bind();
+        renderData->_material->color->bind(0);
+        renderData->_material->normal->bind(1);
         renderData->_material->program.bind();
 
-        QMatrix4x4 cameraMatrix = Camera::ActiveCamera->GetTransform()->TransformMatrix();
-        QMatrix4x4 modelMatrix = current->GetTransform()->TransformMatrix();
+        //NOTE: for some reason the camera matrix needs to be inverted
+        QMatrix4x4 cameraMatrix = Camera::ActiveCamera->GetTransform()->GlobalTransformMatrix().inverted();
+        QMatrix4x4 modelMatrix = current->GetTransform()->GlobalTransformMatrix();
 
         // Set modelview-projection matrix
         renderData->_material->program.setUniformValue("mvp_matrix", _projection * cameraMatrix * modelMatrix);
@@ -88,9 +107,13 @@ void Engine::Draw(GameObject* current) {
 
         // Use texture unit 0
         renderData->_material->program.setUniformValue("color", 0);
+        // Use texture unit 1
+        renderData->_material->program.setUniformValue("normal", 1);
 
-        // Draw cube geometry
-        renderData->_mesh->draw(&current->GetRenderData()->_material->program);
+        // Draw Mesh
+        float distance = (Camera::ActiveCamera->GetTransform()->GetGlobalPosition() - current->GetTransform()->GetGlobalPosition()).length();
+        qDebug("%s", ("Distance " + current->NAME + " = " + std::to_string(distance)).c_str());
+        renderData->_mesh->draw(&current->GetRenderData()->_material->program, distance);
     }
 
     for (GameObject* child : *current->GetChildren()) {
@@ -113,6 +136,15 @@ void Engine::Update(GameObject* current, double deltaTime) {
     current->Update(deltaTime);
     for (GameObject* child : *current->GetChildren()) {
         Update(child, deltaTime);
+    }
+}
+
+void Engine::FixedUpdate(GameObject* current, double deltaTime) {
+    if (!current->Enabled()) return;
+
+    current->FixedUpdate(deltaTime);
+    for (GameObject* child : *current->GetChildren()) {
+        FixedUpdate(child, deltaTime);
     }
 }
 
