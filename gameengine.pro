@@ -52,4 +52,5 @@ INSTALLS += target
 
 DISTFILES += \
     misc/Suzanne.obj\
-    misc/Cube.obj
+    misc/Cube.obj \
+    misc/plane.obj

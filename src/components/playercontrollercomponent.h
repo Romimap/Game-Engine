@@ -34,8 +34,8 @@ public:
         if (InputManager::Key('M')) InputManager::SetCaptureMouse(false);
 
         //PushPull Cube
-        if (InputManager::Key('T')) _cubeRb->_momentum += GetParent()->GetTransform()->Forward();
-        if (InputManager::Key('G')) _cubeRb->_momentum -= GetParent()->GetTransform()->Forward();
+        if (InputManager::Key('T') && _cubeRb != nullptr) _cubeRb->_momentum += GetParent()->GetTransform()->Forward();
+        if (InputManager::Key('G') && _cubeRb != nullptr) _cubeRb->_momentum -= GetParent()->GetTransform()->Forward();
 
         //Movement & Orientation
         float x = InputManager::Key('D') - InputManager::Key('Q');
@@ -59,6 +59,8 @@ public:
 
         GetParent()->GetTransform()->Translate(_momentum * delta);
         GetParent()->GetTransform()->SetRotation(azimuthQuat * elevationQuat);
+
+        qDebug((std::to_string(GetParent()->GetTransform()->GetPosition().x()) + " " + std::to_string(GetParent()->GetTransform()->GetPosition().y()) + " " + std::to_string(GetParent()->GetTransform()->GetPosition().z())).c_str());
     }
 };
 

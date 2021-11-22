@@ -17,7 +17,7 @@ void Engine::initializeGL() {
     glEnable(GL_DEPTH_TEST);
 
     // Enable back face culling
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
     qDebug("initializeGL ->");
 
     // Initialize the input manager
@@ -91,8 +91,7 @@ void Engine::Draw(GameObject* current) {
     // Clear color and depth buffer
     RenderData* renderData = current->GetRenderData();
     if (renderData != nullptr) {
-        renderData->_material->color->bind(0);
-        renderData->_material->normal->bind(1);
+        renderData->_material->colorLod0->bind(0);
         renderData->_material->program.bind();
 
         //NOTE: for some reason the camera matrix needs to be inverted
@@ -106,14 +105,10 @@ void Engine::Draw(GameObject* current) {
         renderData->_material->program.setUniformValue("model_matrix", modelMatrix);
 
         // Use texture unit 0
-        renderData->_material->program.setUniformValue("color", 0);
-        // Use texture unit 1
-        renderData->_material->program.setUniformValue("normal", 1);
+        renderData->_material->program.setUniformValue("colorlod0", 0);
 
         // Draw Mesh
-        float distance = (Camera::ActiveCamera->GetTransform()->GetGlobalPosition() - current->GetTransform()->GetGlobalPosition()).length();
-        qDebug("%s", ("Distance " + current->NAME + " = " + std::to_string(distance)).c_str());
-        renderData->_mesh->draw(&current->GetRenderData()->_material->program, distance);
+        renderData->_mesh->draw(&current->GetRenderData()->_material->program);
     }
 
     for (GameObject* child : *current->GetChildren()) {

@@ -62,26 +62,21 @@ struct VertexData {
 };
 
 //! [0]
-GLMesh::GLMesh(char* lod0, char* lod1)
-    : indexBuf(QOpenGLBuffer::IndexBuffer), indexBufLow(QOpenGLBuffer::IndexBuffer) {
+GLMesh::GLMesh(char* lod0)
+    : indexBuf(QOpenGLBuffer::IndexBuffer){
     initializeOpenGLFunctions();
 
     // Generate 2 VBOs
     arrayBuf.create();
     indexBuf.create();
-    arrayBufLow.create();
-    indexBufLow.create();
 
     // Initializes cube geometry and transfers it to VBOs
     initMesh(lod0, &arrayBuf, &indexBuf);
-    initMesh(lod1, &arrayBufLow, &indexBufLow);
 }
 
 GLMesh::~GLMesh() {
     arrayBuf.destroy();
     indexBuf.destroy();
-    arrayBufLow.destroy();
-    indexBufLow.destroy();
 }
 //! [0]
 
@@ -215,18 +210,12 @@ void GLMesh::initMesh(char *path, QOpenGLBuffer* arrayBuffer, QOpenGLBuffer* ind
 //! [2]
 
 
-void GLMesh::draw(QOpenGLShaderProgram *program, float distance) {
+void GLMesh::draw(QOpenGLShaderProgram *program) {
     // Tell OpenGL which VBOs to use
     int size = 0;
-    if (distance < 5) {
-        arrayBuf.bind();
-        indexBuf.bind();
-        size = indexBuf.size();
-    } else {
-        arrayBufLow.bind();
-        indexBufLow.bind();
-        size = indexBufLow.size();
-    }
+    arrayBuf.bind();
+    indexBuf.bind();
+    size = indexBuf.size();
 
     // Offset for position
     quintptr offset = 0;
