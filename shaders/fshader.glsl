@@ -6,17 +6,21 @@ in vec2 v_texcoord;
 in vec3 v_position;
 in mat4 v_camera_matrix;
 
-
-const int MAXTRACE = 3;
-const float MINDIST = 0.0001;
+//VALUES
 const float EPSILON = 0.000001;
 const float INFINITY = 99999999;
-const float MAXDIST = 1000;
+
+//VOXELS
 const int GRIDSIZE = 8;
 const float VOXELSIZE = 0.1;
-const vec3 light = vec3(0, 2, 0);
-const float LIGHTFORCE = 5;
-const float FOGSAMPLEDISTANCE = 0.02;
+
+//LIGHTING
+const vec3 SUNDIR = vec3(0.534, 0.801, 0.267);
+const float FOGINTENSITY = 0.1;
+const vec3 AMBIENTCOLOR = vec3(0.5,0.6,0.7);
+const float AMBIENTFORCE = 0.3;
+const vec3 SUNCOLOR = vec3(1, 0.97, 0.75);
+const float SUNFORCE = 3;
 
 struct CollisionData {
     float distance;
@@ -199,49 +203,37 @@ CollisionData sceneSDF (vec3 O, vec3 D) {
 }
 
 float shadows (vec3 O) {
-    vec3 D = light - O;
-    float len = length(D);
-    D = normalize(D);
+    CollisionData cdata = sceneSDF(O + SUNDIR * EPSILON, SUNDIR);
 
-    CollisionData cdata = sceneSDF(O + D * EPSILON, D);
-
-    if (cdata.distance < len) return 0.;
+    if (cdata.distance < INFINITY) return 0.;
     return 1.0;
 }
 
-float shading (vec3 O, vec3 N) {
-    vec3 D = light - O;
-    float len = length(D);
-    D = normalize(D);
-
-    return clamp(dot(N, -D), 0, 1);
+vec3 shading (vec3 O, vec3 N) {
+    return SUNCOLOR * SUNFORCE * clamp(dot(N, -SUNDIR), 0, 1);
 }
 
-float lightforce (vec3 O) {
-    vec3 D = light - O;
-    float len = length(D);
-
-    return LIGHTFORCE / pow(len, 3);
+vec3 ambient() {
+    return AMBIENTCOLOR * AMBIENTFORCE;
 }
 
-float ambient() {
-    return 0.1;
-}
-
-vec4 fog (vec3 O, vec3 D, float distance, vec4 color) {
-    vec3 ans = vec3(0);
-    for (float d = 0; d < distance; d += FOGSAMPLEDISTANCE) {
-        O += D * FOGSAMPLEDISTANCE;
-        if (shadows(O) > 0) ans += color.rgb * color.a * lightforce(O);
-    }
-    return vec4(ans, 0);
+vec3 applyFog( in vec3  rgb,      // original color of the pixel
+               in float distance, // camera to point distance
+               in vec3  rayDir,   // camera to point vector
+               in vec3  sunDir )  // sun light direction
+{
+    float fogAmount = 1.0 - exp( -distance * FOGINTENSITY );
+    float sunAmount = max(dot( rayDir, sunDir ), 0.0 );
+    vec3  fogColor  = mix(AMBIENTCOLOR, // bluish
+                          SUNCOLOR * 4, // yellowish
+                           pow(sunAmount, 16.0) );
+    return mix( rgb, fogColor, fogAmount );
 }
 
 
 
 void main () {
-    vec4 Color = vec4(0, 0, 0, 0);
-    vec4 FogColor = vec4(1, 1, 1, 0.005);
+    vec3 Color = vec3(0, 0, 0);
     vec3 O = vec3(0, 0, 0);
     vec3 D = vec3(v_texcoord.x - 0.5, v_texcoord.y - 0.5, 0.5);
     D = normalize(D);
@@ -251,21 +243,19 @@ void main () {
 
     CollisionData cdata = sceneSDF(O, D);
     if (cdata.distance < INFINITY) {
-        Color.a = 1;
         vec3 hitPoint = O + D * cdata.distance;
         vec3 light = vec3(1);
         light *= shadows(hitPoint);
         light *= shading(hitPoint, cdata.normal);
-        light *= lightforce(hitPoint);
         light += ambient();
-        Color += fog(O, D, cdata.distance, FogColor);
 
         Color.rgb += light;
     } else {
         vec3 light = vec3(1);
-        Color += fog(O, D, 10, FogColor);
     }
 
-    gl_FragColor = Color;
+    Color = applyFog(Color.rgb, cdata.distance, D, SUNDIR);
+
+    gl_FragColor = vec4(tanh(Color), 1);
 }
 
