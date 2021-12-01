@@ -94,10 +94,10 @@ int main(int argc, char *argv[]) {
 
     GameObject renderPlane(&camera);
     renderPlane.GetTransform()->SetRotation(90, 0, 0);
-    renderPlane.GetTransform()->SetPosition(0, 0, -2);
+    renderPlane.GetTransform()->SetPosition(0, 0, -0.75);
     renderPlane.SetRenderData(&testRenderData);
 
-    //PlayerControllerComponent cameraPlayerController(5, 0.1, nullptr, &renderPlane);
+    PlayerControllerComponent playerController(5, 0.01, nullptr, &camera);
 
     return app.exec();
 }

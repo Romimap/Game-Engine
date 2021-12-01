@@ -107,7 +107,6 @@ void GameObject::AddComponent(Component *component) {
 }
 
 void GameObject::RefreshAABB() {
-    qDebug("%s", ("Refreshing AABB (" + NAME + ")").c_str());
     QVector3D min( 100000000,  100000000,  100000000);
     QVector3D max(-100000000, -100000000, -100000000);
     if (_collider != nullptr) {

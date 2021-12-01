@@ -2,8 +2,5 @@
     <qresource prefix="/">
         <file>vshader.glsl</file>
         <file>fshader.glsl</file>
-        <file>terrainfshader.glsl</file>
-        <file>terrainvshader.glsl</file>
-        <file>fshaderunlit.glsl</file>
     </qresource>
 </RCC>

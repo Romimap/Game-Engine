@@ -4,18 +4,20 @@
 Material::Material(char* colorPath, char* vshaderPath, char* fshaderPath) {
     colorLod0 = new QOpenGLTexture(QOpenGLTexture::Target3D);
     colorLod0->setMinMagFilters(QOpenGLTexture::Nearest, QOpenGLTexture::Nearest);
+    colorLod0->setWrapMode(QOpenGLTexture::Repeat);
     colorLod0->create();
 
-    colorLod0->setSize(2, 2, 2);
-    colorLod0->setFormat(QOpenGLTexture::TextureFormat::RGBA8_UNorm);
+    colorLod0->setSize(8, 8, 8);
+    colorLod0->setFormat(QOpenGLTexture::TextureFormat::LuminanceFormat);
     colorLod0->allocateStorage();
 
-    uint8_t* data = (uint8_t*)calloc(8 * 4, sizeof (uint8_t));
-    data[3]  = 255;
-    data[7]  = 255;
-    data[11] = 255;
+    char* data = (char*)malloc(8*8*8 * sizeof (char));
+    for (int k = 0; k < 8*8*8; k++) {
+        data[k] = (rand() % 8 == 0) * 255;
+    }
 
-    colorLod0->setData(QOpenGLTexture::Red, QOpenGLTexture::UInt8, data);
+    colorLod0->setData(QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, data);
+
 
     // Compile vertex shader
     program.addShaderFromSourceFile(QOpenGLShader::Vertex, vshaderPath);

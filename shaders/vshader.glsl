@@ -6,16 +6,16 @@ uniform mat4 view_matrix;
 uniform mat4 model_matrix;
 
 in vec3 a_position;
-in vec3 a_normal;
 in vec2 a_texcoord;
 
 out vec3 v_position;
 out vec2 v_texcoord;
+out mat4 v_camera_matrix;
 
 void main()
 {
     // Calculate vertex position in screen space
-    gl_Position = projection_matrix * view_matrix * model_matrix * vec4(a_position, 1);
+    gl_Position = mvp_matrix * vec4(a_position, 1);
 
     // Pass texture coordinate to fragment shader
     // Value will be automatically interpolated to fragments inside polygon faces

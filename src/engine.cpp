@@ -79,10 +79,7 @@ void Engine::paintGL() {
     // Draw GameObjects
     Draw(GameObject::Root);
 
-    tick++;
-    qDebug("%f", _fixedDeltaTime);
-    qDebug("%f", deltaTime);
-
+qDebug(std::to_string(deltaTime).c_str());
 
     update();
 }

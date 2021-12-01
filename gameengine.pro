@@ -3,6 +3,8 @@ QT       += core gui widgets
 TARGET = gameengine
 TEMPLATE = app
 
+CONFIG += c++17
+
 SOURCES += src/main.cpp \
     src/aabb.cpp \
     src/aabbcollider.cpp \
