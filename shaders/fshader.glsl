@@ -9,13 +9,14 @@ in mat4 v_camera_matrix;
 
 const int MAXTRACE = 3;
 const float MINDIST = 0.0001;
-const float EPSILON = 0.001;
+const float EPSILON = 0.000001;
 const float INFINITY = 99999999;
 const float MAXDIST = 1000;
 const int GRIDSIZE = 8;
 const float VOXELSIZE = 0.1;
 const vec3 light = vec3(0, 2, 0);
 const float LIGHTFORCE = 5;
+const float FOGSAMPLEDISTANCE = 0.02;
 
 struct CollisionData {
     float distance;
@@ -227,8 +228,20 @@ float ambient() {
     return 0.1;
 }
 
+vec4 fog (vec3 O, vec3 D, float distance, vec4 color) {
+    vec3 ans = vec3(0);
+    for (float d = 0; d < distance; d += FOGSAMPLEDISTANCE) {
+        O += D * FOGSAMPLEDISTANCE;
+        if (shadows(O) > 0) ans += color.rgb * color.a * lightforce(O);
+    }
+    return vec4(ans, 0);
+}
+
+
+
 void main () {
     vec4 Color = vec4(0, 0, 0, 0);
+    vec4 FogColor = vec4(1, 1, 1, 0.005);
     vec3 O = vec3(0, 0, 0);
     vec3 D = vec3(v_texcoord.x - 0.5, v_texcoord.y - 0.5, 0.5);
     D = normalize(D);
@@ -245,11 +258,14 @@ void main () {
         light *= shading(hitPoint, cdata.normal);
         light *= lightforce(hitPoint);
         light += ambient();
+        Color += fog(O, D, cdata.distance, FogColor);
 
         Color.rgb += light;
+    } else {
+        vec3 light = vec3(1);
+        Color += fog(O, D, 10, FogColor);
     }
 
-    if (Color.a == 0) Color = vec4(0);
     gl_FragColor = Color;
 }
 
