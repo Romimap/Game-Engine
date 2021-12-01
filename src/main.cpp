@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
     renderPlane.GetTransform()->SetPosition(0, 0, -0.75);
     renderPlane.SetRenderData(&testRenderData);
 
-    PlayerControllerComponent playerController(5, 0.01, nullptr, &camera);
+    PlayerControllerComponent playerController(1, 0.1, nullptr, &camera);
 
     return app.exec();
 }

@@ -92,11 +92,11 @@ void Engine::Draw(GameObject* current) {
         renderData->_material->program.bind();
 
         //NOTE: for some reason the camera matrix needs to be inverted
-        QMatrix4x4 cameraMatrix = Camera::ActiveCamera->GetTransform()->GlobalTransformMatrix().inverted();
+        QMatrix4x4 cameraMatrix = Camera::ActiveCamera->GetTransform()->GlobalTransformMatrix();
         QMatrix4x4 modelMatrix = current->GetTransform()->GlobalTransformMatrix();
 
         // Set modelview-projection matrix
-        renderData->_material->program.setUniformValue("mvp_matrix", _projection * cameraMatrix * modelMatrix);
+        renderData->_material->program.setUniformValue("mvp_matrix", _projection * cameraMatrix.inverted() * modelMatrix);
         renderData->_material->program.setUniformValue("projection_matrix", _projection);
         renderData->_material->program.setUniformValue("view_matrix", cameraMatrix);
         renderData->_material->program.setUniformValue("model_matrix", modelMatrix);
