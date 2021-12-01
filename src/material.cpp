@@ -7,13 +7,14 @@ Material::Material(char* colorPath, char* vshaderPath, char* fshaderPath) {
     colorLod0->setWrapMode(QOpenGLTexture::Repeat);
     colorLod0->create();
 
-    colorLod0->setSize(8, 8, 8);
+    int s = 512;
+    colorLod0->setSize(s, s, s);
     colorLod0->setFormat(QOpenGLTexture::TextureFormat::LuminanceFormat);
     colorLod0->allocateStorage();
 
-    char* data = (char*)malloc(8*8*8 * sizeof (char));
-    for (int k = 0; k < 8*8*8; k++) {
-        data[k] = (rand() % 8 == 0) * 255;
+    char* data = (char*)malloc(s*s*s * sizeof (char));
+    for (int k = 0; k < s*s*s; k++) {
+        data[k] = (rand() % 10 == 0) * 255;
     }
 
     colorLod0->setData(QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, data);

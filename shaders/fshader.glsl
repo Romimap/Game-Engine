@@ -8,11 +8,11 @@ in mat4 v_camera_matrix;
 
 //VALUES
 const float EPSILON = 0.000001;
-const float INFINITY = 99999999;
+const float INFINITY = 67108864; //2^26
 
 //VOXELS
-const int GRIDSIZE = 8;
-const float VOXELSIZE = 0.1;
+const int GRIDSIZE = 512;
+const float VOXELSIZE = 0.01;
 
 //LIGHTING
 const vec3 SUNDIR = vec3(0.534, 0.801, 0.267);
