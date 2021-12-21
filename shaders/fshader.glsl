@@ -11,7 +11,7 @@ const float EPSILON = 0.000001;
 const float INFINITY = 67108864; //2^26
 
 //VOXELS
-const int GRIDSIZE = 512;
+const int GRIDSIZE = 1024;
 const float VOXELSIZE = 0.01;
 
 //LIGHTING
@@ -96,7 +96,7 @@ CollisionData gridDF (vec3 O, vec3 D, vec3 gridPos, sampler3D grid) {
     cdata.distance = INFINITY;
 
     TMinMax tminmax = boxFarDistance(O, D, gridPos, gridPos + (vec3(1) * GRIDSIZE * VOXELSIZE));
-    if (tminmax.tmin == INFINITY) return cdata;
+    if (tminmax.tmax == INFINITY) return cdata;
 
     vec3 hitPos = O;
     if (tminmax.tmin > 0) {
