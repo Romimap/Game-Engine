@@ -6,7 +6,11 @@
 
 class Material {
 public:
-    QOpenGLTexture* colorLod0;
+    QOpenGLTexture* colorLod4;
+    QOpenGLTexture* colorLod16;
+    QOpenGLTexture* colorLod64;
+    QOpenGLTexture* colorLod256;
+    QOpenGLTexture* colorLod1024;
 
     QOpenGLShaderProgram program;
     Material(char* colorPath, char* vshaderPath, char* fshaderPath);
