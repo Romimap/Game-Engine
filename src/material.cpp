@@ -27,7 +27,7 @@ Material::Material(char* colorPath, char* vshaderPath, char* fshaderPath) {
     colorLod16->allocateStorage();
     char* data16 = (char*)malloc(16*16*16 * sizeof (char));
     for (int k = 0; k < 16*16*16; k++) {
-        data16[k] = (rand() % 10 == 0) * 255;
+        data16[k] = (rand() % 5 == 0) * 255;
     }
     colorLod16->setData(QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, data16);
 
@@ -41,7 +41,7 @@ Material::Material(char* colorPath, char* vshaderPath, char* fshaderPath) {
     colorLod64->allocateStorage();
     char* data64 = (char*)malloc(64*64*64 * sizeof (char));
     for (int k = 0; k < 64*64*64; k++) {
-        data64[k] = (rand() % 10 == 0) * 255;
+        data64[k] = (rand() % 4 == 0) * 255;
     }
     colorLod64->setData(QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, data64);
 
@@ -56,7 +56,7 @@ Material::Material(char* colorPath, char* vshaderPath, char* fshaderPath) {
     colorLod256->allocateStorage();
     char* data256 = (char*)malloc(256*256*256 * sizeof (char));
     for (int k = 0; k < 256*256*256; k++) {
-        data256[k] = (rand() % 10 == 0) * 255;
+        data256[k] = (rand() % 3 == 0) * 255;
     }
     colorLod256->setData(QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, data256);
 
@@ -65,12 +65,12 @@ Material::Material(char* colorPath, char* vshaderPath, char* fshaderPath) {
     colorLod1024->setMinMagFilters(QOpenGLTexture::Nearest, QOpenGLTexture::Nearest);
     colorLod1024->setWrapMode(QOpenGLTexture::Repeat);
     colorLod1024->create();
-    colorLod1024->setSize(1024, 1024, 1024);
+    colorLod1024->setSize(512, 512, 512);
     colorLod1024->setFormat(QOpenGLTexture::TextureFormat::LuminanceFormat);
     colorLod1024->allocateStorage();
-    char* data1024 = (char*)malloc(1024*1024*1024 * sizeof (char));
-    for (int k = 0; k < 1024*1024*1024; k++) {
-        data1024[k] = (rand() % 10 == 0) * 255;
+    char* data1024 = (char*)malloc(512*512*512 * sizeof (char));
+    for (int k = 0; k < 512*512*512; k++) {
+        data1024[k] = (rand() % 2 == 0) * 255;
     }
     colorLod1024->setData(QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, data1024);
 
