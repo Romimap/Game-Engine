@@ -6,7 +6,8 @@
 
 class Material {
 public:
-    QOpenGLTexture* colorLod32;
+    QOpenGLTexture* colorLod8;
+    QOpenGLTexture* colorLod64;
     QOpenGLTexture* colorLod1024;
 
     QOpenGLShaderProgram program;

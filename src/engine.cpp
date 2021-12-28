@@ -88,8 +88,9 @@ void Engine::Draw(GameObject* current) {
     // Clear color and depth buffer
     RenderData* renderData = current->GetRenderData();
     if (renderData != nullptr) {
-        renderData->_material->colorLod32->bind(0);
-        renderData->_material->colorLod1024->bind(1);
+        renderData->_material->colorLod8->bind(0);
+        renderData->_material->colorLod64->bind(1);
+        renderData->_material->colorLod1024->bind(2);
         renderData->_material->program.bind();
 
         //NOTE: for some reason the camera matrix needs to be inverted
@@ -103,8 +104,9 @@ void Engine::Draw(GameObject* current) {
         renderData->_material->program.setUniformValue("model_matrix", modelMatrix);
 
         // Use texture unit 0
-        renderData->_material->program.setUniformValue("colorlod32",    0);
-        renderData->_material->program.setUniformValue("colorlod1024",  1);
+        renderData->_material->program.setUniformValue("colorlod8", 0);
+        renderData->_material->program.setUniformValue("colorlod64", 1);
+        renderData->_material->program.setUniformValue("colorlod1024", 2);
 
         // Draw Mesh
         renderData->_mesh->draw(&current->GetRenderData()->_material->program);

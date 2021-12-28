@@ -87,15 +87,27 @@ int main(int argc, char *argv[]) {
     Engine engine;
     engine.show();
 
-    Material* testMat = new Material(nullptr, ":/vshader.glsl", ":/fshader.glsl");
+    Material* octreeMat = new Material(nullptr, ":/vshader.glsl", ":/octreefshader.glsl");
+    GLMesh* cube = new GLMesh("/home/romimap/Documents/git/QT/misc/Cube.obj");
     GLMesh* plane = new GLMesh("/home/romimap/Documents/git/QT/misc/plane.obj");
 
-    RenderData testRenderData(testMat, plane);
+    RenderData octreeRenderData(octreeMat, plane);
 
-    GameObject renderPlane(&camera);
-    renderPlane.GetTransform()->SetRotation(90, 0, 0);
-    renderPlane.GetTransform()->SetPosition(0, 0, -0.75);
-    renderPlane.SetRenderData(&testRenderData);
+    GameObject octree(&camera);
+    octree.GetTransform()->SetRotation(90, 0, 0);
+    octree.GetTransform()->SetPosition(0, 0, -0.75);
+    octree.SetRenderData(&octreeRenderData);
+
+
+
+    //Material* skyboxMat = new Material(nullptr, ":/vshader.glsl", ":/skyboxfshader.glsl");
+    //
+    //RenderData skyboxRenderData(skyboxMat, plane);
+    //
+    //GameObject skybox(&camera);
+    //skybox.GetTransform()->SetRotation(90, 0, 0);
+    //skybox.GetTransform()->SetPosition(0, 0, -0.75);
+    //skybox.SetRenderData(&skyboxRenderData);
 
     PlayerControllerComponent playerController(1, 0.1, nullptr, &camera);
 
