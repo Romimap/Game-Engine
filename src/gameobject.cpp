@@ -40,10 +40,6 @@ std::vector<GameObject*>* GameObject::GetChildren() {
     return _children;
 }
 
-void GameObject::SetRenderData(RenderData *renderData) {
-    _renderData = renderData;
-}
-
 void GameObject::SetCollider(Collider *collider) {
     if (_collider != nullptr) delete _collider;
     _collider = collider;
@@ -98,9 +94,6 @@ void GameObject::Collisions(GameObject* current) {
     }
 }
 
-RenderData* GameObject::GetRenderData() {
-    return _renderData;
-}
 
 void GameObject::AddComponent(Component *component) {
     _components->push_back(component);
@@ -173,4 +166,11 @@ template <typename T> Component* GameObject::GetComponent() {
         if (typeid (*c) == typeid (T)) return c;
     }
     return nullptr;
+}
+
+
+void GameObject::Draw() {
+    for (Component* c : *_components) {
+        c->Draw();
+    }
 }

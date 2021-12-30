@@ -26,16 +26,6 @@ struct VertexData {
     QVector2D uv;
 };
 
-struct RenderData {
-    GLMesh* _mesh;
-    Material* _material;
-
-    RenderData(Material* material, GLMesh* mesh) {
-        _mesh = mesh;
-        _material = material;
-    }
-};
-
 class GameObject;
 class Engine : public QOpenGLWidget, protected QOpenGLFunctions_3_1 {
 private:

@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>vshader.glsl</file>
+        <file>octreevshader.glsl</file>
         <file>octreefshader.glsl</file>
         <file>skyboxfshader.glsl</file>
     </qresource>

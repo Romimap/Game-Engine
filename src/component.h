@@ -15,6 +15,7 @@ public:
     virtual void Update(float delta){}
     virtual void FixedUpdate(float delta){}
     virtual void Collision(Collider* other){}
+    virtual void Draw(){}
 
 protected:
     GameObject* GetParent() {return _parent;}

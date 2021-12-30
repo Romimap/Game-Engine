@@ -61,6 +61,7 @@
 #include "components/playercontrollercomponent.h"
 #include "components/rigidbodycomponent.h"
 #include "components/rotatorcomponent.h"
+#include "components/octreerenderercomponent.h"
 
 
 #include "cubecollider.h"
@@ -87,17 +88,10 @@ int main(int argc, char *argv[]) {
     Engine engine;
     engine.show();
 
-    Material* octreeMat = new Material(nullptr, ":/vshader.glsl", ":/octreefshader.glsl");
-    GLMesh* cube = new GLMesh("/home/romimap/Documents/git/QT/misc/Cube.obj");
-    GLMesh* plane = new GLMesh("/home/romimap/Documents/git/QT/misc/plane.obj");
-
-    RenderData octreeRenderData(octreeMat, plane);
-
-    GameObject octree(&camera);
+    GameObject octree(&root);
     octree.GetTransform()->SetRotation(90, 0, 0);
-    octree.GetTransform()->SetPosition(0, 0, -0.75);
-    octree.SetRenderData(&octreeRenderData);
-
+    octree.GetTransform()->SetPosition(0, 0, 0);
+    OctreeRendererComponent octreeRenderer(&octree);
 
 
     //Material* skyboxMat = new Material(nullptr, ":/vshader.glsl", ":/skyboxfshader.glsl");

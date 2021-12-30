@@ -1,8 +1,8 @@
 #version 150
 
-uniform sampler3D colorlod8;
+uniform sampler3D colorlod4;
+uniform sampler3D colorlod16;
 uniform sampler3D colorlod64;
-uniform sampler3D colorlod1024;
 
 
 in vec2 v_texcoord;
@@ -12,16 +12,23 @@ in mat4 v_camera_matrix;
 //VALUES
 const float EPSILON = 0.000001;
 const float INFINITY = 67108864; //2^26
+const int NULL = 0;
 
 //VOXELS
-//const int GRIDSIZE = 1024;
-//const float VOXELSIZE = 0.01;
-const float VOXEL8 = 0.25;
+const float VOXEL4 = 0.5;
+const int VOXEL4X = 4;
+const int VOXEL4Y = 32;
+const int VOXEL4Z = 4;
+
+const float VOXEL16 = 0.125;
+const int VOXEL16X = 4;
+const int VOXEL16Y = 4;
+const int VOXEL16Z = 4;
+
 const float VOXEL64 = 0.03125;
-const float VOXEL1024 = 0.001953125;
-const int VOXEL8I = 8;
-const int VOXEL64I = 8;
-const int VOXEL1024I = 16;
+const int VOXEL64X = 4;
+const int VOXEL64Y = 4;
+const int VOXEL64Z = 4;
 
 //LIGHTING
 const vec3 SUNDIR = vec3(0.534, 0.801, 0.267);
@@ -30,7 +37,6 @@ const vec3 AMBIENTCOLOR = vec3(0.5,0.6,0.7);
 const float AMBIENTFORCE = 0.3;
 const vec3 SUNCOLOR = vec3(1, 0.97, 0.75);
 const float SUNFORCE = 3;
-const int NULL = 0;
 
 struct CollisionData {
     float distance;
@@ -102,7 +108,7 @@ TMinMax boxFarDistance (vec3 O, vec3 D, vec3 min, vec3 max) {
     return tminmax;
 }
 
-CollisionData gridDF1024 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int gridsize, vec3 offset) {
+CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
     CollisionData cdata;
     cdata.distance = INFINITY;
 
@@ -118,9 +124,9 @@ CollisionData gridDF1024 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int gri
 
     float X, Y, Z;
 
-    X = floor((hitPos - gridPos) / voxelsize).x;
-    Y = floor((hitPos - gridPos) / voxelsize).y;
-    Z = floor((hitPos - gridPos) / voxelsize).z;
+    X = floor((hitPos - gridPos) / VOXEL64).x;
+    Y = floor((hitPos - gridPos) / VOXEL64).y;
+    Z = floor((hitPos - gridPos) / VOXEL64).z;
 
     float tx, ty, tz;
 
@@ -130,11 +136,11 @@ CollisionData gridDF1024 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int gri
 
     float tmaxx, tmaxy, tmaxz;
 
-    tmaxx = ((hitPos - gridPos) / voxelsize).x - X;
+    tmaxx = ((hitPos - gridPos) / VOXEL64).x - X;
     if (D.x > 0) tmaxx = 1 - tmaxx;
-    tmaxy = ((hitPos - gridPos) / voxelsize).y - Y;
+    tmaxy = ((hitPos - gridPos) / VOXEL64).y - Y;
     if (D.y > 0) tmaxy = 1 - tmaxy;
-    tmaxz = ((hitPos - gridPos) / voxelsize).z - Z;
+    tmaxz = ((hitPos - gridPos) / VOXEL64).z - Z;
     if (D.z > 0) tmaxz = 1 - tmaxz;
     tmaxx = tmaxx * tx;
     tmaxy = tmaxy * ty;
@@ -149,13 +155,13 @@ CollisionData gridDF1024 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int gri
     if (D.z > 0) Zstep = 1;
     else Zstep = -1;
 
-    do {
+    while (true) {
         if (tmaxx < tmaxy && tmaxx < tmaxz) {
             X += Xstep;
-            if (X >= 0 && X < VOXEL1024I) {
-                cdata.color = texture3D(colorlod1024, clamp((vec3(X, Y, Z) + offset) / 1024, vec3(0), vec3(1)));
+            if (X >= 0 && X < VOXEL64X) {
+                cdata.color = texture3D(colorlod64, clamp((vec3(X, Y, Z) + offset) / vec3(64, 512, 64), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
-                    cdata.distance = length(O.xyz - hitPos.xyz) + (tmaxx * voxelsize);
+                    cdata.distance = length(O.xyz - hitPos.xyz) + (tmaxx * VOXEL64);
                     cdata.normal = vec3(normalize(D.x), 0, 0);
                     return cdata;
                 }
@@ -165,10 +171,10 @@ CollisionData gridDF1024 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int gri
             tmaxx += tx;
         } else if (tmaxy < tmaxz) {
             Y += Ystep;
-            if (Y >= 0 && Y < VOXEL1024I) {
-                cdata.color = texture3D(colorlod1024, clamp((vec3(X, Y, Z) + offset) / 1024, vec3(0), vec3(1)));
+            if (Y >= 0 && Y < VOXEL64Y) {
+                cdata.color = texture3D(colorlod64, clamp((vec3(X, Y, Z) + offset) / vec3(64, 512, 64), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
-                    cdata.distance = length(O - hitPos) + (tmaxy * voxelsize);
+                    cdata.distance = length(O - hitPos) + (tmaxy * VOXEL64);
                     cdata.normal = vec3(0, normalize(D.y), 0);
                     return cdata;
                 }
@@ -178,10 +184,10 @@ CollisionData gridDF1024 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int gri
             tmaxy += ty;
         } else {
             Z += Zstep;
-            if (Z >= 0 && Z < VOXEL1024I) {
-                cdata.color = texture3D(colorlod1024, clamp((vec3(X, Y, Z) + offset) / 1024, vec3(0), vec3(1)));
+            if (Z >= 0 && Z < VOXEL64Z) {
+                cdata.color = texture3D(colorlod64, clamp((vec3(X, Y, Z) + offset) / vec3(64, 512, 64), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
-                    cdata.distance = length(O - hitPos) + (tmaxz * voxelsize);
+                    cdata.distance = length(O - hitPos) + (tmaxz * VOXEL64);
                     cdata.normal = vec3(0, 0, normalize(D.z));
                     return cdata;
                 }
@@ -190,16 +196,14 @@ CollisionData gridDF1024 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int gri
             }
             tmaxz += tz;
         }
-    } while (   X >= 0 && X < VOXEL1024I
-                && Y >= 0 && Y < VOXEL1024I
-                && Z >= 0 && Z < VOXEL1024I);
+    }
 
     cdata.distance = INFINITY;
     return cdata;
 }
 
 
-CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int gridsize, vec3 offset) {
+CollisionData gridDF16 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
     CollisionData cdata;
     cdata.distance = INFINITY;
 
@@ -215,16 +219,16 @@ CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int grids
 
     float X, Y, Z;
 
-    X = floor((hitPos - gridPos) / voxelsize).x;
-    Y = floor((hitPos - gridPos) / voxelsize).y;
-    Z = floor((hitPos - gridPos) / voxelsize).z;
+    X = floor((hitPos - gridPos) / VOXEL16).x;
+    Y = floor((hitPos - gridPos) / VOXEL16).y;
+    Z = floor((hitPos - gridPos) / VOXEL16).z;
 
-    cdata.color = texture3D(colorlod64, clamp((vec3(X, Y, Z) + offset) / 64, vec3(0), vec3(1)));
+    cdata.color = texture3D(colorlod16, clamp((vec3(X, Y, Z) + offset) / vec3(16, 128, 16), vec3(0), vec3(1))); //NOTE: Dont forget to set 64 as vec3(16, 128, 16)
     if (cdata.color.r > 0) {
         cdata.distance = 0;
         cdata.normal = vec3(normalize(D.x), 0, 0);
 
-        CollisionData rcdata = gridDF1024(O + D * (cdata.distance - EPSILON), D, gridPos + vec3(X * voxelsize, Y * voxelsize, Z * voxelsize), VOXEL1024, VOXEL1024I, offset * VOXEL1024I + vec3(X, Y, Z) * VOXEL1024I);
+        CollisionData rcdata = gridDF64(O + D * (cdata.distance - EPSILON), D, gridPos + vec3(X * VOXEL16, Y * VOXEL16, Z * VOXEL16), offset * VOXEL64X + vec3(X, Y, Z) * VOXEL64X);
         if (rcdata.distance < INFINITY) return rcdata;
     }
 
@@ -236,11 +240,11 @@ CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int grids
 
     float tmaxx, tmaxy, tmaxz;
 
-    tmaxx = ((hitPos - gridPos) / voxelsize).x - X;
+    tmaxx = ((hitPos - gridPos) / VOXEL16).x - X;
     if (D.x > 0) tmaxx = 1 - tmaxx;
-    tmaxy = ((hitPos - gridPos) / voxelsize).y - Y;
+    tmaxy = ((hitPos - gridPos) / VOXEL16).y - Y;
     if (D.y > 0) tmaxy = 1 - tmaxy;
-    tmaxz = ((hitPos - gridPos) / voxelsize).z - Z;
+    tmaxz = ((hitPos - gridPos) / VOXEL16).z - Z;
     if (D.z > 0) tmaxz = 1 - tmaxz;
     tmaxx = tmaxx * tx;
     tmaxy = tmaxy * ty;
@@ -255,16 +259,16 @@ CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int grids
     if (D.z > 0) Zstep = 1;
     else Zstep = -1;
 
-    do {
+    while (true) {
         if (tmaxx < tmaxy && tmaxx < tmaxz) {
             X += Xstep;
-            if (X >= 0 && X < VOXEL64I) {
-                cdata.color = texture3D(colorlod64, clamp((vec3(X, Y, Z) + offset) / 64, vec3(0), vec3(1)));
+            if (X >= 0 && X < VOXEL16X) {
+                cdata.color = texture3D(colorlod16, clamp((vec3(X, Y, Z) + offset) / vec3(16, 128, 16), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
-                    cdata.distance = length(O.xyz - hitPos.xyz) + (tmaxx * voxelsize);
+                    cdata.distance = length(O.xyz - hitPos.xyz) + (tmaxx * VOXEL16);
                     cdata.normal = vec3(normalize(D.x), 0, 0);
 
-                    CollisionData rcdata = gridDF1024(O + D * (cdata.distance - EPSILON), D, gridPos + vec3(X * voxelsize, Y * voxelsize, Z * voxelsize), VOXEL1024, VOXEL1024I, offset * VOXEL1024I + vec3(X, Y, Z) * VOXEL1024I);
+                    CollisionData rcdata = gridDF64(O + D * (cdata.distance - EPSILON), D, gridPos + vec3(X, Y, Z) * VOXEL16, offset * VOXEL64X + vec3(X, Y, Z) * VOXEL64X);
                     if (rcdata.distance < INFINITY) {
                         rcdata.distance += cdata.distance;
                         return rcdata;
@@ -276,13 +280,13 @@ CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int grids
             tmaxx += tx;
         } else if (tmaxy < tmaxz) {
             Y += Ystep;
-            if (Y >= 0 && Y < VOXEL64I) {
-                cdata.color = texture3D(colorlod64, clamp((vec3(X, Y, Z) + offset) / 64, vec3(0), vec3(1)));
+            if (Y >= 0 && Y < VOXEL16Y) {
+                cdata.color = texture3D(colorlod16, clamp((vec3(X, Y, Z) + offset) / vec3(16, 128, 16), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
-                    cdata.distance = length(O - hitPos) + (tmaxy * voxelsize);
+                    cdata.distance = length(O - hitPos) + (tmaxy * VOXEL16);
                     cdata.normal = vec3(0, normalize(D.y), 0);
 
-                    CollisionData rcdata = gridDF1024(O + D * (cdata.distance - EPSILON), D, gridPos + vec3(X * voxelsize, Y * voxelsize, Z * voxelsize), VOXEL1024, VOXEL1024I, offset * VOXEL1024I + vec3(X, Y, Z) * VOXEL1024I);
+                    CollisionData rcdata = gridDF64(O + D * (cdata.distance - EPSILON), D, gridPos + vec3(X, Y, Z) * VOXEL16, offset * VOXEL64X + vec3(X, Y, Z) * VOXEL64X);
                     if (rcdata.distance < INFINITY) {
                         rcdata.distance += cdata.distance;
                         return rcdata;
@@ -294,13 +298,13 @@ CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int grids
             tmaxy += ty;
         } else {
             Z += Zstep;
-            if (Z >= 0 && Z < VOXEL64I) {
-                cdata.color = texture3D(colorlod64, clamp((vec3(X, Y, Z) + offset) / 64, vec3(0), vec3(1)));
+            if (Z >= 0 && Z < VOXEL16Z) {
+                cdata.color = texture3D(colorlod16, clamp((vec3(X, Y, Z) + offset) / vec3(16, 128, 16), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
-                    cdata.distance = length(O - hitPos) + (tmaxz * voxelsize);
+                    cdata.distance = length(O - hitPos) + (tmaxz * VOXEL16);
                     cdata.normal = vec3(0, 0, normalize(D.z));
 
-                    CollisionData rcdata = gridDF1024(O + D * (cdata.distance - EPSILON), D, gridPos + vec3(X * voxelsize, Y * voxelsize, Z * voxelsize), VOXEL1024, VOXEL1024I, offset * VOXEL1024I + vec3(X, Y, Z) * VOXEL1024I);
+                    CollisionData rcdata = gridDF64(O + D * (cdata.distance - EPSILON), D, gridPos + vec3(X, Y, Z) * VOXEL16, offset * VOXEL64X + vec3(X, Y, Z) * VOXEL64X);
                     if (rcdata.distance < INFINITY) {
                         rcdata.distance += cdata.distance;
                         return rcdata;
@@ -311,9 +315,7 @@ CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int grids
             }
             tmaxz += tz;
         }
-    } while (   X >= 0 && X < VOXEL64I
-                && Y >= 0 && Y < VOXEL64I
-                && Z >= 0 && Z < VOXEL64I);
+    }
 
     cdata.distance = INFINITY;
     return cdata;
@@ -321,31 +323,31 @@ CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int grids
 
 
 
-CollisionData gridDF8 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int gridsize) {
+CollisionData gridDF4 (vec3 O, vec3 D, vec3 gridPos) {
     CollisionData cdata;
     cdata.distance = INFINITY;
 
-    TMinMax tminmax = boxFarDistance(O, D, gridPos, gridPos + (vec3(1) * gridsize * voxelsize));
+    TMinMax tminmax = boxFarDistance(O, D, gridPos, gridPos + (vec3(VOXEL4X, VOXEL4Y, VOXEL4Z) * VOXEL4));
     if (tminmax.tmax == INFINITY) return cdata;
 
     vec3 hitPos = O;
     if (tminmax.tmin > 0) {
-        hitPos += D * (tminmax.tmin);
-        hitPos -= D * EPSILON;
+        hitPos += D * (tminmax.tmin - EPSILON);
     }
 
 
     float X, Y, Z;
 
-    X = floor((hitPos - gridPos) / voxelsize).x;
-    Y = floor((hitPos - gridPos) / voxelsize).y;
-    Z = floor((hitPos - gridPos) / voxelsize).z;
+    X = floor((hitPos - gridPos) / VOXEL4).x;
+    Y = floor((hitPos - gridPos) / VOXEL4).y;
+    Z = floor((hitPos - gridPos) / VOXEL4).z;
 
-    cdata.color = texture3D(colorlod8, clamp(vec3(X, Y, Z) / gridsize, vec3(0), vec3(1)));
+    cdata.color = texture3D(colorlod4, clamp(vec3(X, Y, Z) / vec3(4, 32, 4), vec3(0), vec3(1)));
     if (cdata.color.r > 0) {
         cdata.distance = 0;
         cdata.normal = vec3(normalize(D.x), 0, 0);
-        CollisionData rcdata = gridDF64(hitPos, D, gridPos + vec3(X * voxelsize, Y * voxelsize, Z * voxelsize), VOXEL64, VOXEL64I, vec3(X, Y, Z) * VOXEL64I);
+
+        CollisionData rcdata = gridDF16(hitPos, D, gridPos + vec3(X * VOXEL4, Y * VOXEL4, Z * VOXEL4), vec3(X, Y, Z) * VOXEL16X);
         if (rcdata.distance < INFINITY) return rcdata;
     }
 
@@ -357,11 +359,11 @@ CollisionData gridDF8 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int gridsi
 
     float tmaxx, tmaxy, tmaxz;
 
-    tmaxx = ((hitPos - gridPos) / voxelsize).x - X;
+    tmaxx = ((hitPos - gridPos) / VOXEL4).x - X;
     if (D.x > 0) tmaxx = 1 - tmaxx;
-    tmaxy = ((hitPos - gridPos) / voxelsize).y - Y;
+    tmaxy = ((hitPos - gridPos) / VOXEL4).y - Y;
     if (D.y > 0) tmaxy = 1 - tmaxy;
-    tmaxz = ((hitPos - gridPos) / voxelsize).z - Z;
+    tmaxz = ((hitPos - gridPos) / VOXEL4).z - Z;
     if (D.z > 0) tmaxz = 1 - tmaxz;
     tmaxx = tmaxx * tx;
     tmaxy = tmaxy * ty;
@@ -376,16 +378,16 @@ CollisionData gridDF8 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int gridsi
     if (D.z > 0) Zstep = 1;
     else Zstep = -1;
 
-    do {
+    while (true) {
         if (tmaxx < tmaxy && tmaxx < tmaxz) {
             X += Xstep;
-            if (X >= 0 && X < VOXEL8I) {
-                cdata.color = texture3D(colorlod8, clamp(vec3(X, Y, Z) / gridsize, vec3(0), vec3(1)));
+            if (X >= 0 && X < VOXEL4X) {
+                cdata.color = texture3D(colorlod4, clamp(vec3(X, Y, Z) / vec3(4, 32, 4), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
-                    cdata.distance = length(O.xyz - hitPos.xyz) + (tmaxx * voxelsize);
+                    cdata.distance = length(O.xyz - hitPos.xyz) + (tmaxx * VOXEL4);
                     cdata.normal = vec3(normalize(D.x), 0, 0);
 
-                    CollisionData rcdata = gridDF64(O + D * (cdata.distance - EPSILON), D, gridPos + vec3(X * voxelsize, Y * voxelsize, Z * voxelsize), VOXEL64, VOXEL64I, vec3(X, Y, Z) * VOXEL64I);
+                    CollisionData rcdata = gridDF16(O + D * (cdata.distance - EPSILON), D, gridPos + vec3(X, Y, Z) * VOXEL4, vec3(X, Y, Z) * VOXEL16X);
                     if (rcdata.distance < INFINITY) {
                         rcdata.distance += cdata.distance;
                         return rcdata;
@@ -397,13 +399,13 @@ CollisionData gridDF8 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int gridsi
             tmaxx += tx;
         } else if (tmaxy < tmaxz) {
             Y += Ystep;
-            if (Y >= 0 && Y < VOXEL8I) {
-                cdata.color = texture3D(colorlod8, clamp(vec3(X, Y, Z) / gridsize, vec3(0), vec3(1)));
+            if (Y >= 0 && Y < VOXEL4Y) {
+                cdata.color = texture3D(colorlod4, clamp(vec3(X, Y, Z) / vec3(4, 32, 4), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
-                    cdata.distance = length(O - hitPos) + (tmaxy * voxelsize);
+                    cdata.distance = length(O - hitPos) + (tmaxy * VOXEL4);
                     cdata.normal = vec3(0, normalize(D.y), 0);
 
-                    CollisionData rcdata = gridDF64(O + D * (cdata.distance - EPSILON), D, gridPos + vec3(X * voxelsize, Y * voxelsize, Z * voxelsize), VOXEL64, VOXEL64I, vec3(X, Y, Z) * VOXEL64I);
+                    CollisionData rcdata = gridDF16(O + D * (cdata.distance - EPSILON), D, gridPos + vec3(X, Y, Z) * VOXEL4, vec3(X, Y, Z) * VOXEL16X);
                     if (rcdata.distance < INFINITY) {
                         rcdata.distance += cdata.distance;
                         return rcdata;
@@ -415,13 +417,13 @@ CollisionData gridDF8 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int gridsi
             tmaxy += ty;
         } else {
             Z += Zstep;
-            if (Z >= 0 && Z < VOXEL8I) {
-                cdata.color = texture3D(colorlod8, clamp(vec3(X, Y, Z) / gridsize, vec3(0), vec3(1)));
+            if (Z >= 0 && Z < VOXEL4Z) {
+                cdata.color = texture3D(colorlod4, clamp(vec3(X, Y, Z) / vec3(4, 32, 4), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
-                    cdata.distance = length(O - hitPos) + (tmaxz * voxelsize);
+                    cdata.distance = length(O - hitPos) + (tmaxz * VOXEL4);
                     cdata.normal = vec3(0, 0, normalize(D.z));
 
-                    CollisionData rcdata = gridDF64(O + D * (cdata.distance - EPSILON), D, gridPos + vec3(X * voxelsize, Y * voxelsize, Z * voxelsize), VOXEL64, VOXEL64I, vec3(X, Y, Z) * VOXEL64I);
+                    CollisionData rcdata = gridDF16(O + D * (cdata.distance - EPSILON), D, gridPos + vec3(X, Y, Z) * VOXEL4, vec3(X, Y, Z) * VOXEL16X);
                     if (rcdata.distance < INFINITY) {
                         rcdata.distance += cdata.distance;
                         return rcdata;
@@ -432,9 +434,7 @@ CollisionData gridDF8 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int gridsi
             }
             tmaxz += tz;
         }
-    } while (   X >= 0 && X < VOXEL8I
-                && Y >= 0 && Y < VOXEL8I
-                && Z >= 0 && Z < VOXEL8I);
+    }
 
     cdata.distance = INFINITY;
     return cdata;
@@ -444,7 +444,7 @@ CollisionData gridDF8 (vec3 O, vec3 D, vec3 gridPos, float voxelsize, int gridsi
 CollisionData sceneSDF (vec3 O, vec3 D) {
     CollisionData cdata;
 
-    cdata = gridDF8(O, D, vec3(-1, -1, -1), VOXEL8, VOXEL8I);
+    cdata = gridDF4(O, D, vec3(-1, -8, -1));
 
     return cdata;
 }
@@ -501,8 +501,6 @@ void main () {
     } else {
        gl_FragDepth = 1.;
     }
-
-
 
 
     gl_FragColor = vec4(tanh(Color), 1);

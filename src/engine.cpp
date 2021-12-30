@@ -34,18 +34,7 @@ void Engine::initializeGL() {
 }
 
 void Engine::resizeGL(int w, int h) {
-    qDebug("resizeGL <-");
-    // Calculate aspect ratio
-    qreal aspect = qreal(w) / qreal(h ? h : 1);
-
-    const qreal zNear = .1, zFar = 100.0, fov = 85.0;
-
-    // Reset projection
-    _projection.setToIdentity();
-
-    // Set perspective projection
-    _projection.perspective(fov, aspect, zNear, zFar);
-    qDebug("resizeGL ->");
+    Camera::ActiveCamera->ResizeGL(w, h);
 }
 
 void Engine::paintGL() {
@@ -85,33 +74,7 @@ qDebug(std::to_string(deltaTime).c_str());
 }
 
 void Engine::Draw(GameObject* current) {
-    // Clear color and depth buffer
-    RenderData* renderData = current->GetRenderData();
-    if (renderData != nullptr) {
-        renderData->_material->colorLod8->bind(0);
-        renderData->_material->colorLod64->bind(1);
-        renderData->_material->colorLod1024->bind(2);
-        renderData->_material->program.bind();
-
-        //NOTE: for some reason the camera matrix needs to be inverted
-        QMatrix4x4 cameraMatrix = Camera::ActiveCamera->GetTransform()->GlobalTransformMatrix();
-        QMatrix4x4 modelMatrix = current->GetTransform()->GlobalTransformMatrix();
-
-        // Set modelview-projection matrix
-        renderData->_material->program.setUniformValue("mvp_matrix", _projection * cameraMatrix.inverted() * modelMatrix);
-        renderData->_material->program.setUniformValue("projection_matrix", _projection);
-        renderData->_material->program.setUniformValue("view_matrix", cameraMatrix);
-        renderData->_material->program.setUniformValue("model_matrix", modelMatrix);
-
-        // Use texture unit 0
-        renderData->_material->program.setUniformValue("colorlod8", 0);
-        renderData->_material->program.setUniformValue("colorlod64", 1);
-        renderData->_material->program.setUniformValue("colorlod1024", 2);
-
-        // Draw Mesh
-        renderData->_mesh->draw(&current->GetRenderData()->_material->program);
-    }
-
+    current->Draw();
     for (GameObject* child : *current->GetChildren()) {
         Draw(child);
     }

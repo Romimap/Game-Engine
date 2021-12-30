@@ -32,7 +32,6 @@ protected:
     std::vector<GameObject*>* _children = nullptr;
     std::vector<Component*>* _components = nullptr;
     Transform* _transform = nullptr;
-    RenderData* _renderData = nullptr;
 
 public:
     static GameObject* Root;
@@ -50,14 +49,13 @@ public:
     void SetTransform (Transform* t);
     GameObject* GetParent ();
     std::vector<GameObject*>* GetChildren();
-    RenderData* GetRenderData();
-    void SetRenderData(RenderData* renderData);
     void AddComponent (Component* component);
     void SetCollider (Collider* collider);
     Collider* GetCollider() {return _collider;}
     AABB* GetGlobalAABB() {return _globalAABB;}
     AABB* GetPersonalGlobalAABB() {return _personalGlobalAABB;}
     template<typename  T> Component* GetComponent ();
+    void Draw();
 
     //METHODS
 public:
