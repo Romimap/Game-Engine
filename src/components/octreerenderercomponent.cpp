@@ -77,9 +77,10 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
             exit(0);
         }
 
-        QColor c = heightmap.pixelColor(x * 16, z * 16);
+        //QColor c = heightmap.pixelColor(x * 16, z * 16);
 
-        if (c.red() / 16 + 32 < y) {
+        //if (c.red() / 16 + 32 < y) {
+        if (x == 0 || y == 0 || z == 0) {
             data64[k] = 0b11111111;
             data16[k16] = 0b11111111;
             data4[k4] = 0b11111111;
