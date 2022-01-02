@@ -62,6 +62,8 @@
 #include "components/rigidbodycomponent.h"
 #include "components/rotatorcomponent.h"
 #include "components/octreerenderercomponent.h"
+#include "components/meshrenderercomponent.h"
+
 
 
 #include "cubecollider.h"
@@ -88,10 +90,47 @@ int main(int argc, char *argv[]) {
     Engine engine;
     engine.show();
 
+
+    //ORIGIN (OFFSET 0 260 0)
+    GLMesh* cubeMesh = new GLMesh("/home/romimap/Documents/git/QT/misc/Cube.obj");
+
+    GameObject cube(&root);
+    cube.GetTransform()->SetRotation(0, 0, 0);
+    cube.GetTransform()->SetPosition(0, 260, 0);
+    Material* cubeMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
+    cubeMat->SetSlot2D(":/default.png", 0);
+    MeshRendererComponent cubeMeshRenderer(cubeMesh, cubeMat, &cube);
+
+    GameObject X(&root);
+    X.GetTransform()->SetRotation(0, 0, 0);
+    X.GetTransform()->SetPosition(4, 260, 0);
+    Material* XMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
+    XMat->SetSlot2D(":/r.png", 0);
+    MeshRendererComponent XMeshRenderer(cubeMesh, XMat, &X);
+
+    GameObject Y(&root);
+    Y.GetTransform()->SetRotation(0, 0, 0);
+    Y.GetTransform()->SetPosition(0, 264, 0);
+    Material* YMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
+    YMat->SetSlot2D(":/g.png", 0);
+    MeshRendererComponent YMeshRenderer(cubeMesh, YMat, &Y);
+
+    GameObject Z(&root);
+    Z.GetTransform()->SetRotation(0, 0, 0);
+    Z.GetTransform()->SetPosition(0, 260, 4);
+    Material* ZMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
+    ZMat->SetSlot2D(":/b.png", 0);
+    MeshRendererComponent ZMeshRenderer(cubeMesh, ZMat, &Z);
+
+
+    //CHUNK
     GameObject octree(&root);
     octree.GetTransform()->SetRotation(0, 0, 0);
     octree.GetTransform()->SetPosition(0, 0, 0);
     OctreeRendererComponent octreeRenderer(&octree);
+
+
+
 
     //Material* skyboxMat = new Material(nullptr, ":/vshader.glsl", ":/skyboxfshader.glsl");
     //

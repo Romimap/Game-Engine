@@ -3,5 +3,7 @@
         <file>octreevshader.glsl</file>
         <file>octreefshader.glsl</file>
         <file>skyboxfshader.glsl</file>
+        <file>meshvshader.glsl</file>
+        <file>meshfshader.glsl</file>
     </qresource>
 </RCC>

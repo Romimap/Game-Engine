@@ -9,8 +9,7 @@
 #include <QCursor>
 #include "rigidbodycomponent.h"
 
-class PlayerControllerComponent : public Component
-{
+class PlayerControllerComponent : public Component {
 private:
     float _speed;
     float _acceleration;
@@ -60,7 +59,9 @@ public:
         GetParent()->GetTransform()->Translate(_momentum * delta);
         GetParent()->GetTransform()->SetRotation(azimuthQuat * elevationQuat);
 
-        qDebug((std::to_string(GetParent()->GetTransform()->GetPosition().x()) + " " + std::to_string(GetParent()->GetTransform()->GetPosition().y()) + " " + std::to_string(GetParent()->GetTransform()->GetPosition().z())).c_str());
+        qDebug((std::to_string(GetParent()->GetTransform()->GetPosition().x())
+        + " " + std::to_string(GetParent()->GetTransform()->GetPosition().y())
+        + " " + std::to_string(GetParent()->GetTransform()->GetPosition().z())).c_str());
     }
 };
 

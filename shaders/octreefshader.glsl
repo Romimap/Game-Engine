@@ -493,7 +493,7 @@ void main () {
     vec3 O = vec3(0, 0, 0);
     O = -(camera_matrix * vec4(O, 1)).xyz;
 
-    vec3 Color = vec3(.3, .3, .3); //NOTE: set that as 0
+    vec3 Color = vec3(0, 0, 0); //NOTE: set that as 0
 
     CollisionData cdata = sceneSDF(O, D);
     if (cdata.distance < INFINITY) {
@@ -506,8 +506,7 @@ void main () {
         gl_FragDepth = cdata.distance / INFINITY;
         Color = applyFog(Color.rgb, cdata.distance, D, SUNDIR);
     } else {
-       //gl_FragDepth = 1.;
-        //NOTE: Dont forget to uncomment that
+       gl_FragDepth = 1.;
     }
 
 

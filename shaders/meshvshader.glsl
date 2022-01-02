@@ -11,11 +11,9 @@ uniform mat4 inv_model_matrix;
 in vec3 a_position;
 in vec2 a_texcoord;
 
-const mat4 plane_transform = mat4(1.0, 0.0, 0.0, 0.0,
-                                  0.0, 0.0, 1.0, 0.0,
-                                  0.0,-1.0, 0.0, 0.0,
-                                  0.0, 0.0, 0.0, 1.0);
+out vec2 v_texcoord;
 
 void main() {
     gl_Position = projection_matrix * view_matrix * model_matrix * vec4(a_position, 1);
+    v_texcoord = a_texcoord;
 }

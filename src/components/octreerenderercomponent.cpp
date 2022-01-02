@@ -3,7 +3,7 @@
 #include "src/gameobject.h"
 
 OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component(parent) {
-    _material = new Material(nullptr, ":/octreevshader.glsl", ":/octreefshader.glsl");
+    _material = new Material(":/octreevshader.glsl", ":/octreefshader.glsl");
     _mesh = new GLMesh("/home/romimap/Documents/git/QT/misc/chunk.obj");
 
     //TODO, do that but with an octree

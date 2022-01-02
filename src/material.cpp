@@ -3,7 +3,7 @@
 #include <QImage>
 #include <QColor>
 
-Material::Material(char* colorPath, char* vshaderPath, char* fshaderPath) {
+Material::Material(char* vshaderPath, char* fshaderPath) {
 
     // Compile vertex shader
     program.addShaderFromSourceFile(QOpenGLShader::Vertex, vshaderPath);
