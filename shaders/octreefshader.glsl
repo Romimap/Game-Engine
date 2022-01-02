@@ -4,35 +4,41 @@ uniform sampler3D colorlod4;
 uniform sampler3D colorlod16;
 uniform sampler3D colorlod64;
 
+uniform mat4 projection_matrix;
+uniform mat4 view_matrix;
+uniform mat4 camera_matrix;
+uniform mat4 model_matrix;
+uniform mat4 inv_projection_matrix;
+uniform mat4 inv_view_matrix;
+uniform mat4 inv_model_matrix;
 
-in vec2 v_texcoord;
-in vec3 v_position;
-in mat4 v_camera_matrix;
+uniform vec2 screen_ratios;
+uniform vec2 screen_size;
 
 //VALUES
-const float EPSILON = 0.000001;
+const float EPSILON = 0.0001;
 const float INFINITY = 67108864; //2^26
 const int NULL = 0;
 
 //VOXELS
-const float VOXEL4 = 0.5;
+const float VOXEL4 = 16;
 const int VOXEL4X = 4;
-const int VOXEL4Y = 32;
+const int VOXEL4Y = 16;
 const int VOXEL4Z = 4;
 
-const float VOXEL16 = 0.125;
+const float VOXEL16 = 4;
 const int VOXEL16X = 4;
 const int VOXEL16Y = 4;
 const int VOXEL16Z = 4;
 
-const float VOXEL64 = 0.03125;
+const float VOXEL64 = 1;
 const int VOXEL64X = 4;
 const int VOXEL64Y = 4;
 const int VOXEL64Z = 4;
 
 //LIGHTING
-const vec3 SUNDIR = vec3(0.534, 0.801, 0.267);
-const float FOGINTENSITY = 0.1;
+const vec3 SUNDIR = vec3(0.534, -0.801, 0.267);
+const float FOGINTENSITY = 0.01;
 const vec3 AMBIENTCOLOR = vec3(0.5,0.6,0.7);
 const float AMBIENTFORCE = 0.3;
 const vec3 SUNCOLOR = vec3(1, 0.97, 0.75);
@@ -444,7 +450,7 @@ CollisionData gridDF4 (vec3 O, vec3 D, vec3 gridPos) {
 CollisionData sceneSDF (vec3 O, vec3 D) {
     CollisionData cdata;
 
-    cdata = gridDF4(O, D, vec3(-1, -8, -1));
+    cdata = gridDF4(O, D, vec3(0, -255, 0));
 
     return cdata;
 }
@@ -480,13 +486,14 @@ vec3 applyFog( in vec3  rgb,      // original color of the pixel
 
 
 void main () {
-    vec3 Color = vec3(0, 0, 0);
-    vec3 O = vec3(0, 0, 0);
-    vec3 D = vec3(v_texcoord.x - 0.5, v_texcoord.y - 0.5, 0.5);
+    vec3 D = vec3(-(((gl_FragCoord.x) / (screen_size.x)) - 0.5) * screen_ratios.x, -(((gl_FragCoord.y) / (screen_size.y)) - 0.5) * screen_ratios.y, 1);
     D = normalize(D);
+    D = (camera_matrix * vec4(D, 0)).xyz;
 
-    O = (v_camera_matrix * vec4(O, 1)).xyz;
-    D = (v_camera_matrix * vec4(D, 0)).xyz;
+    vec3 O = vec3(0, 0, 0);
+    O = -(camera_matrix * vec4(O, 1)).xyz;
+
+    vec3 Color = vec3(.3, .3, .3); //NOTE: set that as 0
 
     CollisionData cdata = sceneSDF(O, D);
     if (cdata.distance < INFINITY) {
@@ -499,7 +506,8 @@ void main () {
         gl_FragDepth = cdata.distance / INFINITY;
         Color = applyFog(Color.rgb, cdata.distance, D, SUNDIR);
     } else {
-       gl_FragDepth = 1.;
+       //gl_FragDepth = 1.;
+        //NOTE: Dont forget to uncomment that
     }
 
 

@@ -39,14 +39,14 @@ public:
 
         //Movement & Orientation
         float x = InputManager::Key('D') - InputManager::Key('Q');
-        float y = InputManager::Key('F') - InputManager::Key('R');
+        float y = InputManager::Key('R') - InputManager::Key('F');
         float z = InputManager::Key('S') - InputManager::Key('Z');
-        QVector3D desiredMovement = z * GetParent()->GetTransform()->Forward() + x * GetParent()->GetTransform()->Right() + y * GetParent()->GetTransform()->Up();
+        QVector3D desiredMovement = z * GetParent()->GetTransform()->Forward() + x * GetParent()->GetTransform()->Left() + y * GetParent()->GetTransform()->Up();
         desiredMovement *= _speed;
         _momentum = desiredMovement * _acceleration + _momentum * (1 - _acceleration);
 
-        _azimuth += InputManager::MouseDX() * 0.3;
-        _elevation += InputManager::MouseDY() * 0.3;
+        _azimuth -= InputManager::MouseDX() * 0.3;
+        _elevation -= InputManager::MouseDY() * 0.3;
 
         if (_elevation > 90) _elevation =  90;
         if (_elevation <-90) _elevation = -90;

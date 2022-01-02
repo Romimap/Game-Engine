@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
 
     Camera camera(&root);
     camera.NAME = "camera";
-    camera.GetTransform()->SetPosition(0, 0, 0);
+    camera.GetTransform()->SetPosition(0, 270, 0);
     camera.GetTransform()->SetRotation(0, 0, 0);
     camera.GetTransform()->SetScale(1, 1, 1);
 
@@ -89,10 +89,9 @@ int main(int argc, char *argv[]) {
     engine.show();
 
     GameObject octree(&root);
-    octree.GetTransform()->SetRotation(90, 0, 0);
+    octree.GetTransform()->SetRotation(0, 0, 0);
     octree.GetTransform()->SetPosition(0, 0, 0);
     OctreeRendererComponent octreeRenderer(&octree);
-
 
     //Material* skyboxMat = new Material(nullptr, ":/vshader.glsl", ":/skyboxfshader.glsl");
     //
@@ -103,7 +102,7 @@ int main(int argc, char *argv[]) {
     //skybox.GetTransform()->SetPosition(0, 0, -0.75);
     //skybox.SetRenderData(&skyboxRenderData);
 
-    PlayerControllerComponent playerController(1, 0.1, nullptr, &camera);
+    PlayerControllerComponent playerController(32, 0.1, nullptr, &camera);
 
     return app.exec();
 }

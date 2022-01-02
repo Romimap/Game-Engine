@@ -25,7 +25,7 @@ public:
 
     QVector3D Forward ();
     QVector3D Up ();
-    QVector3D Right ();
+    QVector3D Left ();
 
     void Translate (QVector3D t);
     void GlobalTranslate (QVector3D t);
@@ -34,7 +34,6 @@ public:
     void SetPosition (float x, float y, float z);
     QVector3D GetPosition ();
     QVector3D GetGlobalPosition ();
-
 
     void Rotate (QQuaternion t);
     void RotateAround (float t, QVector3D a);
@@ -47,8 +46,11 @@ public:
     void SetScale (QVector3D t);
     void SetScale (float x, float y, float z);
 
+
     QMatrix4x4 LocalTransformMatrix ();
     QMatrix4x4 GlobalTransformMatrix ();
+    QMatrix4x4 ViewMatrix ();
+
 };
 
 #endif // TRANSFORM_H

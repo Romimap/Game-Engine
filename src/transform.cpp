@@ -13,14 +13,14 @@ Transform::Transform (Transform* transform, GameObject* gameObject) : _gameObjec
 }
 
 QVector3D Transform::Forward() {
-    return _rotationMatrix * QVector3D(0, 0, -1);
+    return _rotationMatrix * QVector3D(0, 0, 1);
 }
 
 QVector3D Transform::Up() {
-    return _rotationMatrix * QVector3D(0, -1, 0);
+    return _rotationMatrix * QVector3D(0, 1, 0);
 }
 
-QVector3D Transform::Right() {
+QVector3D Transform::Left() {
     return _rotationMatrix * QVector3D(1, 0, 0);
 }
 
@@ -147,4 +147,9 @@ QMatrix4x4 Transform::GlobalTransformMatrix () {
         return transform;
     }
     return _gameObject->GetParent()->GetTransform()->GlobalTransformMatrix() * transform;
+}
+
+QMatrix4x4 Transform::ViewMatrix() {
+    QMatrix4x4 viewMatrix = GlobalTransformMatrix().inverted();
+    return viewMatrix;
 }

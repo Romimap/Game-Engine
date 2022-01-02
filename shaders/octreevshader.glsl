@@ -2,14 +2,16 @@
 
 uniform mat4 projection_matrix;
 uniform mat4 view_matrix;
+uniform mat4 camera_matrix;
 uniform mat4 model_matrix;
+uniform mat4 inv_projection_matrix;
+uniform mat4 inv_view_matrix;
+uniform mat4 inv_model_matrix;
+
 
 in vec3 a_position;
 in vec2 a_texcoord;
 
-out vec3 v_position;
-out vec2 v_texcoord;
-out mat4 v_camera_matrix;
 
 const mat4 plane_transform = mat4(1.0, 0.0, 0.0, 0.0,
                                   0.0, 0.0, 1.0, 0.0,
@@ -17,12 +19,5 @@ const mat4 plane_transform = mat4(1.0, 0.0, 0.0, 0.0,
                                   0.0, 0.0, 0.0, 1.0);
 
 void main() {
-
-
-    gl_Position = plane_transform * vec4(a_position, 1);
-
-    v_camera_matrix = view_matrix;
-
-    v_position = a_position;
-    v_texcoord = a_texcoord;
+    gl_Position = projection_matrix * view_matrix * model_matrix * vec4(a_position, 1);
 }
