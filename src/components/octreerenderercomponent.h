@@ -6,6 +6,13 @@
 #include "src/glmesh.h"
 #include "src/gameobject.h"
 
+struct OctreeRendererChange {
+    int x;
+    int y;
+    int z;
+    unsigned char value;
+};
+
 class OctreeRendererComponent : Component {
 private:
     Material* _material;

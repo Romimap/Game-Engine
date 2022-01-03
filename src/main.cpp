@@ -63,10 +63,12 @@
 #include "components/rotatorcomponent.h"
 #include "components/octreerenderercomponent.h"
 #include "components/meshrenderercomponent.h"
+#include "linkedqueue.h"
 
 
 
 #include "cubecollider.h"
+
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
