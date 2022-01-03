@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
     format.setDepthBufferSize(24);
     QSurfaceFormat::setDefaultFormat(format);
 
-    app.setApplicationName("TP1 et 2");
+    app.setApplicationName("Voxel Game Engine");
     app.setApplicationVersion("0.1");
 
     GameObject root;
@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
 
 
     //ORIGIN (OFFSET 0 260 0)
-    GLMesh* cubeMesh = new GLMesh("/home/romimap/Documents/git/QT/misc/Cube.obj");
+    GLMesh* cubeMesh = new GLMesh("../Game-Engine/misc/Cube.obj");
 
     GameObject cube(&root);
     cube.GetTransform()->SetRotation(0, 0, 0);

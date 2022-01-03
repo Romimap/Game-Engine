@@ -59,9 +59,10 @@ public:
         GetParent()->GetTransform()->Translate(_momentum * delta);
         GetParent()->GetTransform()->SetRotation(azimuthQuat * elevationQuat);
 
-        qDebug((std::to_string(GetParent()->GetTransform()->GetPosition().x())
-        + " " + std::to_string(GetParent()->GetTransform()->GetPosition().y())
-        + " " + std::to_string(GetParent()->GetTransform()->GetPosition().z())).c_str());
+//        qDebug((std::to_string(GetParent()->GetTransform()->GetPosition().x())
+//        + " " + std::to_string(GetParent()->GetTransform()->GetPosition().y())
+//        + " " + std::to_string(GetParent()->GetTransform()->GetPosition().z())
+//        + " (playercontrollercomponent.h)").c_str());
     }
 };
 

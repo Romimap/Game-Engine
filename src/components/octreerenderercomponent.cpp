@@ -4,7 +4,7 @@
 
 OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component(parent) {
     _material = new Material(":/octreevshader.glsl", ":/octreefshader.glsl");
-    _mesh = new GLMesh("/home/romimap/Documents/git/QT/misc/chunk.obj");
+    _mesh = new GLMesh("../Game-Engine/misc/chunk.obj");
 
     //TODO, do that but with an octree
 

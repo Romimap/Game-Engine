@@ -11,7 +11,9 @@ void Engine::initializeGL() {
     qDebug("initializeGL <-");
     initializeOpenGLFunctions();
 
-    glClearColor(0, 0, 0, 1);
+    resize(1280, 720);
+
+    glClearColor(0.212f, 0.224f, 0.247f, 1); // Discord gray
 
     // Enable depth buffer
     glEnable(GL_DEPTH_TEST);
@@ -68,7 +70,7 @@ void Engine::paintGL() {
     // Draw GameObjects
     Draw(GameObject::Root);
 
-qDebug(std::to_string(deltaTime).c_str());
+//    qDebug((std::to_string(deltaTime) + " (engine.cpp)").c_str());
 
     update();
 }
