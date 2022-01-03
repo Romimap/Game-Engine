@@ -53,6 +53,8 @@ public:
                 if (_TexSlot7 != nullptr) delete _TexSlot7;
                 _TexSlot7 = tex;
                 break;
+            default:
+                delete tex;
         }
     }
 };
