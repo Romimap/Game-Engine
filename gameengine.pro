@@ -6,6 +6,7 @@ TEMPLATE = app
 CONFIG += c++17
 
 SOURCES += src/main.cpp \
+    src/chunk.cpp \
     src/aabb.cpp \
     src/aabbcollider.cpp \
     src/camera.cpp \
@@ -20,9 +21,11 @@ SOURCES += src/main.cpp \
     src/inputmanager.cpp \
     src/material.cpp \
     src/components/rotatorcomponent.cpp \
-    src/transform.cpp
+    src/transform.cpp \
+    src/worldgenerator.cpp
 
 HEADERS += \
+    src/chunk.h \
     src/aabb.h \
     src/aabbcollider.h \
     src/camera.h \
@@ -46,7 +49,10 @@ HEADERS += \
     libraries/octree/octree.tcc \
     libraries/octree/point3d.h \
     libraries/octree/shareddata.h \
-    libraries/octree/tinyvector.h
+    libraries/octree/tinyvector.h \
+    libraries/PerlinNoise/PerlinNoise.hpp \
+    src/voxelmaterial.h \
+    src/worldgenerator.h
 
 RESOURCES += \
     shaders/shaders.qrc \
