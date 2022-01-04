@@ -37,5 +37,5 @@ QVector2D Camera::ScreenSize() {
 //TODO
 QVector2D Camera::GetScreenRatios() {
     //Values for 85° FOV
-    return QVector2D(1.42814773744, float(_h) / float(_w) * 1.42814773744);
+    return QVector2D(0.91633111496 * (float(_w) / float(_h)), 0.91633111496);
 }

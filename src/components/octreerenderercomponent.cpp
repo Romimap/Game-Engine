@@ -1,6 +1,9 @@
 #include "octreerenderercomponent.h"
 #include "src/camera.h"
 #include "src/gameobject.h"
+#include <QOpenGLFunctions>
+
+int OctreeRendererComponent::s_notUpToDateChunks = 0;
 
 OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component(parent) {
     _material = new Material(":/octreevshader.glsl", ":/octreefshader.glsl");
@@ -77,10 +80,10 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
             exit(0);
         }
 
-        //QColor c = heightmap.pixelColor(x * 16, z * 16);
+        QColor c = heightmap.pixelColor(x * 16, z * 16);
 
-        //if (c.red() / 16 + 32 < y) {
-        if (x == 0 || y == 0 || z == 0) {
+        //if (x == 0 || y == 0 || z == 0) {
+        if (c.red() / 16 + 32 < y) {
             data64[k] = 0b11111111;
             data16[k16] = 0b11111111;
             data4[k4] = 0b11111111;
@@ -134,4 +137,56 @@ void OctreeRendererComponent::Draw() {
 
     // Draw Mesh
     _mesh->draw(&_material->program);
+}
+
+void OctreeRendererComponent::Update(float delta) {
+    if (_layer4.empty() && _layer16.empty() && _layer64.empty()) return;
+
+    QOpenGLFunctions_3_1 glfunc;
+    glfunc.initializeOpenGLFunctions();
+
+    int quota = std::max(1, OCTREE_RENDERER_VOXELS_FRAME_LIMIT/s_notUpToDateChunks); //Quota with a min value of 1
+
+    while (!_layer4.empty() && quota > 0) {
+        OctreeRendererChange* change = _layer4.pop_front();
+        change->_value;
+        _material->_TexSlot0->bind();
+        glfunc.glTexSubImage3D(GL_TEXTURE_3D, 0, change->_x, change->_y, change->_z, 1, 1, 1, QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, &change->_value);
+        delete change;
+
+        quota--;
+    }
+
+    while (!_layer16.empty() && quota > 0) {
+        OctreeRendererChange* change = _layer16.pop_front();
+        change->_value;
+        _material->_TexSlot1->bind();
+        glfunc.glTexSubImage3D(GL_TEXTURE_3D, 0, change->_x, change->_y, change->_z, 1, 1, 1, QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, &change->_value);
+        delete change;
+
+        quota--;
+    }
+
+    while (!_layer64.empty() && quota > 0) {
+        OctreeRendererChange* change = _layer64.pop_front();
+        change->_value;
+        _material->_TexSlot2->bind();
+        glfunc.glTexSubImage3D(GL_TEXTURE_3D, 0, change->_x, change->_y, change->_z, 1, 1, 1, QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, &change->_value);
+        delete change;
+
+        quota--;
+    }
+
+    if (_layer4.empty() && _layer16.empty() && _layer64.empty()) s_notUpToDateChunks--;
+}
+
+void OctreeRendererComponent::ApplyChanges(LinkedQueue<OctreeRendererChange> &layer4, LinkedQueue<OctreeRendererChange> &layer16, LinkedQueue<OctreeRendererChange> &layer64) {
+    if (_layer4.empty() && _layer16.empty() && _layer64.empty()
+    && (!layer4.empty() || !layer16.empty() || !layer64.empty())) {
+        s_notUpToDateChunks++;
+    }
+
+    _layer4.push_back_clear(layer4);
+    _layer16.push_back_clear(layer16);
+    _layer64.push_back_clear(layer64);
 }

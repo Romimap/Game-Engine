@@ -19,6 +19,7 @@ uniform vec2 screen_size;
 const float EPSILON = 0.0001;
 const float INFINITY = 67108864; //2^26
 const int NULL = 0;
+const float FARPLANE = 1000;
 
 //VOXELS
 const float VOXEL4 = 16;
@@ -341,7 +342,6 @@ CollisionData gridDF4 (vec3 O, vec3 D, vec3 gridPos) {
         hitPos += D * (tminmax.tmin - EPSILON);
     }
 
-
     float X, Y, Z;
 
     X = floor((hitPos - gridPos) / VOXEL4).x;
@@ -483,8 +483,6 @@ vec3 applyFog( in vec3  rgb,      // original color of the pixel
     return mix( rgb, fogColor, fogAmount );
 }
 
-
-
 void main () {
     vec3 D = vec3(-(((gl_FragCoord.x) / (screen_size.x)) - 0.5) * screen_ratios.x, -(((gl_FragCoord.y) / (screen_size.y)) - 0.5) * screen_ratios.y, 1);
     D = normalize(D);
@@ -503,8 +501,10 @@ void main () {
         light *= shading(hitPoint, cdata.normal);
         light += ambient();
         Color.rgb += light;
-        gl_FragDepth = cdata.distance / INFINITY;
         Color = applyFog(Color.rgb, cdata.distance, D, SUNDIR);
+
+        gl_FragDepth = distance(O, hitPoint) / FARPLANE;
+
     } else {
        gl_FragDepth = 1.;
     }

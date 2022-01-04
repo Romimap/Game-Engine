@@ -4,11 +4,11 @@ template<typename T> LinkedQueue<T>::LinkedQueue() {
 
 }
 
-template<typename T> LinkedQueue<T>::LinkedQueue(T &value) {
+template<typename T> LinkedQueue<T>::LinkedQueue(T *value) {
     push_back(value);
 }
 
-template<typename T> void LinkedQueue<T>::push_back(T &value) {
+template<typename T> void LinkedQueue<T>::push_back(T *value) {
     LinkedQueueNode<T>* node = new LinkedQueueNode<T>(value);
     if (empty()) {
         _front = node;
@@ -57,6 +57,5 @@ template<typename T> void LinkedQueue<T>::push_back_clear(LinkedQueue<T> &queue)
     queue._size = 0;
 }
 
-struct A;
-template class LinkedQueue<A>;
-
+struct OctreeRendererChange;
+template class LinkedQueue<OctreeRendererChange>;

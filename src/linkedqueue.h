@@ -4,14 +4,14 @@
 template <typename T> struct LinkedQueueNode {
     LinkedQueueNode<T>* _next;
     T* _data;
-    LinkedQueueNode(T &data) {
+    LinkedQueueNode(T *data) {
         _next = nullptr;
-        _data = &data;
+        _data = data;
     }
 };
 
-struct A;
-template struct LinkedQueueNode<A>;
+struct OctreeRendererChange;
+template struct LinkedQueueNode<OctreeRendererChange>;
 
 template <typename T> class LinkedQueue {
 private:
@@ -20,8 +20,8 @@ private:
     int _size = 0;
 public:
     LinkedQueue();
-    LinkedQueue(T &value);
-    void push_back(T &value);
+    LinkedQueue(T *value);
+    void push_back(T *value);
     T* pop_front();
     bool empty();
     int size();
