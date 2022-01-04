@@ -24,8 +24,8 @@ private:
     int _ySize;
     int _zSize;
 
-    vector<unsigned char ***> _layers;
-    int _precisionFactor;
+    vector<vector<vector<vector<unsigned char>>>> _layers;
+    int _layerSizeReductionFactor;
 
 public:
     /** Position **/
@@ -37,15 +37,14 @@ public:
     /*** METHODS ***/
 public:
     /** CONSTRUCTORS/DESTRUCTORS **/
-    Chunk(int x, int y, int z, int xSize, int ySize, int zSize, int nbOfLayers, int precisionFactor, const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence);
-    ~Chunk();
+    Chunk(int x, int y, int z, int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor, const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence);
 
     /** UPDATE **/
     void update();
 
     /** GETTERS/SETTERS **/
-    unsigned char getVoxel(int x, int y, int z);
-    int setVoxel(int x, int y, int z, unsigned char voxelMaterial);
+    unsigned char getVoxelType(int x, int y, int z, int layerID = 0);
+    int setVoxelType(int x, int y, int z, unsigned char voxelMaterial, int layerID = 0);
 
     /** DEBUG **/
     void printLayer(int layer);

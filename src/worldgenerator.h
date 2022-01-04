@@ -31,6 +31,9 @@ public:
     const int _CHUNK_Y_SIZE = 256;
     const int _CHUNK_Z_SIZE = 64;
 
+    const int _CHUNK_NB_OF_LAYERS = 3;
+    const int _CHUNK_LAYER_SIZE_REDUCTION_FACTOR = 4;
+
 
     /*** CONSTRUCTORS/DESTRUCTORS ***/
     WorldGenerator(string worldName, siv::PerlinNoise::seed_type seed);
