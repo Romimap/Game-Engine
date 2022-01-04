@@ -63,6 +63,7 @@
 #include "components/rotatorcomponent.h"
 #include "components/octreerenderercomponent.h"
 #include "components/meshrenderercomponent.h"
+#include "worldgenerator.h"
 #include "linkedqueue.h"
 
 
@@ -156,6 +157,9 @@ int main(int argc, char *argv[]) {
     //skybox.SetRenderData(&skyboxRenderData);
 
     PlayerControllerComponent playerController(32, 0.1, nullptr, &camera);
+
+    // Currently for testing purposes
+    WorldGenerator worldGenerator("New world", 123456u);
 
     return app.exec();
 }
