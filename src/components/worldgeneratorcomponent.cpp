@@ -28,7 +28,7 @@ WorldGeneratorComponent::WorldGeneratorComponent(string worldName, TerrainType t
                 chunk.GetTransform()->SetPosition(aabbMin.x(), aabbMin.y(), aabbMin.z());
                 chunk.SetFixedAABB(aabbMin, aabbMax);
 
-                Perlin2dTerrainComponent TC(0, 0, 0, _CHUNK_X_SIZE, _CHUNK_Y_SIZE, _CHUNK_Z_SIZE, _CHUNK_NB_OF_LAYERS, _CHUNK_LAYER_SIZE_REDUCTION_FACTOR, _perlin, _OCTAVES, _FREQUENCY, _PERSISTENCE, parent);
+                Perlin2dTerrainComponent TC(0, 0, 0, _CHUNK_X_SIZE, _CHUNK_Y_SIZE, _CHUNK_Z_SIZE, _CHUNK_NB_OF_LAYERS, _CHUNK_LAYER_SIZE_REDUCTION_FACTOR, _perlin, _OCTAVES, _FREQUENCY, _PERSISTENCE, GetParent());
 
                 chunksCount++;
             }

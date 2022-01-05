@@ -22,6 +22,7 @@ class WorldGeneratorComponent : public Component {
 public:
     string _worldName;
 
+protected:
     /** World gen related **/
     siv::PerlinNoise::seed_type _seed;   // [0 ... 2^32-1]
 
