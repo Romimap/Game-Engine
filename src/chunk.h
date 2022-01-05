@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vector>
 
-#include "voxelmaterial.h"
+#include "consts.h"
 #include "../libraries/PerlinNoise/PerlinNoise.hpp"
 
 

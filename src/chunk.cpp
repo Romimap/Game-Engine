@@ -57,17 +57,17 @@ Chunk::Chunk(int x, int y, int z, int xSize, int ySize, int zSize, int nbOfLayer
 
             // Place stone
             for (int y = 0; y < groundLevel - 2; y++) {
-                layer[x][y][z] = STONE_ID;
+                layer[x][y][z] = MaterialId::STONE;
             }
 
             // Place 2 dirt and 1 grass
-            if (groundLevel > 1) layer[x][groundLevel - 2][z] = DIRT_ID;
-            if (groundLevel > 0) layer[x][groundLevel - 1][z] = DIRT_ID;
-            layer[x][groundLevel][z] = GRASS_ID;
+            if (groundLevel > 1) layer[x][groundLevel - 2][z] = MaterialId::DIRT;
+            if (groundLevel > 0) layer[x][groundLevel - 1][z] = MaterialId::DIRT;
+            layer[x][groundLevel][z] = MaterialId::GRASS;
 
             // Place air above
             for (int y = groundLevel + 1; y < _ySize; y++) {
-                layer[x][y][z] = AIR_ID;
+                layer[x][y][z] = MaterialId::AIR;
             }
         }
     }
@@ -97,7 +97,7 @@ Chunk::Chunk(int x, int y, int z, int xSize, int ySize, int zSize, int nbOfLayer
 
                     /** Count current layer voxel types **/
 
-                    int voxelTypeCount[MAX_MATERIAL_ID + 1] = { 0 };
+                    int voxelTypeCount[MaterialId::MAX_ID + 1] = { 0 };
 
                     // Use (x1, y1, z1) as coordinates in the current layer
                     for (int i = 0; i < _layerSizeReductionFactor; i++) {
@@ -113,7 +113,7 @@ Chunk::Chunk(int x, int y, int z, int xSize, int ySize, int zSize, int nbOfLayer
 
                     int mostOccuringVoxel_id = 0;
                     int mostOccuringVoxel_count = 0;
-                    for (unsigned int i = 0; i <= MAX_MATERIAL_ID; i++) {
+                    for (unsigned int i = 0; i <= MaterialId::MAX_ID; i++) {
                         if (voxelTypeCount[i] > mostOccuringVoxel_count) {
                             mostOccuringVoxel_id = i;
                             mostOccuringVoxel_count = voxelTypeCount[i];

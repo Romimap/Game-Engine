@@ -35,6 +35,7 @@ HEADERS += \
     src/components/octreerenderercomponent.h \
     src/components/playercontrollercomponent.h \
     src/components/rigidbodycomponent.h \
+    src/consts.h \
     src/engine.h \
     src/gameobject.h \
     src/glmesh.h \
@@ -51,7 +52,6 @@ HEADERS += \
     libraries/octree/shareddata.h \
     libraries/octree/tinyvector.h \
     libraries/PerlinNoise/PerlinNoise.hpp \
-    src/voxelmaterial.h \
     src/worldgenerator.h
 
 RESOURCES += \
