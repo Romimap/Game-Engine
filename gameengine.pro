@@ -23,8 +23,7 @@ SOURCES += src/main.cpp \
     src/inputmanager.cpp \
     src/material.cpp \
     src/components/rotatorcomponent.cpp \
-    src/transform.cpp \
-    src/worldgenerator.cpp
+    src/transform.cpp
 
 HEADERS += \
     src/aabb.h \
@@ -55,8 +54,7 @@ HEADERS += \
     libraries/octree/point3d.h \
     libraries/octree/shareddata.h \
     libraries/octree/tinyvector.h \
-    libraries/PerlinNoise/PerlinNoise.hpp \
-    src/worldgenerator.h
+    libraries/PerlinNoise/PerlinNoise.hpp
 
 RESOURCES += \
     shaders/shaders.qrc \
