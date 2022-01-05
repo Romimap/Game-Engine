@@ -100,8 +100,11 @@ void GameObject::AddComponent(Component *component) {
 }
 
 void GameObject::RefreshAABB() {
-    QVector3D min( 100000000,  100000000,  100000000);
-    QVector3D max(-100000000, -100000000, -100000000);
+    int minInt = std::numeric_limits<int>::min();
+    int maxInt = std::numeric_limits<int>::min();
+    QVector3D min(maxInt, maxInt, maxInt);
+    QVector3D max(minInt, minInt, minInt);
+
     if (_collider != nullptr) {
         QVector3D cMin = _collider->_localAABB._min;
         QVector3D cMax = _collider->_localAABB._max;

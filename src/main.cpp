@@ -59,7 +59,6 @@
 #include "gameobject.h"
 #include "glmesh.h"
 #include "material.h"
-#include "worldgenerator.h"
 
 #include "components/playercontrollercomponent.h"
 #include "components/rigidbodycomponent.h"
