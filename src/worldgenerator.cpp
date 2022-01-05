@@ -1,6 +1,6 @@
 #include "worldgenerator.h"
 
-WorldGenerator::WorldGenerator(string worldName, siv::PerlinNoise::seed_type seed) {
+WorldGenerator::WorldGenerator(string worldName, siv::PerlinNoise::seed_type seed, GameObject* parent) {
     auto start = chrono::high_resolution_clock::now();
 
     this->_worldName = worldName;
@@ -8,7 +8,8 @@ WorldGenerator::WorldGenerator(string worldName, siv::PerlinNoise::seed_type see
 
     this->_perlin = siv::PerlinNoise{seed};
 
-    Chunk chunk(0, 0, 0, _CHUNK_X_SIZE, _CHUNK_Y_SIZE, _CHUNK_Z_SIZE, _CHUNK_NB_OF_LAYERS, _CHUNK_LAYER_SIZE_REDUCTION_FACTOR, _perlin, _OCTAVES, _FREQUENCY, _PERSISTENCE);
+    GameObject chunk(parent);
+    Perlin2dTerrainComponent TC(0, 0, 0, _CHUNK_X_SIZE, _CHUNK_Y_SIZE, _CHUNK_Z_SIZE, _CHUNK_NB_OF_LAYERS, _CHUNK_LAYER_SIZE_REDUCTION_FACTOR, _perlin, _OCTAVES, _FREQUENCY, _PERSISTENCE, parent);
 
     auto end = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed = end - start;

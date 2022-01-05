@@ -1,5 +1,5 @@
-#ifndef CHUNK_H
-#define CHUNK_H
+#ifndef TERRAINCOMPONENT_H
+#define TERRAINCOMPONENT_H
 
 
 #include <cmath>
@@ -8,15 +8,17 @@
 
 #include "libraries/PerlinNoise/PerlinNoise.hpp"
 
+#include "src/component.h"
+#include "src/gameobject.h"
 #include "src/consts.h"
 
 
 using namespace std;
 
 
-class Chunk {
+class TerrainComponent : public Component {
     /*** ATTRIBUTES ***/
-private:
+protected:
     /** Update method related **/
     bool _hasChanged = true;
 
@@ -28,24 +30,27 @@ private:
     vector<vector<vector<vector<unsigned char>>>> _layers;
     int _layerSizeReductionFactor;
 
-public:
     /** Position **/
-    int _x;
-    int _y;
-    int _z;
+    int _chunkX;
+    int _chunkY;
+    int _chunkZ;
 
 
     /*** METHODS ***/
-public:
+protected:
     /** CONSTRUCTORS/DESTRUCTORS **/
-    Chunk(int x, int y, int z, int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor, const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence);
+    TerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor, GameObject* parent);
 
+public:
     /** UPDATE **/
     void update();
 
     /** GETTERS/SETTERS **/
     unsigned char getVoxelType(int x, int y, int z, int layerID = 0);
     int setVoxelType(int x, int y, int z, unsigned char voxelMaterial, int layerID = 0);
+
+    /** DEBUG **/
+    void debugPrintLayers();
 };
 
-#endif // CHUNK_H
+#endif // TERRAINCOMPONENT_H

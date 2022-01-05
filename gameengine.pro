@@ -15,6 +15,8 @@ SOURCES += src/main.cpp \
     src/components/octreerenderercomponent.cpp \
     src/components/playercontrollercomponent.cpp \
     src/components/rigidbodycomponent.cpp \
+    src/components/terrain/perlin2dterraincomponent.cpp \
+    src/components/terrain/terraincomponent.cpp \
     src/engine.cpp \
     src/gameobject.cpp \
     src/glmesh.cpp \
@@ -35,6 +37,8 @@ HEADERS += \
     src/components/octreerenderercomponent.h \
     src/components/playercontrollercomponent.h \
     src/components/rigidbodycomponent.h \
+    src/components/terrain/perlin2dterraincomponent.h \
+    src/components/terrain/terraincomponent.h \
     src/consts.h \
     src/engine.h \
     src/gameobject.h \

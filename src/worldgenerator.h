@@ -5,8 +5,11 @@
 #include <chrono>
 #include <iostream>
 
-#include "../libraries/PerlinNoise/PerlinNoise.hpp"
-#include "chunk.h"
+#include "libraries/PerlinNoise/PerlinNoise.hpp"
+
+#include "src/gameobject.h"
+
+#include "src/components/terrain/perlin2dterraincomponent.h"
 
 
 using namespace std;
@@ -36,7 +39,7 @@ public:
 
 
     /*** CONSTRUCTORS/DESTRUCTORS ***/
-    WorldGenerator(string worldName, siv::PerlinNoise::seed_type seed);
+    WorldGenerator(string worldName, siv::PerlinNoise::seed_type seed, GameObject* parent);
 
 
     /*** METHODS ***/
