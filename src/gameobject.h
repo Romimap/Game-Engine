@@ -6,6 +6,7 @@
 #include "aabb.h"
 #include "collider.h"
 
+#include <iostream>
 #include <limits>
 
 #include <qquaternion.h>
@@ -24,6 +25,7 @@ class GameObject {
 protected:
     bool _enabled = true;
     bool _started = false;
+    bool _fixedAABB = false;
 
     GameObject* _parent = nullptr;
 
@@ -49,13 +51,14 @@ public:
     ~GameObject();
 
     //METHODS
-    bool Enabled();
-
-    void AddComponent (Component* component);
+    void AddComponent(Component* component);
 
     void Draw();
 
     //GETTERS SETTERS
+    bool Enabled();
+
+    void SetFixedAABB(QVector3D min, QVector3D max);
 
     GameObject* GetParent();
 

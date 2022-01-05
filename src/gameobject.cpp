@@ -25,6 +25,19 @@ GameObject::~GameObject() {
 bool GameObject::Enabled () {
     return _enabled;
 }
+
+void GameObject::SetFixedAABB(QVector3D min, QVector3D max) {
+    this->_fixedAABB = true;
+
+    if (_globalAABB != nullptr)
+        delete _globalAABB;
+    _globalAABB = new AABB(min, max);
+
+    if (_personalGlobalAABB != nullptr)
+        delete _personalGlobalAABB;
+    _personalGlobalAABB = new AABB(min, max);
+}
+
 Transform* GameObject::GetTransform () {
     return _transform;
 }
@@ -100,6 +113,9 @@ void GameObject::AddComponent(Component *component) {
 }
 
 void GameObject::RefreshAABB() {
+    if (_fixedAABB) // Don't update AABBs
+        return;
+
     int minInt = std::numeric_limits<int>::min();
     int maxInt = std::numeric_limits<int>::min();
     QVector3D min(maxInt, maxInt, maxInt);
