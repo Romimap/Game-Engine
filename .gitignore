@@ -1,1 +1,4 @@
+.vscode
+
 *.pro.user*
+.qmake.stash
