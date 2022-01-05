@@ -6,7 +6,6 @@ TEMPLATE = app
 CONFIG += c++17
 
 SOURCES += src/main.cpp \
-    src/chunk.cpp \
     src/aabb.cpp \
     src/aabbcollider.cpp \
     src/camera.cpp \
@@ -27,7 +26,6 @@ SOURCES += src/main.cpp \
     src/worldgenerator.cpp
 
 HEADERS += \
-    src/chunk.h \
     src/aabb.h \
     src/aabbcollider.h \
     src/camera.h \
