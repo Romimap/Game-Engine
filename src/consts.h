@@ -12,13 +12,13 @@ namespace MaterialId {
 }
 
 
-namespace TerrainType {
-    const int PERLIN_2D = 0;
-    const int PERLIN_3D = 1;
-    const int FLAT = 2;
-    const int FLOATING_ISLANDS = 3;
-    const int BIG_CAVES = 4;
-}
+enum TerrainType {
+    PERLIN_2D,
+    PERLIN_3D,
+    FLAT = 2,
+    FLOATING_ISLANDS,
+    BIG_CAVES
+};
 
 
 #endif // CONSTS_H

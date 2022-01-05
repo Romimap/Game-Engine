@@ -2,6 +2,7 @@
 
 TerrainComponent::TerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor, GameObject* parent)
     : Component(parent) {
+
     this->_hasChanged = true;
     this->_xSize = xSize;
     this->_ySize = ySize;

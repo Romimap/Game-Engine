@@ -66,7 +66,7 @@
 #include "components/rotatorcomponent.h"
 #include "components/octreerenderercomponent.h"
 #include "components/meshrenderercomponent.h"
-#include "components/terrain/perlin2dterraincomponent.h"
+#include "components/worldgeneratorcomponent.h"
 
 
 int main(int argc, char *argv[]) {
@@ -144,9 +144,14 @@ int main(int argc, char *argv[]) {
 
     PlayerControllerComponent playerController(32, 0.1, nullptr, &camera);
 
+
     // Currently for testing purposes
     GameObject dummy;
-    WorldGenerator worldGenerator("New world", 123456u, &dummy);
+
+    GameObject worldGenerator(&dummy);
+    WorldGeneratorComponent WGC("New world", TerrainType::PERLIN_2D, 123456u, &worldGenerator);
+
+//    WorldGenerator worldGenerator("New world", 123456u, &dummy);
 
     return app.exec();
 }
