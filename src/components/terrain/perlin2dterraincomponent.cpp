@@ -6,14 +6,21 @@ Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int c
 
     /** Generate terrain for the most detailed layer using perlin noise **/
 
+    vector<vector<vector<unsigned char>>> &layer = _layers[0];
+
     float xFrequency = frequency / (float) _xSize;
     float zFrequency = frequency / (float) _zSize;
 
-    vector<vector<vector<unsigned char>>> &layer = _layers[0];
+    float xStart = chunkX * frequency;
+    float zStart = chunkZ * frequency;
 
     for (int x = 0; x < _xSize; x++) {
+        float xNoise = xStart + x * xFrequency;
+
         for (int z = 0; z < _zSize; z++) {
-            const double noise = perlin.octave2D_01((x * xFrequency), (z * zFrequency), octaves, persistence);
+            float zNoise = zStart + z * zFrequency;
+
+            const double noise = perlin.octave2D_01(xNoise, zNoise, octaves, persistence);
             int groundLevel = (int)(noise * (_ySize - 1));
 
             // Place stone
