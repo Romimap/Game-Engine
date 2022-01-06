@@ -14,9 +14,7 @@ public:
     std::string NAME;
 
     Component(GameObject* parent);
-    virtual ~Component() {
-        std::cout << "Call to Component destructor" << std::endl;
-    };
+    virtual ~Component(){}
 
     virtual void Start(){}
     virtual void Update(float delta){}

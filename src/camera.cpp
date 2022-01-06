@@ -7,10 +7,6 @@ Camera::Camera(GameObject* parent) : GameObject(parent) {
         ActiveCamera = this;
 }
 
-void Camera::SetActive() {
-    ActiveCamera = this;
-}
-
 void Camera::ResizeGL(int w, int h) {
     qDebug("resizeGL <-");
     // Calculate aspect ratio
@@ -28,6 +24,10 @@ void Camera::ResizeGL(int w, int h) {
     _h = h;
 
     qDebug("resizeGL ->");
+}
+
+void Camera::SetActive() {
+    ActiveCamera = this;
 }
 
 QVector2D Camera::ScreenSize() {

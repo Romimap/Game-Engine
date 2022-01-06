@@ -22,6 +22,7 @@ public:
     Transform* _previousTransform = new Transform(GetParent());
 public:
     RigidBodyComponent(float weight, float drag, float bounciness, float friction, GameObject* parent);
+    virtual ~RigidBodyComponent();
 
     void FixedUpdate(float delta) override;
 

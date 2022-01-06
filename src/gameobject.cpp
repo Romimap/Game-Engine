@@ -21,40 +21,28 @@ GameObject::~GameObject() {
     std::cout << "Deleting '" << NAME << "' GameObject..." << std::endl;
     if (_transform != nullptr)
         delete _transform;
-    std::cout << "# Deleted transform" << std::endl;
+    std::cout << "ok 1" << std::endl;
     if (_collider != nullptr)
         delete _collider;
-    std::cout << "# Deleted collider" << std::endl;
+    std::cout << "ok 2" << std::endl;
     if (_globalAABB != nullptr)
         delete _globalAABB;
-    std::cout << "# Deleted global AABB" << std::endl;
+    std::cout << "ok 3" << std::endl;
     if (_personalGlobalAABB != nullptr)
         delete _personalGlobalAABB;
-    std::cout << "# Deleted personal global AABB" << std::endl;
+    std::cout << "ok 4" << std::endl;
 
-    std::cout << "# Child Components to delete: " << _components.size() << std::endl;
     for (auto* component : _components) {
-        std::cout << "## Identifying new component..." << std::endl;
-        if (component != nullptr) {
-            std::cout << "## Deleting '" << component->NAME << "' (" << component << ") child Component..." << std::endl;
+        if (component != nullptr)
             delete component;
-            std::cout << "## Done deleting this child Component..." << std::endl;
-        }
-        else {
-            std::cout << "## nullptr child Component..." << std::endl;
-        }
     }
-    std::cout << "# Deleted components" << std::endl;
+    std::cout << "ok 5" << std::endl;
 
     for (auto* child : _children) {
-        if (child != nullptr) {
-            std::cout << "## Deleting '" << child->NAME << "' (" << child << ") child GameObject..." << std::endl;
+        if (child != nullptr)
             delete child;
-        }
     }
-    std::cout << "# Deleted children" << std::endl;
-
-    std::cout << "### Done deleting '" << NAME << "'" << std::endl;
+    std::cout << "ok 6" << std::endl;
 }
 
 //GETTERS SETTERS

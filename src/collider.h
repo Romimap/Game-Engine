@@ -1,8 +1,9 @@
 #ifndef COLLIDER_H
 #define COLLIDER_H
 
-#include "aabb.h"
 #include <QMatrix4x4>
+
+#include "aabb.h"
 
 class GameObject;
 class PlaneCollider;
@@ -16,15 +17,13 @@ public:
     GameObject* _parent;
 
 public:
-    Collider() {
-    }
-    virtual ~Collider() {
+    Collider(){}
+    virtual ~Collider(){}
 
-    }
+    virtual void SetAABB(){}
 
-public:
-    virtual void SetAABB () {}
     virtual GameObject* GetParent() {return _parent;}
+
     virtual bool Collision(Collider* other) {
         qDebug("COLLISION VIRTUAL");
         return false;

@@ -4,6 +4,8 @@
 Engine* Engine::Singleton = nullptr;
 
 Engine::Engine() {
+    if (Singleton != nullptr)
+        delete Singleton;
     Singleton = this;
 }
 

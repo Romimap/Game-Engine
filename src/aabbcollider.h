@@ -6,6 +6,7 @@
 class AABBCollider : public Collider {
 private:
     QVector3D _size;
+
 public:
     AABBCollider(float x, float y, float z);
 

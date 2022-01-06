@@ -11,8 +11,14 @@ RigidBodyComponent::RigidBodyComponent(float weight, float drag, float bouncines
 
 }
 
+RigidBodyComponent::~RigidBodyComponent() {
+    if (_previousTransform != nullptr)
+        delete _previousTransform;
+}
+
 void RigidBodyComponent::FixedUpdate(float delta) {
-    delete _previousTransform;
+    if (_previousTransform != nullptr)
+        delete _previousTransform;
     _previousTransform = new Transform(GetParent()->GetTransform(), GetParent());
 
     GetParent()->GetTransform()->Translate(_momentum * delta);

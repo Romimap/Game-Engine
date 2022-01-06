@@ -34,7 +34,7 @@ protected:
     const float _FREQUENCY = 8.0f;       // [0.1 ... 64.0]
     const float _PERSISTENCE = 0.5f;     // [0.0 ... 1.0]
 
-    const unsigned int TERRAIN_GEN_SQUARE_RADIUS = 5;
+    const unsigned int TERRAIN_GEN_SQUARE_RADIUS = 2;
 
     /** Chunks related **/
     const int _CHUNK_X_SIZE = 64;
@@ -48,7 +48,6 @@ protected:
 public:
     /** CONSTRUCTORS/DESTRUCTORS **/
     WorldGeneratorComponent(string worldName, TerrainType terrainType, siv::PerlinNoise::seed_type seed, GameObject* parent);
-    virtual ~WorldGeneratorComponent() override;
 
     /** CHUNK GENERATION **/
     bool generateChunk(int x, int z);
