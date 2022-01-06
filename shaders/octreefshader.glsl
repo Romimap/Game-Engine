@@ -45,7 +45,7 @@ const int VOXEL64Y = 4;
 const int VOXEL64Z = 4;
 
 //LIGHTING
-const vec3 SUNDIR = vec3(0.534, -0.801, 0.267);
+const vec3 SUNDIR = vec3(-0.234, -0.801, -0.567);
 const float FOGINTENSITY = 0.01;
 const vec3 AMBIENTCOLOR = vec3(0.5,0.6,0.7);
 const float AMBIENTFORCE = 0.3;
@@ -123,15 +123,16 @@ TMinMax boxFarDistance (vec3 O, vec3 D, vec3 min, vec3 max) {
 }
 
 vec3 getColor(int material, vec3 coord, vec3 n) {
+    float shading;
     if (n.x != 0) {
         //return vec3(1, 0, 0);
-        return texture2D(materials, (coord.yz * 0.015625 * vec2(0.25, 1)) + vec2(0, 0.25 * material)).rgb * max(AMBIENTFORCE, n.x) * 0.5;
+        return texture2D(materials, mod((coord.yz * 0.015625 * vec2(0.25, 1)), vec2(.25, 1)) + vec2(0.25 * material, 0)).rgb * max(AMBIENTFORCE, n.x) * 0.5;
     } else if (n.y != 0) {
         //return vec3(0, 1, 0);
-        return texture2D(materials, (coord.xz * 0.015625 * vec2(0.25, 1)) + vec2(0, 0.25 * material)).rgb * max(AMBIENTFORCE, n.y) * 1;
+        return texture2D(materials, mod((coord.xz * 0.015625 * vec2(0.25, 1)), vec2(1, 1)) + vec2(0.25 * material, 0)).rgb * max(AMBIENTFORCE, n.y) * 1;
     } else {
         //return vec3(0, 0, 1);
-        return texture2D(materials, (coord.yx * 0.015625 * vec2(0.25, 1)) + vec2(0, 0.25 * material)).rgb * max(AMBIENTFORCE, n.z) * 0.7;
+        return texture2D(materials, mod((coord.yx * 0.015625 * vec2(0.25, 1)), vec2(.25, 1)) + vec2(0.25 * material, 0)).rgb * max(AMBIENTFORCE, n.z) * 0.7;
     }
 }
 
@@ -509,12 +510,12 @@ void main () {
     CollisionData cdata = sceneSDF(O, D);
     if (cdata.distance < INFINITY) {
         vec3 hitPoint = O + D * cdata.distance;
-        vec3 light = vec3(1);
+        //vec3 light = vec3(1);
         Color = cdata.color.rgb;
         //light *= shadows(hitPoint);
         //light *= shading(hitPoint, cdata.normal);
-        light += ambient();
-        Color *= light;
+        //light += ambient();
+        //Color *= light;
         Color = applyFog(Color.rgb, cdata.distance, D, SUNDIR);
 
         gl_FragDepth = distance(O, hitPoint) / FARPLANE;
