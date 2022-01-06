@@ -10,6 +10,7 @@ private:
     GameObject* _parent;
 public:
     Component(GameObject* parent);
+    virtual ~Component(){};
 
     virtual void Start(){}
     virtual void Update(float delta){}

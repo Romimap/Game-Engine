@@ -16,7 +16,16 @@ GameObject::GameObject(GameObject* parent) : _parent(parent) {
 }
 
 GameObject::~GameObject() {
-    //TODO : Free the memory and do something about the orphans
+    delete _transform;
+    delete _collider;
+    delete _globalAABB;
+    delete _personalGlobalAABB;
+
+    for (auto* component : _components)
+        delete component;
+
+    for (auto* child : _children)
+        delete child;
 }
 
 //GETTERS SETTERS
