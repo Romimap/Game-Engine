@@ -4,13 +4,19 @@
 #include "gameobject.h"
 #include "collider.h"
 
+#include <iostream>
+
 class GameObject;
 class Component {
 private:
     GameObject* _parent;
 public:
+    std::string NAME;
+
     Component(GameObject* parent);
-    virtual ~Component(){};
+    virtual ~Component() {
+        std::cout << "Call to Component destructor" << std::endl;
+    };
 
     virtual void Start(){}
     virtual void Update(float delta){}

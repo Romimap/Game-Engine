@@ -8,6 +8,8 @@ GameObject::GameObject(GameObject* parent) : _parent(parent) {
         Root = this;
     }
 
+    if (_transform != nullptr)
+        delete _transform;
     _transform = new Transform(this);
 
     if (parent != nullptr) {
@@ -16,16 +18,43 @@ GameObject::GameObject(GameObject* parent) : _parent(parent) {
 }
 
 GameObject::~GameObject() {
-    delete _transform;
-    delete _collider;
-    delete _globalAABB;
-    delete _personalGlobalAABB;
+    std::cout << "Deleting '" << NAME << "' GameObject..." << std::endl;
+    if (_transform != nullptr)
+        delete _transform;
+    std::cout << "# Deleted transform" << std::endl;
+    if (_collider != nullptr)
+        delete _collider;
+    std::cout << "# Deleted collider" << std::endl;
+    if (_globalAABB != nullptr)
+        delete _globalAABB;
+    std::cout << "# Deleted global AABB" << std::endl;
+    if (_personalGlobalAABB != nullptr)
+        delete _personalGlobalAABB;
+    std::cout << "# Deleted personal global AABB" << std::endl;
 
-    for (auto* component : _components)
-        delete component;
+    std::cout << "# Child Components to delete: " << _components.size() << std::endl;
+    for (auto* component : _components) {
+        std::cout << "## Identifying new component..." << std::endl;
+        if (component != nullptr) {
+            std::cout << "## Deleting '" << component->NAME << "' (" << component << ") child Component..." << std::endl;
+            delete component;
+            std::cout << "## Done deleting this child Component..." << std::endl;
+        }
+        else {
+            std::cout << "## nullptr child Component..." << std::endl;
+        }
+    }
+    std::cout << "# Deleted components" << std::endl;
 
-    for (auto* child : _children)
-        delete child;
+    for (auto* child : _children) {
+        if (child != nullptr) {
+            std::cout << "## Deleting '" << child->NAME << "' (" << child << ") child GameObject..." << std::endl;
+            delete child;
+        }
+    }
+    std::cout << "# Deleted children" << std::endl;
+
+    std::cout << "### Done deleting '" << NAME << "'" << std::endl;
 }
 
 //GETTERS SETTERS
@@ -50,6 +79,8 @@ Transform* GameObject::GetTransform () {
 }
 ///Dont forget to free t
 void GameObject::SetTransform(Transform* t) {
+    if (_transform != nullptr)
+        delete _transform;
     _transform = new Transform(t, this);
 }
 GameObject* GameObject::GetParent () {
@@ -61,7 +92,8 @@ std::vector<GameObject*> GameObject::GetChildren() {
 }
 
 void GameObject::SetCollider(Collider *collider) {
-    if (_collider != nullptr) delete _collider;
+    if (_collider != nullptr)
+        delete _collider;
     _collider = collider;
     _collider->_parent = this;
 }
@@ -160,7 +192,8 @@ void GameObject::RefreshAABB() {
         }
 
         //Save the _personalGlobalAABB for collision check
-        if (_personalGlobalAABB != nullptr) delete _personalGlobalAABB;
+        if (_personalGlobalAABB != nullptr)
+            delete _personalGlobalAABB;
         _personalGlobalAABB = new AABB(min, max);
         //qDebug("%s", ("For " + NAME + ", personalAABB is " + std::to_string(_personalGlobalAABB->_min.x()) + ", " + std::to_string(_personalGlobalAABB->_min.y()) + ", " + std::to_string(_personalGlobalAABB->_min.z()) + " : " + std::to_string(_personalGlobalAABB->_max.x()) + ", " + std::to_string(_personalGlobalAABB->_max.y()) + ", " + std::to_string(_personalGlobalAABB->_max.z())).c_str());
     }
@@ -181,7 +214,8 @@ void GameObject::RefreshAABB() {
     }
 
     if (min.x() < max.x()) {
-        delete _globalAABB;
+        if (_globalAABB != nullptr)
+            delete _globalAABB;
         _globalAABB = new AABB(min, max);
         //qDebug("%s", ("For " + NAME + ", globalAABB is " + std::to_string(_globalAABB->_min.x()) + ", " + std::to_string(_globalAABB->_min.y()) + ", " + std::to_string(_globalAABB->_min.z()) + " : " + std::to_string(_globalAABB->_max.x()) + ", " + std::to_string(_globalAABB->_max.y()) + ", " + std::to_string(_globalAABB->_max.z())).c_str());
     }
