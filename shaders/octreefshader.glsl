@@ -3,6 +3,7 @@
 uniform sampler3D colorlod4;
 uniform sampler3D colorlod16;
 uniform sampler3D colorlod64;
+uniform sampler2D materials;
 
 uniform mat4 projection_matrix;
 uniform mat4 view_matrix;
@@ -20,6 +21,12 @@ const float EPSILON = 0.0001;
 const float INFINITY = 67108864; //2^26
 const int NULL = 0;
 const float FARPLANE = 1000;
+
+const int MAX_MATERIAL_ID = 3;
+const int AIR_ID = 0;
+const int STONE_ID = 1;
+const int DIRT_ID = 2;
+const int GRASS_ID = 3;
 
 //VOXELS
 const float VOXEL4 = 16;
@@ -115,6 +122,19 @@ TMinMax boxFarDistance (vec3 O, vec3 D, vec3 min, vec3 max) {
     return tminmax;
 }
 
+vec3 getColor(int material, vec3 coord, vec3 n) {
+    if (n.x != 0) {
+        //return vec3(1, 0, 0);
+        return texture2D(materials, (coord.yz * 0.015625 * vec2(0.25, 1)) + vec2(0, 0.25 * material)).rgb * max(AMBIENTFORCE, n.x) * 0.5;
+    } else if (n.y != 0) {
+        //return vec3(0, 1, 0);
+        return texture2D(materials, (coord.xz * 0.015625 * vec2(0.25, 1)) + vec2(0, 0.25 * material)).rgb * max(AMBIENTFORCE, n.y) * 1;
+    } else {
+        //return vec3(0, 0, 1);
+        return texture2D(materials, (coord.yx * 0.015625 * vec2(0.25, 1)) + vec2(0, 0.25 * material)).rgb * max(AMBIENTFORCE, n.z) * 0.7;
+    }
+}
+
 CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
     CollisionData cdata;
     cdata.distance = INFINITY;
@@ -170,6 +190,7 @@ CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
                 if (cdata.color.r > 0) {
                     cdata.distance = length(O.xyz - hitPos.xyz) + (tmaxx * VOXEL64);
                     cdata.normal = vec3(normalize(D.x), 0, 0);
+                    cdata.color.rgb = getColor(int(cdata.color.r), vec3(X, Y, Z) + offset, cdata.normal);
                     return cdata;
                 }
             } else {
@@ -183,6 +204,7 @@ CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
                 if (cdata.color.r > 0) {
                     cdata.distance = length(O - hitPos) + (tmaxy * VOXEL64);
                     cdata.normal = vec3(0, normalize(D.y), 0);
+                    cdata.color.rgb = getColor(int(cdata.color.r), vec3(X, Y, Z) + offset, cdata.normal);
                     return cdata;
                 }
             } else {
@@ -196,6 +218,7 @@ CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
                 if (cdata.color.r > 0) {
                     cdata.distance = length(O - hitPos) + (tmaxz * VOXEL64);
                     cdata.normal = vec3(0, 0, normalize(D.z));
+                    cdata.color.rgb = getColor(int(cdata.color.r), vec3(X, Y, Z) + offset, cdata.normal);
                     return cdata;
                 }
             } else {
@@ -205,7 +228,6 @@ CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
         }
     }
 
-    cdata.distance = INFINITY;
     return cdata;
 }
 
@@ -213,16 +235,7 @@ CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
 CollisionData gridDF16 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
     CollisionData cdata;
     cdata.distance = INFINITY;
-
-    //TMinMax tminmax = boxFarDistance(O, D, gridPos, gridPos + (vec3(1) * gridsize * voxelsize));
-    //if (tminmax.tmax == INFINITY) return cdata;
-
     vec3 hitPos = O;
-    //if (tminmax.tmin > 0) {
-    //    hitPos += D * (tminmax.tmin);
-    //    hitPos -= D * EPSILON;
-    //}
-
 
     float X, Y, Z;
 
@@ -489,22 +502,22 @@ void main () {
     D = (camera_matrix * vec4(D, 0)).xyz;
 
     vec3 O = vec3(0, 0, 0);
-    O = -(camera_matrix * vec4(O, 1)).xyz;
+    O = -(inv_model_matrix * camera_matrix * vec4(O, 1)).xyz;
 
-    vec3 Color = vec3(0, 0, 0); //NOTE: set that as 0
+    vec3 Color = vec3(0, 0, 0);
 
     CollisionData cdata = sceneSDF(O, D);
     if (cdata.distance < INFINITY) {
         vec3 hitPoint = O + D * cdata.distance;
         vec3 light = vec3(1);
+        Color = cdata.color.rgb;
         //light *= shadows(hitPoint);
-        light *= shading(hitPoint, cdata.normal);
+        //light *= shading(hitPoint, cdata.normal);
         light += ambient();
-        Color.rgb += light;
+        Color *= light;
         Color = applyFog(Color.rgb, cdata.distance, D, SUNDIR);
 
         gl_FragDepth = distance(O, hitPoint) / FARPLANE;
-
     } else {
        gl_FragDepth = 1.;
     }

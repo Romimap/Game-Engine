@@ -12,7 +12,7 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
     //TODO, do that but with an octree
 
     QImage heightmap;
-    heightmap.load(":/heightmap-1024x1024.png");
+    heightmap.load(":/montagne.png");
 
     _material->_TexSlot0 = new QOpenGLTexture(QOpenGLTexture::Target3D);
     _material->_TexSlot0->setMinMagFilters(QOpenGLTexture::Nearest, QOpenGLTexture::Nearest);
@@ -103,6 +103,7 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
     _material->_TexSlot0->setData(QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, data4);
     _material->_TexSlot1->setData(QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, data16);
     _material->_TexSlot2->setData(QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, data64);
+    _material->SetSlot2D(":/Textures.png", 3);
 }
 
 
@@ -110,6 +111,7 @@ void OctreeRendererComponent::Draw() {
     _material->_TexSlot0->bind(0);
     _material->_TexSlot1->bind(1);
     _material->_TexSlot2->bind(2);
+    _material->_TexSlot3->bind(3);
     _material->program.bind();
 
     //NOTE: for some reason the camera matrix needs to be inverted
@@ -134,6 +136,7 @@ void OctreeRendererComponent::Draw() {
     _material->program.setUniformValue("colorlod4", 0);
     _material->program.setUniformValue("colorlod16", 1);
     _material->program.setUniformValue("colorlod64", 2);
+    _material->program.setUniformValue("materials", 3);
 
     // Draw Mesh
     _mesh->draw(&_material->program);

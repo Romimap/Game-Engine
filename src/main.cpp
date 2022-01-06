@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
     //CHUNK
     GameObject octree(&root);
     octree.GetTransform()->SetRotation(0, 0, 0);
-    octree.GetTransform()->SetPosition(0, 0, 0);
+    octree.GetTransform()->SetPosition(64, 64, 64);
     OctreeRendererComponent octreeRenderer(&octree);
 
     LinkedQueue<OctreeRendererChange> changes4;
