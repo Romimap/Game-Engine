@@ -28,10 +28,12 @@ unsigned int Material3D::addTexture(vector<vector<vector<unsigned char>>> data) 
     unsigned char* convertedData = (unsigned char*)malloc(sizeX * sizeY * sizeZ * sizeof (unsigned char));
 
     unsigned int index = 0;
-    for (auto &layerX : data) {
-        for (auto &layerXY : layerX) {
-            for (auto &value : layerXY) {
-                convertedData[index++] = value;
+    for (int z = 0; z < sizeZ; z++) {
+        for (int y = 0; y < sizeY; y++) {
+            for (int x = 0; x < sizeX; x++) {
+                convertedData[index++] = data[x][y][z];
+                if (index < 2000)
+                    cout << x << " " << y << " " << z << endl;
             }
         }
     }

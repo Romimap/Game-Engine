@@ -143,10 +143,10 @@ int main(int argc, char *argv[]) {
 
 
     // Currently for testing purposes
-    GameObject dummy("Dummy");
+//    GameObject dummy("Dummy");
 
-    GameObject* worldGenerator = new GameObject("World generator", &dummy);
-    new WorldGeneratorComponent("New world", TerrainType::PERLIN_2D, 123456u, worldGenerator);
+//    GameObject* worldGenerator = new GameObject("World generator", &root);
+//    new WorldGeneratorComponent("New world", TerrainType::PERLIN_2D, 123456u, worldGenerator);
 
     return app.exec();
 }
