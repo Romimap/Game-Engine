@@ -1,10 +1,13 @@
 #ifndef OCTREERENDERERCOMPONENT_H
 #define OCTREERENDERERCOMPONENT_H
 
+
+#include "src/camera.h"
 #include "src/component.h"
-#include "src/material.h"
-#include "src/glmesh.h"
 #include "src/gameobject.h"
+#include "src/glmesh.h"
+#include "src/material.h"
+
 
 class OctreeRendererComponent : Component {
 private:

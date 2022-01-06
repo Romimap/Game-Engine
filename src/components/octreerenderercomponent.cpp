@@ -1,6 +1,4 @@
 #include "octreerenderercomponent.h"
-#include "src/camera.h"
-#include "src/gameobject.h"
 
 OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component(parent) {
     this->_name = "OctreeRendererComponent";

@@ -28,8 +28,9 @@ public:
     Material3D(std::string vshaderPath, std::string fshaderPath);
     ~Material3D();
 
-    /** ADD TEXTURE **/
+    /** TEXTURE MANAGEMENT **/
     unsigned int addTexture(vector<vector<vector<unsigned char>>> data);
+    void bindTexture(unsigned int textureIndex, unsigned int bindIndex);
 };
 
 #endif // MATERIAL3D_H
