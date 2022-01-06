@@ -7,7 +7,9 @@ WorldGeneratorComponent::WorldGeneratorComponent(string worldName, TerrainType t
     this->_terrainType = terrainType;
     this->_seed = seed;
 
-    cout << "Generating world... (WorldGeneratorComponent)" << endl;
+    string className = " (WorldGeneratorComponent)";
+
+    cout << "Generating world..." << className << endl;
 
     auto start = chrono::high_resolution_clock::now();
 
@@ -18,6 +20,8 @@ WorldGeneratorComponent::WorldGeneratorComponent(string worldName, TerrainType t
     int zMin = 0, zMax = 0;
 
     int chunksCount = 0;
+    int totalChunks = (xMax - xMin + 1) * (yMax - yMin + 1) * (zMax - zMin + 1);
+
     for (int x = xMin; x <= xMax; x++) {
         for (int y = yMin; y <= yMax; y++) {
             for (int z = zMin; z <= zMax; z++) {
@@ -31,12 +35,16 @@ WorldGeneratorComponent::WorldGeneratorComponent(string worldName, TerrainType t
                 Perlin2dTerrainComponent TC(0, 0, 0, _CHUNK_X_SIZE, _CHUNK_Y_SIZE, _CHUNK_Z_SIZE, _CHUNK_NB_OF_LAYERS, _CHUNK_LAYER_SIZE_REDUCTION_FACTOR, _perlin, _OCTAVES, _FREQUENCY, _PERSISTENCE, GetParent());
 
                 chunksCount++;
+
+                int percentage = (100 * chunksCount) / totalChunks;
+                cout << "\rProgress: " << chunksCount << "/" << totalChunks << " chunks (" << percentage << "%)" << className << flush;
             }
         }
     }
+    cout << endl;
 
     auto end = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed = end - start;
 
-    cout << "World generation done (created " << chunksCount << " chunks) in " << elapsed.count() << "s (WorldGeneratorComponent)" << endl;
+    cout << "World generation done (created " << chunksCount << " chunks) in " << elapsed.count() << "s" << className << endl;
 }
