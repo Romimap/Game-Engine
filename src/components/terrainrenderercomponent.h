@@ -6,7 +6,10 @@
 
 #include "src/camera.h"
 #include "src/component.h"
+#include "src/gameobject.h"
 #include "src/material3d.h"
+
+#include "src/components/terrain/terraincomponent.h"
 
 
 using namespace std;
@@ -22,6 +25,7 @@ public:
     TerrainRendererComponent(GameObject* parent);
 
     /** GENERIC COMPONENT'S METHODS **/
+    void Start() override;
     void Draw() override;
 };
 

@@ -57,6 +57,6 @@ unsigned int Material3D::addTexture(vector<vector<vector<unsigned char>>> data) 
     return _sizeX.size() - 1; // Return the index at which we can find the texture and its dimensions
 }
 
-void Material3D::bindTexture(int textureIndex, int bindIndex) {
-    _textures[textureIndex]->bind(bindIndex);
+void Material3D::bindTexture(int textureID, int bindID) {
+    _textures[textureID]->bind(bindID);
 }

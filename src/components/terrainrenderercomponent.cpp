@@ -2,15 +2,30 @@
 
 TerrainRendererComponent::TerrainRendererComponent(GameObject* parent) : Component(parent) {
     this->_name = "TerrainRendererComponent";
+
+    this->_materiald3D = new Material3D(":/octreevshader.glsl", ":/octreefshader.glsl");
+}
+
+void TerrainRendererComponent::Start() {
+    TerrainComponent* TC = GetParent()->GetComponent<TerrainComponent>();
+
+    for (int i = TC->getNumberOfLayers() - 1; i >= 0; i--) { // From less to most detailed, TODO: swap
+        _materiald3D->addTexture(TC->getLayer(i));
+    }
 }
 
 void TerrainRendererComponent::Draw() {
 
+    cout << "TerrainRendererComponent::Draw() call" << endl;
+
     /** Bind the 3D textures to the shader **/
 
-    _materiald3D->bindTexture(2, 0);
-    _materiald3D->bindTexture(1, 1);
-    _materiald3D->bindTexture(0, 2);
+    TerrainComponent* TC = GetParent()->GetComponent<TerrainComponent>();
+    int textureID = TC->getNumberOfLayers() - 1;
+
+    _materiald3D->bindTexture(textureID--, 0);
+    _materiald3D->bindTexture(textureID--, 1);
+    _materiald3D->bindTexture(textureID--, 2);
     _materiald3D->_program.bind();
 
     /** Get the MVP matrices **/

@@ -91,6 +91,10 @@ int TerrainComponent::setVoxelType(int x, int y, int z, unsigned char voxelMater
     return 1;
 }
 
+int TerrainComponent::getNumberOfLayers() {
+    return _layers.size();
+}
+
 vector<vector<vector<unsigned char>>> TerrainComponent::getLayer(int layerID) {
     return _layers[layerID];
 }

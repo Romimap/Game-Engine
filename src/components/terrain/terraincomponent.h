@@ -49,6 +49,7 @@ public:
     unsigned char getVoxelType(int x, int y, int z, int layerID = 0);
     int setVoxelType(int x, int y, int z, unsigned char voxelMaterial, int layerID = 0);
 
+    int getNumberOfLayers();
     vector<vector<vector<unsigned char>>> getLayer(int layerID);
 
     /** DEBUG **/
