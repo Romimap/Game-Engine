@@ -20,7 +20,7 @@ GameObject::GameObject(std::string name, GameObject* parent) : _parent(parent) {
 }
 
 GameObject::~GameObject() {
-    std::cout << "Deleting '" << _name << "' GameObject..." << std::endl;
+//    std::cout << "Deleting '" << _name << "' GameObject..." << std::endl;
     if (_transform != nullptr)
         delete _transform;
     if (_collider != nullptr)
@@ -203,13 +203,6 @@ void GameObject::RefreshAABB() {
         _globalAABB = new AABB(min, max);
         //qDebug("%s", ("For " + NAME + ", globalAABB is " + std::to_string(_globalAABB->_min.x()) + ", " + std::to_string(_globalAABB->_min.y()) + ", " + std::to_string(_globalAABB->_min.z()) + " : " + std::to_string(_globalAABB->_max.x()) + ", " + std::to_string(_globalAABB->_max.y()) + ", " + std::to_string(_globalAABB->_max.z())).c_str());
     }
-}
-
-template <typename T> Component* GameObject::GetComponent() {
-    for (Component* c : _components) {
-        if (typeid (*c) == typeid (T)) return c;
-    }
-    return nullptr;
 }
 
 

@@ -50,12 +50,12 @@ public:
     GameObject(std::string name, GameObject* parent = nullptr);
     ~GameObject();
 
-    //METHODS
+    /** METHODS **/
     void AddComponent(Component* component);
 
     void Draw();
 
-    //GETTERS SETTERS
+    /** GETTERS SETTERS **/
     bool Enabled();
 
     void SetFixedAABB(QVector3D min, QVector3D max);
@@ -72,10 +72,8 @@ public:
     AABB* GetPersonalGlobalAABB() {return _personalGlobalAABB;}
 
     std::vector<GameObject*> GetChildren();
-    template<typename T> Component* GetComponent();
 
-    //METHODS
-public:
+    /** GENERIC METHODS **/
     void Enable();
     void Disable();
     void Start();
@@ -83,6 +81,15 @@ public:
     void FixedUpdate(float delta);
     void Collisions(GameObject* current);
     void RefreshAABB();
+
+    /** METHODS USING TEMPLATES **/
+    template <typename T> T* GetComponent() {
+        std::cout << "Use of GetComponent" << std::endl;
+        for (Component* c : _components) {
+            if (typeid (*c) == typeid (T)) return (T*)c;
+        }
+        return nullptr;
+    }
 
 };
 
