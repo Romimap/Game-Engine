@@ -1,5 +1,6 @@
 #include "perlin2dterraincomponent.h"
 
+
 Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor,
                                                    const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, GameObject* parent)
     : TerrainComponent(chunkX, chunkY, chunkZ, xSize, ySize, zSize, nbOfLayers, layerSizeReductionFactor, parent) {

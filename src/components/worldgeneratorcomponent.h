@@ -34,6 +34,8 @@ protected:
     const float _FREQUENCY = 8.0f;       // [0.1 ... 64.0]
     const float _PERSISTENCE = 0.5f;     // [0.0 ... 1.0]
 
+    const int TERRAIN_GEN_SQUARE_RADIUS = 0;
+
     /** Chunks related **/
     const int _CHUNK_X_SIZE = 64;
     const int _CHUNK_Y_SIZE = 256;

@@ -72,7 +72,7 @@ public:
     AABB* GetPersonalGlobalAABB() {return _personalGlobalAABB;}
 
     std::vector<GameObject*>* GetChildren();
-    template<typename T> Component* GetComponent();
+    template<typename T> Component* GetComponents();
 
     //METHODS
 public:

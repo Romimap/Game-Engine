@@ -148,6 +148,7 @@ int main(int argc, char *argv[]) {
     GameObject dummy;
 
     GameObject worldGenerator(&dummy);
+    worldGenerator.NAME = "World generator";
     WorldGeneratorComponent WGC("New world", TerrainType::PERLIN_2D, 123456u, &worldGenerator);
 
 //    WorldGenerator worldGenerator("New world", 123456u, &dummy);

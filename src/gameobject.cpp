@@ -180,7 +180,7 @@ void GameObject::RefreshAABB() {
     }
 }
 
-template <typename T> Component* GameObject::GetComponent() {
+template <typename T> Component* GameObject::GetComponents() {
     for(Component* c : *_components) {
         if (typeid (*c) == typeid (T)) return c;
     }

@@ -1,5 +1,6 @@
 #include "terraincomponent.h"
 
+
 TerrainComponent::TerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor, GameObject* parent)
     : Component(parent) {
 
@@ -11,6 +12,16 @@ TerrainComponent::TerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize
     this->_chunkX = chunkX;
     this->_chunkY = chunkY;
     this->_chunkZ = chunkZ;
+
+    /** Setup chunk GameObject's data **/
+
+    QVector3D aabbMin(_chunkX * _xSize, _chunkY * _ySize, _chunkZ * _zSize);
+    QVector3D aabbMax((_chunkX + 1) * _xSize, (_chunkY + 1) * _ySize, (_chunkZ + 1) * _zSize);
+
+    GameObject* chunk = GetParent();
+    chunk->NAME = "chunk_" + to_string(_chunkX) + "_" + to_string(_chunkY) + "_" + to_string(_chunkZ);
+    chunk->GetTransform()->SetPosition(aabbMin.x(), aabbMin.y(), aabbMin.z());
+    chunk->SetFixedAABB(aabbMin, aabbMax);
 
     /** Allocate space for each layer **/
 
