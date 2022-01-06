@@ -16,6 +16,7 @@ SOURCES += src/main.cpp \
     src/components/rigidbodycomponent.cpp \
     src/components/terrain/perlin2dterraincomponent.cpp \
     src/components/terrain/terraincomponent.cpp \
+    src/components/terrainrenderer.cpp \
     src/components/worldgeneratorcomponent.cpp \
     src/engine.cpp \
     src/gameobject.cpp \
@@ -23,6 +24,7 @@ SOURCES += src/main.cpp \
     src/inputmanager.cpp \
     src/material.cpp \
     src/components/rotatorcomponent.cpp \
+    src/material3d.cpp \
     src/transform.cpp
 
 HEADERS += \
@@ -37,6 +39,7 @@ HEADERS += \
     src/components/rigidbodycomponent.h \
     src/components/terrain/perlin2dterraincomponent.h \
     src/components/terrain/terraincomponent.h \
+    src/components/terrainrenderer.h \
     src/components/worldgeneratorcomponent.h \
     src/consts.h \
     src/engine.h \
@@ -45,6 +48,7 @@ HEADERS += \
     src/inputmanager.h \
     src/material.h \
     src/components/rotatorcomponent.h \
+    src/material3d.h \
     src/transform.h \
     libraries/octree/array.h \
     libraries/octree/array2d.h \
