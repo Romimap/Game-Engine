@@ -9,11 +9,9 @@ GameObject::GameObject(GameObject* parent) : _parent(parent) {
     }
 
     _transform = new Transform(this);
-    _children = new std::vector<GameObject*>();
-    _components = new std::vector<Component*>();
 
     if (parent != nullptr) {
-        parent->_children->push_back(this);
+        parent->_children.push_back(this);
     }
 }
 
@@ -49,7 +47,7 @@ GameObject* GameObject::GetParent () {
     return _parent;
 }
 
-std::vector<GameObject*>* GameObject::GetChildren() {
+std::vector<GameObject*> GameObject::GetChildren() {
     return _children;
 }
 
@@ -66,20 +64,20 @@ void GameObject::Disable () {//TODO
 }
 
 void GameObject::Start () {
-    for (Component* component : *_components) {
+    for (Component* component : _components) {
         component->Start();
     }
     _started = true;
 }
 
 void GameObject::Update (float delta) {
-    for (Component* component : *_components) {
+    for (Component* component : _components) {
         component->Update(delta);
     }
 }
 
 void GameObject::FixedUpdate (float delta) {
-    for (Component* component : *_components) {
+    for (Component* component : _components) {
         component->FixedUpdate(delta);
     }
 }
@@ -95,12 +93,12 @@ void GameObject::Collisions(GameObject* current) {
                     //qDebug("%s", (NAME + " is colliding with " + current->NAME).c_str());
                     //NOTE: now if A collide with B, only A is notified as B will be computed later
                     //Possible optimisation : notify A and B, and mark that collision as solved. When we test B to A, skip the test
-                    for (Component* c : *_components) {
+                    for (Component* c : _components) {
                         c->Collision(current->GetCollider());
                     }
                 }
             }
-            for (GameObject* child : *current->GetChildren()) { //Possible children collision
+            for (GameObject* child : current->GetChildren()) { //Possible children collision
                 Collisions(child);
             }
         }
@@ -109,7 +107,7 @@ void GameObject::Collisions(GameObject* current) {
 
 
 void GameObject::AddComponent(Component *component) {
-    _components->push_back(component);
+    _components.push_back(component);
 }
 
 void GameObject::RefreshAABB() {
@@ -159,7 +157,7 @@ void GameObject::RefreshAABB() {
     }
 
     //Finally, we do that recursively for each child. The _globalAABB of a game object contains itself and all children
-    for(GameObject* child : *_children) {
+    for(GameObject* child : _children) {
         child->RefreshAABB();
         AABB* current = child->_globalAABB;
 
@@ -180,8 +178,8 @@ void GameObject::RefreshAABB() {
     }
 }
 
-template <typename T> Component* GameObject::GetComponents() {
-    for(Component* c : *_components) {
+template <typename T> Component* GameObject::GetComponent() {
+    for (Component* c : _components) {
         if (typeid (*c) == typeid (T)) return c;
     }
     return nullptr;
@@ -189,7 +187,7 @@ template <typename T> Component* GameObject::GetComponents() {
 
 
 void GameObject::Draw() {
-    for (Component* c : *_components) {
+    for (Component* c : _components) {
         c->Draw();
     }
 }
