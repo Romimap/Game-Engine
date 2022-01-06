@@ -8,7 +8,7 @@ float RigidBodyComponent::frictionTreshold = 0.02;
 
 
 RigidBodyComponent::RigidBodyComponent(float weight, float drag, float bounciness, float friction, GameObject* parent) : Component(parent), _weight(weight), _drag(1 - drag), _bounciness(bounciness), _friction(1 - friction) {
-
+    this->_name = "RigidBodyComponent";
 }
 
 RigidBodyComponent::~RigidBodyComponent() {

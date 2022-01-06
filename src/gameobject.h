@@ -43,11 +43,11 @@ protected:
 public:
     static GameObject* Root;
 
-    std::string NAME = "";
+    std::string _name = "";
 
     //CONSTRUCTORS
 public:
-    GameObject(GameObject* parent = nullptr);
+    GameObject(std::string name, GameObject* parent = nullptr);
     ~GameObject();
 
     //METHODS

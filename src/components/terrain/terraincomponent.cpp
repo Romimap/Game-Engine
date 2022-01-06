@@ -4,6 +4,7 @@
 TerrainComponent::TerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor, GameObject* parent)
     : Component(parent) {
 
+    this->_name = "TerrainComponent";
     this->_hasChanged = true;
     this->_xSize = xSize;
     this->_ySize = ySize;
@@ -19,7 +20,7 @@ TerrainComponent::TerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize
     QVector3D aabbMax((_chunkX + 1) * _xSize, (_chunkY + 1) * _ySize, (_chunkZ + 1) * _zSize);
 
     GameObject* chunk = GetParent();
-    chunk->NAME = "chunk_" + to_string(_chunkX) + "_" + to_string(_chunkY) + "_" + to_string(_chunkZ);
+    chunk->_name = "Chunk_" + to_string(_chunkX) + "_" + to_string(_chunkY) + "_" + to_string(_chunkZ);
     chunk->GetTransform()->SetPosition(aabbMin.x(), aabbMin.y(), aabbMin.z());
     chunk->SetFixedAABB(aabbMin, aabbMax);
 

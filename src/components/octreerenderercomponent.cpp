@@ -3,6 +3,8 @@
 #include "src/gameobject.h"
 
 OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component(parent) {
+    this->_name = "OctreeRendererComponent";
+
     _material = new Material(":/octreevshader.glsl", ":/octreefshader.glsl");
 
     _mesh = new GLMesh("../Game-Engine/misc/chunk.obj");
@@ -71,8 +73,8 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
     }
 
     _material->SetSlot3D(0, 4, 16, 4, data4);
-    _material->SetSlot3D(0, 16, 64, 16, data16);
-    _material->SetSlot3D(0, 64, 256, 64, data64);
+    _material->SetSlot3D(1, 16, 64, 16, data16);
+    _material->SetSlot3D(2, 64, 256, 64, data64);
 }
 
 

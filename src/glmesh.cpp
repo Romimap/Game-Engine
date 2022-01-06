@@ -61,7 +61,6 @@ struct VertexData {
     QVector2D uv;
 };
 
-//! [0]
 GLMesh::GLMesh(std::string lod0)
     : indexBuf(QOpenGLBuffer::IndexBuffer){
     initializeOpenGLFunctions();
@@ -73,12 +72,6 @@ GLMesh::GLMesh(std::string lod0)
     // Initializes cube geometry and transfers it to VBOs
     initMesh(lod0, &arrayBuf, &indexBuf);
 }
-
-GLMesh::~GLMesh() {
-    arrayBuf.destroy();
-    indexBuf.destroy();
-}
-//! [0]
 
 //TY Stack overflow
 std::vector<std::string> split (std::string s, std::string delimiter) {

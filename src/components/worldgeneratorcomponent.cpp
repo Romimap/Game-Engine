@@ -4,7 +4,7 @@
 WorldGeneratorComponent::WorldGeneratorComponent(string worldName, TerrainType terrainType, siv::PerlinNoise::seed_type seed, GameObject* parent)
     : Component(parent) {
 
-    this->NAME = "WorldGeneratorComponent";
+    this->_name = "WorldGeneratorComponent";
     this->_worldName = worldName;
     this->_terrainType = terrainType;
     this->_seed = seed;
@@ -27,7 +27,7 @@ WorldGeneratorComponent::WorldGeneratorComponent(string worldName, TerrainType t
     for (int x = xMin; x <= xMax; x++) {
         for (int y = yMin; y <= yMax; y++) {
             for (int z = zMin; z <= zMax; z++) {
-                GameObject* chunk = new GameObject(GetParent());
+                GameObject* chunk = new GameObject("Chunk", GetParent());
 
                 switch (_terrainType) {
                     case TerrainType::PERLIN_2D:

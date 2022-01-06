@@ -16,7 +16,7 @@ SOURCES += src/main.cpp \
     src/components/rigidbodycomponent.cpp \
     src/components/terrain/perlin2dterraincomponent.cpp \
     src/components/terrain/terraincomponent.cpp \
-    src/components/terrainrenderer.cpp \
+    src/components/terrainrenderercomponent.cpp \
     src/components/worldgeneratorcomponent.cpp \
     src/engine.cpp \
     src/gameobject.cpp \
@@ -39,7 +39,7 @@ HEADERS += \
     src/components/rigidbodycomponent.h \
     src/components/terrain/perlin2dterraincomponent.h \
     src/components/terrain/terraincomponent.h \
-    src/components/terrainrenderer.h \
+    src/components/terrainrenderercomponent.h \
     src/components/worldgeneratorcomponent.h \
     src/consts.h \
     src/engine.h \

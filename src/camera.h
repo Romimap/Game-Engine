@@ -14,7 +14,7 @@ public:
     QMatrix4x4 _projectionMatrix;
 
 
-    Camera(GameObject* parent);
+    Camera(std::string name, GameObject* parent);
 
     void ResizeGL(int w, int h);
 

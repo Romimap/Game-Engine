@@ -11,10 +11,10 @@ class Component {
 private:
     GameObject* _parent;
 public:
-    std::string NAME;
+    std::string _name;
 
     Component(GameObject* parent);
-    virtual ~Component(){}
+    virtual ~Component();
 
     virtual void Start(){}
     virtual void Update(float delta){}

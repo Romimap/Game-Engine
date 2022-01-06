@@ -5,6 +5,8 @@ Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int c
                                                    const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, GameObject* parent)
     : TerrainComponent(chunkX, chunkY, chunkZ, xSize, ySize, zSize, nbOfLayers, layerSizeReductionFactor, parent) {
 
+    this->_name = "Perlin2dTerrainComponent";
+
     /** Generate terrain for the most detailed layer using perlin noise **/
 
     vector<vector<vector<unsigned char>>> &layer = _layers[0];

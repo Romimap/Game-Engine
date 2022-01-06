@@ -1,7 +1,7 @@
 #include "meshrenderercomponent.h"
 
 MeshRendererComponent::MeshRendererComponent(GLMesh* mesh, Material* material, GameObject* parent) : Component(parent), _mesh(mesh), _material(material) {
-
+    this->_name = "MeshRendererComponent";
 }
 
 void MeshRendererComponent::Draw() {

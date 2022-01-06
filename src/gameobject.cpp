@@ -3,7 +3,9 @@
 
 GameObject* GameObject::Root = nullptr;
 
-GameObject::GameObject(GameObject* parent) : _parent(parent) {
+GameObject::GameObject(std::string name, GameObject* parent) : _parent(parent) {
+    this->_name = name;
+
     if (parent == nullptr && Root == nullptr) {
         Root = this;
     }
@@ -18,31 +20,25 @@ GameObject::GameObject(GameObject* parent) : _parent(parent) {
 }
 
 GameObject::~GameObject() {
-    std::cout << "Deleting '" << NAME << "' GameObject..." << std::endl;
+    std::cout << "Deleting '" << _name << "' GameObject..." << std::endl;
     if (_transform != nullptr)
         delete _transform;
-    std::cout << "ok 1" << std::endl;
     if (_collider != nullptr)
         delete _collider;
-    std::cout << "ok 2" << std::endl;
     if (_globalAABB != nullptr)
         delete _globalAABB;
-    std::cout << "ok 3" << std::endl;
     if (_personalGlobalAABB != nullptr)
         delete _personalGlobalAABB;
-    std::cout << "ok 4" << std::endl;
 
     for (auto* component : _components) {
         if (component != nullptr)
             delete component;
     }
-    std::cout << "ok 5" << std::endl;
 
     for (auto* child : _children) {
         if (child != nullptr)
             delete child;
     }
-    std::cout << "ok 6" << std::endl;
 }
 
 //GETTERS SETTERS

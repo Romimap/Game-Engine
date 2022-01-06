@@ -78,14 +78,12 @@ int main(int argc, char *argv[]) {
     app.setApplicationName("Voxel Game Engine");
     app.setApplicationVersion("0.1");
 
-    GameObject root;
-    root.NAME = "root";
+    GameObject root("Root");
 
-    Camera camera(&root);
-    camera.NAME = "camera";
-    camera.GetTransform()->SetPosition(0, 270, 0);
-    camera.GetTransform()->SetRotation(0, 0, 0);
-    camera.GetTransform()->SetScale(1, 1, 1);
+    Camera* camera = new Camera("Camera", &root);
+    camera->GetTransform()->SetPosition(0, 270, 0);
+    camera->GetTransform()->SetRotation(0, 0, 0);
+    camera->GetTransform()->SetScale(1, 1, 1);
 
     Engine engine;
     engine.show();
@@ -94,28 +92,28 @@ int main(int argc, char *argv[]) {
     //ORIGIN (OFFSET 0 260 0)
     GLMesh* cubeMesh = new GLMesh("../Game-Engine/misc/Cube.obj");
 
-    GameObject* cube = new GameObject(&root);
+    GameObject* cube = new GameObject("White cube", &root);
     cube->GetTransform()->SetRotation(0, 0, 0);
     cube->GetTransform()->SetPosition(0, 260, 0);
     Material* cubeMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
     cubeMat->SetSlot2D(":/default.png", 0);
     new MeshRendererComponent(cubeMesh, cubeMat, cube);
 
-    GameObject* X = new GameObject(&root);
+    GameObject* X = new GameObject("Red cube", &root);
     X->GetTransform()->SetRotation(0, 0, 0);
     X->GetTransform()->SetPosition(4, 260, 0);
     Material* XMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
     XMat->SetSlot2D(":/r.png", 0);
     new MeshRendererComponent(cubeMesh, XMat, X);
 
-    GameObject* Y = new GameObject(&root);
+    GameObject* Y = new GameObject("Green cube", &root);
     Y->GetTransform()->SetRotation(0, 0, 0);
     Y->GetTransform()->SetPosition(0, 264, 0);
     Material* YMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
     YMat->SetSlot2D(":/g.png", 0);
     new MeshRendererComponent(cubeMesh, YMat, Y);
 
-    GameObject* Z = new GameObject(&root);
+    GameObject* Z = new GameObject("Blue cube", &root);
     Z->GetTransform()->SetRotation(0, 0, 0);
     Z->GetTransform()->SetPosition(0, 260, 4);
     Material* ZMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
@@ -124,7 +122,7 @@ int main(int argc, char *argv[]) {
 
 
     //CHUNK
-    GameObject* octree = new GameObject(&root);
+    GameObject* octree = new GameObject("Octree", &root);
     octree->GetTransform()->SetRotation(0, 0, 0);
     octree->GetTransform()->SetPosition(0, 0, 0);
     new OctreeRendererComponent(octree);
@@ -141,15 +139,13 @@ int main(int argc, char *argv[]) {
     //skybox.GetTransform()->SetPosition(0, 0, -0.75);
     //skybox.SetRenderData(&skyboxRenderData);
 
-    PlayerControllerComponent playerController(32, 0.1, nullptr, &camera);
+    new PlayerControllerComponent(32, 0.1, nullptr, camera);
 
 
     // Currently for testing purposes
-    GameObject dummy;
-    dummy.NAME = "dummy";
+    GameObject dummy("Dummy");
 
-    GameObject* worldGenerator = new GameObject(&dummy);
-    worldGenerator->NAME = "World generator";
+    GameObject* worldGenerator = new GameObject("World generator", &dummy);
     new WorldGeneratorComponent("New world", TerrainType::PERLIN_2D, 123456u, worldGenerator);
 
     return app.exec();
