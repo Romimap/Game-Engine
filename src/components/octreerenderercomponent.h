@@ -13,6 +13,7 @@ private:
 
 public:
     OctreeRendererComponent(GameObject* parent);
+
     void Draw() override;
 };
 

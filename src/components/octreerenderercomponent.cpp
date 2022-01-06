@@ -4,6 +4,7 @@
 
 OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component(parent) {
     _material = new Material(":/octreevshader.glsl", ":/octreefshader.glsl");
+
     _mesh = new GLMesh("../Game-Engine/misc/chunk.obj");
 
     //TODO, do that but with an octree
@@ -11,53 +12,31 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
     QImage heightmap;
     heightmap.load(":/heightmap-1024x1024.png");
 
-    _material->_TexSlot0 = new QOpenGLTexture(QOpenGLTexture::Target3D);
-    _material->_TexSlot0->setMinMagFilters(QOpenGLTexture::Nearest, QOpenGLTexture::Nearest);
-    _material->_TexSlot0->setWrapMode(QOpenGLTexture::Repeat);
-    _material->_TexSlot0->create();
-    _material->_TexSlot0->setSize(4, 32, 4);
-    _material->_TexSlot0->setFormat(QOpenGLTexture::TextureFormat::LuminanceFormat);
-    _material->_TexSlot0->allocateStorage();
-    char* data4 = (char*)malloc(4*32*4 * sizeof (char));
-    for (int k = 0; k < 4*32*4; k++) {
+    char* data4 = (char*)malloc(4*16*4 * sizeof (char));
+    for (int k = 0; k < 4*16*4; k++) {
         data4[k] = 0;
         //data4[k] = (rand() % 5 == 0) * 255;;
     }
 
-    _material->_TexSlot1 = new QOpenGLTexture(QOpenGLTexture::Target3D);
-    _material->_TexSlot1->setMinMagFilters(QOpenGLTexture::Nearest, QOpenGLTexture::Nearest);
-    _material->_TexSlot1->setWrapMode(QOpenGLTexture::Repeat);
-    _material->_TexSlot1->create();
-    _material->_TexSlot1->setSize(16, 128, 16);
-    _material->_TexSlot1->setFormat(QOpenGLTexture::TextureFormat::LuminanceFormat);
-    _material->_TexSlot1->allocateStorage();
-    char* data16 = (char*)malloc(16*128*16 * sizeof (char));
-    for (int k = 0; k < 16*128*16; k++) {
+    char* data16 = (char*)malloc(16*64*16 * sizeof (char));
+    for (int k = 0; k < 16*64*16; k++) {
         data16[k] = 0;
         //data16[k] = (rand() % 5 == 0) * 255;;
     }
 
-
-    _material->_TexSlot2 = new QOpenGLTexture(QOpenGLTexture::Target3D);
-    _material->_TexSlot2->setMinMagFilters(QOpenGLTexture::Nearest, QOpenGLTexture::Nearest);
-    _material->_TexSlot2->setWrapMode(QOpenGLTexture::Repeat);
-    _material->_TexSlot2->create();
-    _material->_TexSlot2->setSize(64, 512, 64);
-    _material->_TexSlot2->setFormat(QOpenGLTexture::TextureFormat::LuminanceFormat);
-    _material->_TexSlot2->allocateStorage();
-    char* data64 = (char*)malloc(64*512*64 * sizeof (char));
-    for (int k = 0; k < 64*512*64; k++) {
+    char* data64 = (char*)malloc(64*256*64 * sizeof (char));
+    for (int k = 0; k < 64*256*64; k++) {
         int x =  k % 64;
-        int y = (k / 64) % 512;
-        int z = (k / 64) / 512;
+        int y = (k / 64) % 256;
+        int z = (k / 64) / 256;
 
 
         int x16 = x / 4;
         int y16 = y / 4;
         int z16 = z / 4;
-        int k16 = x16 + 16*y16 + 16*128*z16;
+        int k16 = x16 + 16*y16 + 16*64*z16;
 
-        if (k16 >= 16*128*16) {
+        if (k16 >= 16*64*16) {
             printf("ERROR 16 k=%d x=%d y=%d z=%d\n", k16, x16, y16, z16);
             exit(0);
         }
@@ -65,14 +44,14 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
         int x4 = x16 / 4;
         int y4 = y16 / 4;
         int z4 = z16 / 4;
-        int k4 = x4 + 4*y4 + 4*32*z4;
+        int k4 = x4 + 4*y4 + 4*16*z4;
 
         //printf("64 k=%d x=%d y=%d z=%d\n", k, x, y, z);
         //printf("16 k=%d x=%d y=%d z=%d\n", k16, x16, y16, z16);
         //printf("4  k=%d x=%d y=%d z=%d\n\n", k4, x4, y4, z4);
 
 
-        if (k4 >= 4*32*4) {
+        if (k4 >= 4*16*4) {
             printf("ERROR 4 k=%d x=%d y=%d z=%d\n", k4, x4, y4, z4);
             exit(0);
         }
@@ -89,17 +68,11 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
         }
         //data1024[k] = 0b11111111;
         //data64[k] = (rand() % 20 == 0) * 255;
-
-//        if (k == 64*512*64 - 1) {
-//            printf("64 k=%d x=%d y=%d z=%d\n", k, x, y, z);
-//            printf("16 k=%d x=%d y=%d z=%d\n", k16, x16, y16, z16);
-//            printf("4  k=%d x=%d y=%d z=%d\n\n", k4, x4, y4, z4);
-//        }
     }
 
-    _material->_TexSlot0->setData(QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, data4);
-    _material->_TexSlot1->setData(QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, data16);
-    _material->_TexSlot2->setData(QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, data64);
+    _material->SetSlot3D(0, 4, 16, 4, data4);
+    _material->SetSlot3D(0, 16, 64, 16, data16);
+    _material->SetSlot3D(0, 64, 256, 64, data64);
 }
 
 

@@ -8,10 +8,12 @@
 
 class MeshRendererComponent : public Component {
 private:
-    GLMesh* _mesh;
     Material* _material;
+    GLMesh* _mesh;
+
 public:
     MeshRendererComponent(GLMesh* mesh, Material* material, GameObject* parent);
+
     void Draw() override;
 };
 
