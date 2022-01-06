@@ -57,6 +57,16 @@ TerrainComponent::TerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize
 }
 
 unsigned char TerrainComponent::getVoxelType(int x, int y, int z, int layerID) {
+    int _currentLayerSizeReductionFactor = pow(layerID, _layerSizeReductionFactor);
+    int xSize = _xSize / _currentLayerSizeReductionFactor;
+    int ySize = _ySize / _currentLayerSizeReductionFactor;
+    int zSize = _zSize / _currentLayerSizeReductionFactor;
+
+    if (x < 0 || x >= xSize || y < 0 || y >= ySize || z < 0 || z >= zSize) {
+        cerr << "Trying to get a voxel (" << x << ", " << y << ", " << z << ") outside of the defined layer (" << layerID << ")" << endl;
+        return MaterialId::AIR;
+    }
+
     return _layers[layerID][x][y][z];
 }
 
@@ -71,9 +81,10 @@ int TerrainComponent::setVoxelType(int x, int y, int z, unsigned char voxelMater
     int ySize = _ySize / _currentLayerSizeReductionFactor;
     int zSize = _zSize / _currentLayerSizeReductionFactor;
 
-    if (x < 0 || x >= xSize) return -1;
-    if (y < 0 || y >= ySize) return -1;
-    if (z < 0 || z >= zSize) return -1;
+    if (x < 0 || x >= xSize || y < 0 || y >= ySize || z < 0 || z >= zSize) {
+        cerr << "Trying to set a voxel (" << x << ", " << y << ", " << z << ") outside of the defined layer (" << layerID << ")" << endl;
+        return -1;
+    }
 
     _layers[0][x][y][z] = voxelMaterial;
     return 1;
