@@ -94,40 +94,40 @@ int main(int argc, char *argv[]) {
     //ORIGIN (OFFSET 0 260 0)
     GLMesh* cubeMesh = new GLMesh("../Game-Engine/misc/Cube.obj");
 
-    GameObject cube(&root);
-    cube.GetTransform()->SetRotation(0, 0, 0);
-    cube.GetTransform()->SetPosition(0, 260, 0);
+    GameObject* cube = new GameObject(&root);
+    cube->GetTransform()->SetRotation(0, 0, 0);
+    cube->GetTransform()->SetPosition(0, 260, 0);
     Material* cubeMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
     cubeMat->SetSlot2D(":/default.png", 0);
-    MeshRendererComponent cubeMeshRenderer(cubeMesh, cubeMat, &cube);
+    new MeshRendererComponent(cubeMesh, cubeMat, cube);
 
-    GameObject X(&root);
-    X.GetTransform()->SetRotation(0, 0, 0);
-    X.GetTransform()->SetPosition(4, 260, 0);
+    GameObject* X = new GameObject(&root);
+    X->GetTransform()->SetRotation(0, 0, 0);
+    X->GetTransform()->SetPosition(4, 260, 0);
     Material* XMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
     XMat->SetSlot2D(":/r.png", 0);
-    MeshRendererComponent XMeshRenderer(cubeMesh, XMat, &X);
+    new MeshRendererComponent(cubeMesh, XMat, X);
 
-    GameObject Y(&root);
-    Y.GetTransform()->SetRotation(0, 0, 0);
-    Y.GetTransform()->SetPosition(0, 264, 0);
+    GameObject* Y = new GameObject(&root);
+    Y->GetTransform()->SetRotation(0, 0, 0);
+    Y->GetTransform()->SetPosition(0, 264, 0);
     Material* YMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
     YMat->SetSlot2D(":/g.png", 0);
-    MeshRendererComponent YMeshRenderer(cubeMesh, YMat, &Y);
+    new MeshRendererComponent(cubeMesh, YMat, Y);
 
-    GameObject Z(&root);
-    Z.GetTransform()->SetRotation(0, 0, 0);
-    Z.GetTransform()->SetPosition(0, 260, 4);
+    GameObject* Z = new GameObject(&root);
+    Z->GetTransform()->SetRotation(0, 0, 0);
+    Z->GetTransform()->SetPosition(0, 260, 4);
     Material* ZMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
     ZMat->SetSlot2D(":/b.png", 0);
-    MeshRendererComponent ZMeshRenderer(cubeMesh, ZMat, &Z);
+    new MeshRendererComponent(cubeMesh, ZMat, Z);
 
 
     //CHUNK
-    GameObject octree(&root);
-    octree.GetTransform()->SetRotation(0, 0, 0);
-    octree.GetTransform()->SetPosition(0, 0, 0);
-    OctreeRendererComponent octreeRenderer(&octree);
+    GameObject* octree = new GameObject(&root);
+    octree->GetTransform()->SetRotation(0, 0, 0);
+    octree->GetTransform()->SetPosition(0, 0, 0);
+    new OctreeRendererComponent(octree);
 
 
 
@@ -146,12 +146,11 @@ int main(int argc, char *argv[]) {
 
     // Currently for testing purposes
     GameObject dummy;
+    dummy.NAME = "dummy";
 
-    GameObject worldGenerator(&dummy);
-    worldGenerator.NAME = "World generator";
-    WorldGeneratorComponent WGC("New world", TerrainType::PERLIN_2D, 123456u, &worldGenerator);
-
-//    WorldGenerator worldGenerator("New world", 123456u, &dummy);
+    GameObject* worldGenerator = new GameObject(&dummy);
+    worldGenerator->NAME = "World generator";
+    new WorldGeneratorComponent("New world", TerrainType::PERLIN_2D, 123456u, worldGenerator);
 
     return app.exec();
 }

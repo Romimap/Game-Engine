@@ -62,7 +62,7 @@ struct VertexData {
 };
 
 //! [0]
-GLMesh::GLMesh(char* lod0)
+GLMesh::GLMesh(std::string lod0)
     : indexBuf(QOpenGLBuffer::IndexBuffer){
     initializeOpenGLFunctions();
 
@@ -117,7 +117,7 @@ std::vector<std::string> split (std::string s, std::string delimiter) {
    |_______|   ;_|_|_/    :_;_;_;_:
     [=====]
 */
-void GLMesh::initMesh(char *path, QOpenGLBuffer* arrayBuffer, QOpenGLBuffer* indexBuffer) {
+void GLMesh::initMesh(std::string path, QOpenGLBuffer* arrayBuffer, QOpenGLBuffer* indexBuffer) {
     std::vector<QVector3D> pos;
     std::vector<QVector3D> nrm;
     std::vector<QVector2D> uv;
@@ -126,7 +126,7 @@ void GLMesh::initMesh(char *path, QOpenGLBuffer* arrayBuffer, QOpenGLBuffer* ind
     std::vector<VertexData>& vertexArray = *vertexArray_ptr;
     std::vector<GLushort>& indexArray = *indexArray_ptr;
 
-    std::ifstream file(path);
+    std::ifstream file(path.c_str());
     std::string str;
     while (std::getline(file, str)) {
         std::vector<std::string> splitStr = split(str, " ");
