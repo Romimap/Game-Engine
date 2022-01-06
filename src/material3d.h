@@ -30,7 +30,7 @@ public:
 
     /** TEXTURE MANAGEMENT **/
     unsigned int addTexture(vector<vector<vector<unsigned char>>> data);
-    void bindTexture(unsigned int textureIndex, unsigned int bindIndex);
+    void bindTexture(int textureIndex, int bindIndex);
 };
 
 #endif // MATERIAL3D_H

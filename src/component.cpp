@@ -6,5 +6,5 @@ Component::Component(GameObject* parent) : _parent(parent) {
 }
 
 Component::~Component() {
-    std::cout << "# Deleting '" << _name << "' Component..." << std::endl;
+//    std::cout << "# Deleting '" << _name << "' Component..." << std::endl;
 }
