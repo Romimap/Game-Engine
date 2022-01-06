@@ -1,4 +1,4 @@
-    /****************************************************************************
+/****************************************************************************
 **
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -54,21 +54,19 @@
 #include <QWidget>
 #include <QTimer>
 
-#include "gameobject.h"
+#include "cubecollider.h"
 #include "engine.h"
+#include "gameobject.h"
 #include "glmesh.h"
 #include "material.h"
+
 #include "components/playercontrollercomponent.h"
 #include "components/rigidbodycomponent.h"
 #include "components/rotatorcomponent.h"
 #include "components/octreerenderercomponent.h"
 #include "components/meshrenderercomponent.h"
-#include "worldgenerator.h"
+#include "components/worldgeneratorcomponent.h"
 #include "linkedqueue.h"
-
-
-
-#include "cubecollider.h"
 
 
 int main(int argc, char *argv[]) {
@@ -158,8 +156,15 @@ int main(int argc, char *argv[]) {
 
     PlayerControllerComponent playerController(32, 0.1, nullptr, &camera);
 
+
     // Currently for testing purposes
-    WorldGenerator worldGenerator("New world", 123456u);
+    GameObject dummy;
+
+    GameObject worldGenerator(&dummy);
+    worldGenerator.NAME = "World generator";
+    WorldGeneratorComponent WGC("New world", TerrainType::PERLIN_2D, 123456u, &worldGenerator);
+
+//    WorldGenerator worldGenerator("New world", 123456u, &dummy);
 
     return app.exec();
 }

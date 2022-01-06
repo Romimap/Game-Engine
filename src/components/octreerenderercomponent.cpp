@@ -93,11 +93,11 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
         //data1024[k] = 0b11111111;
         //data64[k] = (rand() % 20 == 0) * 255;
 
-        if (k == 64*512*64 - 1) {
-            printf("64 k=%d x=%d y=%d z=%d\n", k, x, y, z);
-            printf("16 k=%d x=%d y=%d z=%d\n", k16, x16, y16, z16);
-            printf("4  k=%d x=%d y=%d z=%d\n\n", k4, x4, y4, z4);
-        }
+//        if (k == 64*512*64 - 1) {
+//            printf("64 k=%d x=%d y=%d z=%d\n", k, x, y, z);
+//            printf("16 k=%d x=%d y=%d z=%d\n", k16, x16, y16, z16);
+//            printf("4  k=%d x=%d y=%d z=%d\n\n", k4, x4, y4, z4);
+//        }
     }
 
     _material->_TexSlot0->setData(QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, data4);

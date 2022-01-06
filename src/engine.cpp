@@ -77,7 +77,7 @@ void Engine::paintGL() {
 
 void Engine::Draw(GameObject* current) {
     current->Draw();
-    for (GameObject* child : *current->GetChildren()) {
+    for (GameObject* child : current->GetChildren()) {
         Draw(child);
     }
 }
@@ -86,7 +86,7 @@ void Engine::Start(GameObject* current) {
     if (!current->Enabled()) return;
 
     current->Start();
-    for (GameObject* child : *current->GetChildren()) {
+    for (GameObject* child : current->GetChildren()) {
         Start(child);
     }
 }
@@ -95,7 +95,7 @@ void Engine::Update(GameObject* current, double deltaTime) {
     if (!current->Enabled()) return;
 
     current->Update(deltaTime);
-    for (GameObject* child : *current->GetChildren()) {
+    for (GameObject* child : current->GetChildren()) {
         Update(child, deltaTime);
     }
 }
@@ -104,7 +104,7 @@ void Engine::FixedUpdate(GameObject* current, double deltaTime) {
     if (!current->Enabled()) return;
 
     current->FixedUpdate(deltaTime);
-    for (GameObject* child : *current->GetChildren()) {
+    for (GameObject* child : current->GetChildren()) {
         FixedUpdate(child, deltaTime);
     }
 }
@@ -112,7 +112,7 @@ void Engine::FixedUpdate(GameObject* current, double deltaTime) {
 void Engine::Collisions(GameObject* current) {
     if (current->Enabled()) {
         if (current->GetPersonalGlobalAABB() != nullptr) current->Collisions(GameObject::Root);
-        for (GameObject* child : *current->GetChildren()) {
+        for (GameObject* child : current->GetChildren()) {
             Collisions(child);
         }
     }

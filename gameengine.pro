@@ -6,7 +6,6 @@ TEMPLATE = app
 CONFIG += c++17
 
 SOURCES += src/main.cpp \
-    src/chunk.cpp \
     src/aabb.cpp \
     src/aabbcollider.cpp \
     src/camera.cpp \
@@ -15,6 +14,9 @@ SOURCES += src/main.cpp \
     src/components/octreerenderercomponent.cpp \
     src/components/playercontrollercomponent.cpp \
     src/components/rigidbodycomponent.cpp \
+    src/components/terrain/perlin2dterraincomponent.cpp \
+    src/components/terrain/terraincomponent.cpp \
+    src/components/worldgeneratorcomponent.cpp \
     src/engine.cpp \
     src/gameobject.cpp \
     src/glmesh.cpp \
@@ -22,11 +24,9 @@ SOURCES += src/main.cpp \
     src/linkedqueue.cpp \
     src/material.cpp \
     src/components/rotatorcomponent.cpp \
-    src/transform.cpp \
-    src/worldgenerator.cpp
+    src/transform.cpp
 
 HEADERS += \
-    src/chunk.h \
     src/aabb.h \
     src/aabbcollider.h \
     src/camera.h \
@@ -36,6 +36,10 @@ HEADERS += \
     src/components/octreerenderercomponent.h \
     src/components/playercontrollercomponent.h \
     src/components/rigidbodycomponent.h \
+    src/components/terrain/perlin2dterraincomponent.h \
+    src/components/terrain/terraincomponent.h \
+    src/components/worldgeneratorcomponent.h \
+    src/consts.h \
     src/engine.h \
     src/gameobject.h \
     src/glmesh.h \
@@ -52,9 +56,7 @@ HEADERS += \
     libraries/octree/point3d.h \
     libraries/octree/shareddata.h \
     libraries/octree/tinyvector.h \
-    libraries/PerlinNoise/PerlinNoise.hpp \
-    src/voxelmaterial.h \
-    src/worldgenerator.h
+    libraries/PerlinNoise/PerlinNoise.hpp
 
 RESOURCES += \
     shaders/shaders.qrc \

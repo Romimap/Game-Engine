@@ -9,22 +9,42 @@ GameObject::GameObject(GameObject* parent) : _parent(parent) {
     }
 
     _transform = new Transform(this);
-    _children = new std::vector<GameObject*>();
-    _components = new std::vector<Component*>();
 
     if (parent != nullptr) {
-        parent->_children->push_back(this);
+        parent->_children.push_back(this);
     }
 }
 
 GameObject::~GameObject() {
-    //TODO : Free the memory and do something about the orphans
+    delete _transform;
+    delete _collider;
+    delete _globalAABB;
+    delete _personalGlobalAABB;
+
+    for (auto* component : _components)
+        delete component;
+
+    for (auto* child : _children)
+        delete child;
 }
 
 //GETTERS SETTERS
 bool GameObject::Enabled () {
     return _enabled;
 }
+
+void GameObject::SetFixedAABB(QVector3D min, QVector3D max) {
+    this->_fixedAABB = true;
+
+    if (_globalAABB != nullptr)
+        delete _globalAABB;
+    _globalAABB = new AABB(min, max);
+
+    if (_personalGlobalAABB != nullptr)
+        delete _personalGlobalAABB;
+    _personalGlobalAABB = new AABB(min, max);
+}
+
 Transform* GameObject::GetTransform () {
     return _transform;
 }
@@ -36,7 +56,7 @@ GameObject* GameObject::GetParent () {
     return _parent;
 }
 
-std::vector<GameObject*>* GameObject::GetChildren() {
+std::vector<GameObject*> GameObject::GetChildren() {
     return _children;
 }
 
@@ -53,20 +73,20 @@ void GameObject::Disable () {//TODO
 }
 
 void GameObject::Start () {
-    for (Component* component : *_components) {
+    for (Component* component : _components) {
         component->Start();
     }
     _started = true;
 }
 
 void GameObject::Update (float delta) {
-    for (Component* component : *_components) {
+    for (Component* component : _components) {
         component->Update(delta);
     }
 }
 
 void GameObject::FixedUpdate (float delta) {
-    for (Component* component : *_components) {
+    for (Component* component : _components) {
         component->FixedUpdate(delta);
     }
 }
@@ -82,12 +102,12 @@ void GameObject::Collisions(GameObject* current) {
                     //qDebug("%s", (NAME + " is colliding with " + current->NAME).c_str());
                     //NOTE: now if A collide with B, only A is notified as B will be computed later
                     //Possible optimisation : notify A and B, and mark that collision as solved. When we test B to A, skip the test
-                    for (Component* c : *_components) {
+                    for (Component* c : _components) {
                         c->Collision(current->GetCollider());
                     }
                 }
             }
-            for (GameObject* child : *current->GetChildren()) { //Possible children collision
+            for (GameObject* child : current->GetChildren()) { //Possible children collision
                 Collisions(child);
             }
         }
@@ -96,12 +116,18 @@ void GameObject::Collisions(GameObject* current) {
 
 
 void GameObject::AddComponent(Component *component) {
-    _components->push_back(component);
+    _components.push_back(component);
 }
 
 void GameObject::RefreshAABB() {
-    QVector3D min( 100000000,  100000000,  100000000);
-    QVector3D max(-100000000, -100000000, -100000000);
+    if (_fixedAABB) // Don't update AABBs
+        return;
+
+    int minInt = std::numeric_limits<int>::min();
+    int maxInt = std::numeric_limits<int>::min();
+    QVector3D min(maxInt, maxInt, maxInt);
+    QVector3D max(minInt, minInt, minInt);
+
     if (_collider != nullptr) {
         QVector3D cMin = _collider->_localAABB._min;
         QVector3D cMax = _collider->_localAABB._max;
@@ -140,7 +166,7 @@ void GameObject::RefreshAABB() {
     }
 
     //Finally, we do that recursively for each child. The _globalAABB of a game object contains itself and all children
-    for(GameObject* child : *_children) {
+    for(GameObject* child : _children) {
         child->RefreshAABB();
         AABB* current = child->_globalAABB;
 
@@ -162,7 +188,7 @@ void GameObject::RefreshAABB() {
 }
 
 template <typename T> Component* GameObject::GetComponent() {
-    for(Component* c : *_components) {
+    for (Component* c : _components) {
         if (typeid (*c) == typeid (T)) return c;
     }
     return nullptr;
@@ -170,7 +196,7 @@ template <typename T> Component* GameObject::GetComponent() {
 
 
 void GameObject::Draw() {
-    for (Component* c : *_components) {
+    for (Component* c : _components) {
         c->Draw();
     }
 }
