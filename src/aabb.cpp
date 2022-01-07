@@ -1,5 +1,5 @@
 #include "aabb.h"
-#include "math.h"
+
 
 AABB::AABB() {}
 

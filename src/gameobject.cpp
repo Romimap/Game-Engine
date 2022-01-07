@@ -160,7 +160,7 @@ void GameObject::AddComponent(Component *component) {
 
 void GameObject::RefreshAABB() {
     int minInt = std::numeric_limits<int>::min();
-    int maxInt = std::numeric_limits<int>::min();
+    int maxInt = std::numeric_limits<int>::max();
     QVector3D min(maxInt, maxInt, maxInt);
     QVector3D max(minInt, minInt, minInt);
 
