@@ -24,7 +24,7 @@ void TerrainRendererComponent::Draw() {
 
     TerrainComponent* TC = GetParent()->GetDerivedComponent<TerrainComponent>();
     if (TC == nullptr) {
-        cerr << "TerrainRendererComponent::Start() No TerrainComponent found" << endl;
+        cerr << "TerrainRendererComponent::Draw() No TerrainComponent found" << endl;
         return;
     }
     int textureID = TC->getNumberOfLayers() - 1;
