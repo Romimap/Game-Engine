@@ -1,5 +1,6 @@
 #include "aabbcollider.h"
 
+
 AABBCollider::AABBCollider (float x, float y, float z) : _size(QVector3D(x * 0.5, y * 0.5, z * 0.5)) {
     AABBCollider::SetAABB();
 }

@@ -51,11 +51,24 @@
 #ifndef GLMESH_H
 #define GLMESH_H
 
+
+#include <fstream>
+#include <iostream>
+
+#include <QOpenGLBuffer>
 #include <QOpenGLFunctions_3_1>
 #include <QOpenGLShaderProgram>
-#include <QOpenGLBuffer>
+#include <QVector2D>
+#include <QVector3D>
+
 
 class GLMesh : protected QOpenGLFunctions_3_1 {
+    /*** ATTRIBUTES ***/
+private:
+    QOpenGLBuffer arrayBuf;
+    QOpenGLBuffer indexBuf;
+
+    /*** METHODS ***/
 public:
     GLMesh(std::string lod0);
 
@@ -63,10 +76,6 @@ public:
 
 private:
     void initMesh(std::string lod0, QOpenGLBuffer* arrayBuffer, QOpenGLBuffer* indexBuffer);
-
-    //LOD0
-    QOpenGLBuffer arrayBuf;
-    QOpenGLBuffer indexBuf;
 };
 
 #endif // GLMESH_H

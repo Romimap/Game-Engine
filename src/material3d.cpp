@@ -1,5 +1,6 @@
 #include "material3d.h"
 
+
 Material3D::Material3D(std::string vshaderPath, std::string fshaderPath) {
 
     // Compile vertex shader
@@ -15,7 +16,7 @@ Material3D::Material3D(std::string vshaderPath, std::string fshaderPath) {
     _program.bind();
 }
 
-unsigned int Material3D::addTexture(vector<vector<vector<unsigned char>>> data) {
+unsigned int Material3D::addTexture(std::vector<std::vector<std::vector<unsigned char>>> data) {
 
     /** Determine sizes **/
 

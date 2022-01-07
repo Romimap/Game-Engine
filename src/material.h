@@ -1,12 +1,18 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#include <QOpenGLShaderProgram>
-#include <QOpenGLTexture>
 
 #include <iostream>
 
+#include <QColor>
+#include <QImage>
+#include <QOpenGLFunctions_3_1>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLTexture>
+
+
 class Material {
+    /*** ATTRIBUTES ***/
 public:
     QOpenGLTexture* _TexSlot0 = nullptr;
     QOpenGLTexture* _TexSlot1 = nullptr;
@@ -20,6 +26,8 @@ public:
     QOpenGLShaderProgram program;
 
 
+    /*** METHODS ***/
+public:
     Material(std::string vshaderPath, std::string fshaderPath);
     ~Material();
 

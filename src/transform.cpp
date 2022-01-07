@@ -1,5 +1,6 @@
 #include "transform.h"
 
+
 Transform::Transform (GameObject* gameObject) : _gameObject(gameObject) {
     _positionMatrix.setToIdentity();
     _rotationMatrix.setToIdentity();

@@ -50,16 +50,13 @@
 
 #include "glmesh.h"
 
-#include <iostream>
-#include <fstream>
-#include <QVector2D>
-#include <QVector3D>
 
 struct VertexData {
     QVector3D position;
     QVector3D normal;
     QVector2D uv;
 };
+
 
 GLMesh::GLMesh(std::string lod0)
     : indexBuf(QOpenGLBuffer::IndexBuffer){

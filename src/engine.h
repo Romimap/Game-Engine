@@ -1,33 +1,40 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "glmesh.h"
-#include "material.h"
-#include "gameobject.h"
-#include "camera.h"
 
-#include <QOpenGLWidget>
-#include <QOpenGLFunctions_3_1>
-#include <QOpenGLBuffer>
-#include <QObject>
-#include <QMatrix4x4>
-#include <QVector3D>
-#include <QVector2D>
-#include <QMatrix4x4>
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <QOpenGLShaderProgram>
+
 #include <QKeyEvent>
-#include <chrono>
+#include <QMatrix4x4>
+#include <QObject>
+#include <QOpenGLBuffer>
+#include <QOpenGLFunctions_3_1>
+#include <QOpenGLWidget>
+#include <QOpenGLShaderProgram>
+#include <QVector2D>
+#include <QVector3D>
+
+#include "src/camera.h"
+#include "src/gameobject.h"
+#include "src/glmesh.h"
+#include "src/inputmanager.h"
+#include "src/material.h"
+
 
 struct VertexData {
     QVector3D position;
     QVector2D uv;
 };
 
+
 class GameObject;
+
+
 class Engine : public QOpenGLWidget, protected QOpenGLFunctions_3_1 {
+    /*** ATTRIBUTES ***/
 private:
     QMatrix4x4 _projection;
     std::chrono::time_point<std::chrono::system_clock> _beginTime;
@@ -39,13 +46,11 @@ public:
     static Engine* Singleton;
     int tick = 0;
 
+    /*** METHODS ***/
 public:
     Engine();
 
-public:
     RayCastHit RayCast(QVector3D origin, QVector3D direction);
-private:
-    RayCastHit RayCastRecursive(QVector3D origin, QVector3D direction, GameObject *current);
 
 protected:
     void initializeGL() override;
@@ -58,6 +63,9 @@ protected:
     void Collisions(GameObject* current);
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
+
+private:
+    RayCastHit RayCastRecursive(QVector3D origin, QVector3D direction, GameObject *current);
 };
 
 #endif // ENGINE_H

@@ -1,5 +1,6 @@
 #include "linkedqueue.h"
 
+
 template<typename T> LinkedQueue<T>::LinkedQueue() {
 
 }

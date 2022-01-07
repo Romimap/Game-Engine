@@ -1,7 +1,8 @@
 #include "gameobject.h"
-#include <math.h>
+
 
 GameObject* GameObject::Root = nullptr;
+
 
 GameObject::GameObject(std::string name, GameObject* parent) : _parent(parent) {
     this->_name = name;

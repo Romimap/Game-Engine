@@ -2,14 +2,11 @@
 #define MATERIAL3D_H
 
 
-#include <QOpenGLShaderProgram>
-#include <QOpenGLTexture>
-
 #include <iostream>
 #include <vector>
 
-
-using namespace std;
+#include <QOpenGLShaderProgram>
+#include <QOpenGLTexture>
 
 
 class Material3D {
@@ -17,10 +14,10 @@ class Material3D {
 public:
     QOpenGLShaderProgram _program;
 
-    vector<QOpenGLTexture*> _textures;
-    vector<unsigned int> _sizeX;
-    vector<unsigned int> _sizeY;
-    vector<unsigned int> _sizeZ;
+    std::vector<QOpenGLTexture*> _textures;
+    std::vector<unsigned int> _sizeX;
+    std::vector<unsigned int> _sizeY;
+    std::vector<unsigned int> _sizeZ;
 
     /*** METHODS ***/
 public:
@@ -29,7 +26,7 @@ public:
     ~Material3D();
 
     /** TEXTURE MANAGEMENT **/
-    unsigned int addTexture(vector<vector<vector<unsigned char>>> data);
+    unsigned int addTexture(std::vector<std::vector<std::vector<unsigned char>>> data);
     void bindTexture(int textureID, int bindID);
 };
 

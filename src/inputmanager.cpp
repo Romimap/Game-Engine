@@ -1,6 +1,5 @@
 #include "inputmanager.h"
-#include <QCursor>
-#include "engine.h"
+
 
 bool InputManager::captureMouse = false;
 std::map<int, bool> InputManager::pressed;
@@ -9,6 +8,7 @@ std::map<int, bool> InputManager::released;
 QVector2D InputManager::previous;
 QVector2D InputManager::current;
 QVector2D InputManager::delta;
+
 
 void InputManager::Press(int keyCode) {
     if (KeyDown(keyCode)) return;
@@ -71,7 +71,6 @@ void InputManager::SetCaptureMouse(bool capture) {
     captureMouse = capture;
 }
 
-InputManager::InputManager()
-{
+InputManager::InputManager() {
 
 }

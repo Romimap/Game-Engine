@@ -1,18 +1,19 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include "transform.h"
-#include "component.h"
-#include "aabb.h"
-#include "collider.h"
 
+#include <QQuaternion>
+#include <QVector3D>
 
+#include <cmath>
 #include <iostream>
 #include <limits>
-
-#include <qquaternion.h>
-#include <qvector3d.h>
 #include <vector>
+
+#include "src/aabb.h"
+#include "src/collider.h"
+#include "src/component.h"
+#include "src/transform.h"
 
 
 class Collider;
@@ -20,6 +21,7 @@ class Transform;
 class Engine;
 struct RenderData;
 class Component;
+
 
 struct RayCastHit {
     float _distance;
@@ -31,8 +33,9 @@ struct RayCastHit {
     }
 };
 
+
 class GameObject {
-    //MEMBERS
+    /*** ATTRIBUTES ***/
 protected:
     bool _enabled = true;
     bool _started = false;
@@ -55,15 +58,13 @@ public:
 
     std::string _name = "";
 
-    //CONSTRUCTORS
+    /*** METHODS ***/
 public:
+    /** CONSTRUCTORS/DESTRUCTORS **/
     GameObject(std::string name, GameObject* parent = nullptr);
     ~GameObject();
 
     /** METHODS **/
-    void AddComponent(Component* component);
-
-    void Draw();
 
     /** GETTERS SETTERS **/
     bool Enabled();
@@ -87,19 +88,23 @@ public:
     void Start();
     void Update(float delta);
     void FixedUpdate(float delta);
+    void Draw();
+
+    void AddComponent(Component* component);
+
     void Collisions(GameObject* current);
     RayCastHit AABBRayCollision(QVector3D origin, QVector3D direction);
 
     void RefreshAABB();
 
+    /** TEMPLATE METHODS **/
     template <typename T> T* GetComponent() {
         for (Component* c : _components) {
             if (T* tc = dynamic_cast<T*>(c)) return tc;
         }
-        std::cout << "null !" << std::endl;
+        std::cerr << "GameObject::GetComponent<>() has not found the searched component" << std::endl;
         return nullptr;
     }
-
 };
 
 #endif // GAMEOBJECT_H

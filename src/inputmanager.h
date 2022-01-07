@@ -1,13 +1,18 @@
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
 
+
 #include <map>
+
 #include <QApplication>
+#include <QCursor>
 #include <QVector2D>
 
+#include "src/engine.h"
 
-class InputManager
-{
+
+class InputManager {
+    /*** ATTRIBUTES ***/
 private:
     static bool captureMouse;
     static std::map<int, bool> active;
@@ -17,18 +22,18 @@ private:
     static QVector2D current;
     static QVector2D delta;
 
-
+    /*** METHODS ***/
 public:
     InputManager();
 
     static void Press(int keyCode);
     static void Resease(int keyCode);
     static void NextFrame();
-    static bool Key (int keyCode);
-    static bool KeyDown (int keyCode);
-    static bool KeyUp (int keyCode);
-    static int MouseDX ();
-    static int MouseDY ();
+    static bool Key(int keyCode);
+    static bool KeyDown(int keyCode);
+    static bool KeyUp(int keyCode);
+    static int MouseDX();
+    static int MouseDY();
     static QVector2D MousePosition();
     static void SampleMousePosition();
     static void SetCaptureMouse(bool capture);

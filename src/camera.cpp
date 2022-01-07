@@ -1,6 +1,8 @@
 #include "camera.h"
 
+
 Camera* Camera::ActiveCamera = nullptr;
+
 
 Camera::Camera(std::string name, GameObject* parent) : GameObject(name, parent) {
     if (ActiveCamera == nullptr)

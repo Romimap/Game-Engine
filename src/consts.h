@@ -20,5 +20,4 @@ enum TerrainType {
     BIG_CAVES
 };
 
-
 #endif // CONSTS_H

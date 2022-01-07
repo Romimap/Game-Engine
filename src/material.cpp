@@ -1,7 +1,5 @@
-#include "src/material.h"
-#include <QOpenGLFunctions_3_1>
-#include <QImage>
-#include <QColor>
+#include "material.h"
+
 
 Material::Material(std::string vshaderPath, std::string fshaderPath) {
 
