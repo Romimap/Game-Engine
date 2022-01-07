@@ -191,7 +191,7 @@ CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
         if (tmaxx < tmaxy && tmaxx < tmaxz) {
             X += Xstep;
             if (X >= 0 && X < VOXEL64X) {
-                cdata.color = texture3D(colorlod64, clamp((vec3(X, Y, Z) + offset) / vec3(64, 512, 64), vec3(0), vec3(1)));
+                cdata.color = texture3D(colorlod64, clamp((vec3(X, Y, Z) + offset) / vec3(64, 256, 64), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
                     cdata.distance = length(O.xyz - hitPos.xyz) + (tmaxx * VOXEL64);
                     cdata.normal = vec3(normalize(D.x), 0, 0);
@@ -205,7 +205,7 @@ CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
         } else if (tmaxy < tmaxz) {
             Y += Ystep;
             if (Y >= 0 && Y < VOXEL64Y) {
-                cdata.color = texture3D(colorlod64, clamp((vec3(X, Y, Z) + offset) / vec3(64, 512, 64), vec3(0), vec3(1)));
+                cdata.color = texture3D(colorlod64, clamp((vec3(X, Y, Z) + offset) / vec3(64, 256, 64), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
                     cdata.distance = length(O - hitPos) + (tmaxy * VOXEL64);
                     cdata.normal = vec3(0, normalize(D.y), 0);
@@ -219,7 +219,7 @@ CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
         } else {
             Z += Zstep;
             if (Z >= 0 && Z < VOXEL64Z) {
-                cdata.color = texture3D(colorlod64, clamp((vec3(X, Y, Z) + offset) / vec3(64, 512, 64), vec3(0), vec3(1)));
+                cdata.color = texture3D(colorlod64, clamp((vec3(X, Y, Z) + offset) / vec3(64, 256, 64), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
                     cdata.distance = length(O - hitPos) + (tmaxz * VOXEL64);
                     cdata.normal = vec3(0, 0, normalize(D.z));
@@ -248,7 +248,7 @@ CollisionData gridDF16 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
     Y = floor((hitPos - gridPos) / VOXEL16).y;
     Z = floor((hitPos - gridPos) / VOXEL16).z;
 
-    cdata.color = texture3D(colorlod16, clamp((vec3(X, Y, Z) + offset) / vec3(16, 128, 16), vec3(0), vec3(1))); //NOTE: Dont forget to set 64 as vec3(16, 128, 16)
+    cdata.color = texture3D(colorlod16, clamp((vec3(X, Y, Z) + offset) / vec3(16, 64, 16), vec3(0), vec3(1))); //NOTE: Dont forget to set 64 as vec3(16, 128, 16)
     if (cdata.color.r > 0) {
         cdata.distance = 0;
         cdata.normal = vec3(normalize(D.x), 0, 0);
@@ -288,7 +288,7 @@ CollisionData gridDF16 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
         if (tmaxx < tmaxy && tmaxx < tmaxz) {
             X += Xstep;
             if (X >= 0 && X < VOXEL16X) {
-                cdata.color = texture3D(colorlod16, clamp((vec3(X, Y, Z) + offset) / vec3(16, 128, 16), vec3(0), vec3(1)));
+                cdata.color = texture3D(colorlod16, clamp((vec3(X, Y, Z) + offset) / vec3(16, 64, 16), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
                     cdata.distance = length(O.xyz - hitPos.xyz) + (tmaxx * VOXEL16);
                     cdata.normal = vec3(normalize(D.x), 0, 0);
@@ -306,7 +306,7 @@ CollisionData gridDF16 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
         } else if (tmaxy < tmaxz) {
             Y += Ystep;
             if (Y >= 0 && Y < VOXEL16Y) {
-                cdata.color = texture3D(colorlod16, clamp((vec3(X, Y, Z) + offset) / vec3(16, 128, 16), vec3(0), vec3(1)));
+                cdata.color = texture3D(colorlod16, clamp((vec3(X, Y, Z) + offset) / vec3(16, 64, 16), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
                     cdata.distance = length(O - hitPos) + (tmaxy * VOXEL16);
                     cdata.normal = vec3(0, normalize(D.y), 0);
@@ -324,7 +324,7 @@ CollisionData gridDF16 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
         } else {
             Z += Zstep;
             if (Z >= 0 && Z < VOXEL16Z) {
-                cdata.color = texture3D(colorlod16, clamp((vec3(X, Y, Z) + offset) / vec3(16, 128, 16), vec3(0), vec3(1)));
+                cdata.color = texture3D(colorlod16, clamp((vec3(X, Y, Z) + offset) / vec3(16, 64, 16), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
                     cdata.distance = length(O - hitPos) + (tmaxz * VOXEL16);
                     cdata.normal = vec3(0, 0, normalize(D.z));
@@ -364,7 +364,7 @@ CollisionData gridDF4 (vec3 O, vec3 D, vec3 gridPos) {
     Y = floor((hitPos - gridPos) / VOXEL4).y;
     Z = floor((hitPos - gridPos) / VOXEL4).z;
 
-    cdata.color = texture3D(colorlod4, clamp(vec3(X, Y, Z) / vec3(4, 32, 4), vec3(0), vec3(1)));
+    cdata.color = texture3D(colorlod4, clamp(vec3(X, Y, Z) / vec3(4, 16, 4), vec3(0), vec3(1)));
     if (cdata.color.r > 0) {
         cdata.distance = 0;
         cdata.normal = vec3(normalize(D.x), 0, 0);
@@ -404,7 +404,7 @@ CollisionData gridDF4 (vec3 O, vec3 D, vec3 gridPos) {
         if (tmaxx < tmaxy && tmaxx < tmaxz) {
             X += Xstep;
             if (X >= 0 && X < VOXEL4X) {
-                cdata.color = texture3D(colorlod4, clamp(vec3(X, Y, Z) / vec3(4, 32, 4), vec3(0), vec3(1)));
+                cdata.color = texture3D(colorlod4, clamp(vec3(X, Y, Z) / vec3(4, 16, 4), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
                     cdata.distance = length(O.xyz - hitPos.xyz) + (tmaxx * VOXEL4);
                     cdata.normal = vec3(normalize(D.x), 0, 0);
@@ -422,7 +422,7 @@ CollisionData gridDF4 (vec3 O, vec3 D, vec3 gridPos) {
         } else if (tmaxy < tmaxz) {
             Y += Ystep;
             if (Y >= 0 && Y < VOXEL4Y) {
-                cdata.color = texture3D(colorlod4, clamp(vec3(X, Y, Z) / vec3(4, 32, 4), vec3(0), vec3(1)));
+                cdata.color = texture3D(colorlod4, clamp(vec3(X, Y, Z) / vec3(4, 16, 4), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
                     cdata.distance = length(O - hitPos) + (tmaxy * VOXEL4);
                     cdata.normal = vec3(0, normalize(D.y), 0);
@@ -440,7 +440,7 @@ CollisionData gridDF4 (vec3 O, vec3 D, vec3 gridPos) {
         } else {
             Z += Zstep;
             if (Z >= 0 && Z < VOXEL4Z) {
-                cdata.color = texture3D(colorlod4, clamp(vec3(X, Y, Z) / vec3(4, 32, 4), vec3(0), vec3(1)));
+                cdata.color = texture3D(colorlod4, clamp(vec3(X, Y, Z) / vec3(4, 16, 4), vec3(0), vec3(1)));
                 if (cdata.color.r > 0) {
                     cdata.distance = length(O - hitPos) + (tmaxz * VOXEL4);
                     cdata.normal = vec3(0, 0, normalize(D.z));

@@ -80,11 +80,7 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
             data64[k] = 1;
             data16[k16] = 1;
             data4[k4] = 1;
-        } else if (x == 63 && y == 255 && z == 64) {
-            data64[k] = 2;
-            data16[k16] = 2;
-            data4[k4] = 2;
-        }else {
+        } else {
             data64[k] = 0;
         }
         //data1024[k] = 0b11111111;
