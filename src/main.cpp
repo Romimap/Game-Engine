@@ -85,6 +85,7 @@ int main(int argc, char *argv[]) {
     camera->GetTransform()->SetRotation(0, 0, 0);
     camera->GetTransform()->SetScale(1, 1, 1);
 
+
     Engine engine;
     engine.show();
 
@@ -122,10 +123,10 @@ int main(int argc, char *argv[]) {
 
 
     //CHUNK
-    GameObject* octree = new GameObject("Octree", &root);
-    octree->GetTransform()->SetRotation(0, 0, 0);
-    octree->GetTransform()->SetPosition(0, 0, 0);
-    new OctreeRendererComponent(octree);
+//    GameObject* octree = new GameObject("Octree", &root);
+//    octree->GetTransform()->SetRotation(0, 0, 0);
+//    octree->GetTransform()->SetPosition(0, 0, 0);
+//    new OctreeRendererComponent(octree);
 
 
 
@@ -145,8 +146,8 @@ int main(int argc, char *argv[]) {
     // Currently for testing purposes
 //    GameObject dummy("Dummy");
 
-//    GameObject* worldGenerator = new GameObject("World generator", &root);
-//    new WorldGeneratorComponent("New world", TerrainType::PERLIN_2D, 123456u, worldGenerator);
+    GameObject* worldGenerator = new GameObject("World generator", &root);
+    new WorldGeneratorComponent("New world", TerrainType::PERLIN_2D, 123456u, worldGenerator);
 
     return app.exec();
 }

@@ -14,7 +14,7 @@ public:
     std::string _name;
 
     Component(GameObject* parent);
-    virtual ~Component();
+    virtual ~Component(){}
 
     virtual void Start(){}
     virtual void Update(float delta){}
