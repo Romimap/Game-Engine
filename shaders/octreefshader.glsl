@@ -1,4 +1,4 @@
-#version 150
+#version 130
 
 uniform sampler3D colorlod4;
 uniform sampler3D colorlod16;

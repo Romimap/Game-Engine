@@ -10,7 +10,9 @@ Material::Material(std::string vshaderPath, std::string fshaderPath) {
     program.addShaderFromSourceFile(QOpenGLShader::Fragment, fshaderPath.c_str());
 
     // Link shader pipeline
+    auto start = std::chrono::high_resolution_clock::now();
     program.link();
+    std::cout << "Linking time: " << ((std::chrono::duration<double>)(std::chrono::high_resolution_clock::now() - start)).count() << std::endl;
 
     // Bind shader pipeline for use
     program.bind();
