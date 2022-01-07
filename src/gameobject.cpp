@@ -127,7 +127,7 @@ RayCastHit GameObject::AABBRayCollision(QVector3D origin, QVector3D direction) {
     hit._distance = _globalAABB->RayIntersect(origin, direction);
     if (hit._distance <= 0) return RayCastHit(); //Ray missed GlobalAABB, No collision
 
-    hit._distance = MAXFLOAT;
+    hit._distance = std::numeric_limits<float>::max();
 
     if (_personalGlobalAABB) {
         hit._distance = _personalGlobalAABB->RayIntersect(origin, direction);
