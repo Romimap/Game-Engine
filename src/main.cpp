@@ -66,6 +66,7 @@
 #include "components/octreerenderercomponent.h"
 #include "components/meshrenderercomponent.h"
 #include "components/worldgeneratorcomponent.h"
+#include "linkedqueue.h"
 
 
 int main(int argc, char *argv[]) {
@@ -126,6 +127,18 @@ int main(int argc, char *argv[]) {
     octree->GetTransform()->SetRotation(0, 0, 0);
     octree->GetTransform()->SetPosition(0, 0, 0);
     new OctreeRendererComponent(octree);
+
+    LinkedQueue<OctreeRendererChange> changes4;
+
+    for (int i = 0; i < 1000; i++) {
+        OctreeRendererChange* change = new OctreeRendererChange(rand() % 4, rand() % 16, rand() % 4, rand() % 2);
+        changes4.push_back(change);
+    }
+
+    LinkedQueue<OctreeRendererChange> changes16;
+    LinkedQueue<OctreeRendererChange> changes64;
+
+    octreeRenderer.ApplyChanges(changes4, changes16, changes64);
 
 
 

@@ -22,6 +22,7 @@ SOURCES += src/main.cpp \
     src/gameobject.cpp \
     src/glmesh.cpp \
     src/inputmanager.cpp \
+    src/linkedqueue.cpp \
     src/material.cpp \
     src/components/rotatorcomponent.cpp \
     src/material3d.cpp \
@@ -46,6 +47,7 @@ HEADERS += \
     src/gameobject.h \
     src/glmesh.h \
     src/inputmanager.h \
+    src/linkedqueue.h \
     src/material.h \
     src/components/rotatorcomponent.h \
     src/material3d.h \

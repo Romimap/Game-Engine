@@ -12,5 +12,6 @@
         <file>r.png</file>
         <file>g.png</file>
         <file>b.png</file>
+        <file>Textures.png</file>
     </qresource>
 </RCC>
