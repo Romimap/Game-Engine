@@ -305,6 +305,7 @@ CollisionData gridDF16 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
                             return rcdata;
                         }
                     } else {
+                        cdata.color.rgb = getColor(int(cdata.color.r * 255), vec3(X, Y, Z), cdata.normal);
                         return cdata;
                     }
                 }
@@ -327,6 +328,7 @@ CollisionData gridDF16 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
                             return rcdata;
                         }
                     } else {
+                        cdata.color.rgb = getColor(int(cdata.color.r * 255), vec3(X, Y, Z), cdata.normal);
                         return cdata;
                     }
                 }
@@ -349,6 +351,7 @@ CollisionData gridDF16 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
                             return rcdata;
                         }
                     } else {
+                        cdata.color.rgb = getColor(int(cdata.color.r * 255), vec3(X, Y, Z), cdata.normal);
                         return cdata;
                     }
                 }
@@ -433,6 +436,7 @@ CollisionData gridDF4 (vec3 O, vec3 D, vec3 gridPos) {
                             return rcdata;
                         }
                     } else {
+                        cdata.color.rgb = getColor(int(cdata.color.r * 255), vec3(X, Y, Z), cdata.normal);
                         return cdata;
                     }
 
@@ -456,6 +460,7 @@ CollisionData gridDF4 (vec3 O, vec3 D, vec3 gridPos) {
                             return rcdata;
                         }
                     } else {
+                        cdata.color.rgb = getColor(int(cdata.color.r * 255), vec3(X, Y, Z), cdata.normal);
                         return cdata;
                     }
                 }
@@ -478,6 +483,7 @@ CollisionData gridDF4 (vec3 O, vec3 D, vec3 gridPos) {
                             return rcdata;
                         }
                     } else {
+                        cdata.color.rgb = getColor(int(cdata.color.r * 255), vec3(X, Y, Z), cdata.normal);
                         return cdata;
                     }
                 }
@@ -496,7 +502,7 @@ CollisionData gridDF4 (vec3 O, vec3 D, vec3 gridPos) {
 CollisionData sceneSDF (vec3 O, vec3 D) {
     CollisionData cdata;
 
-    cdata = gridDF4(O, D, vec3(0, -255, 0));
+    cdata = gridDF4(O, D, vec3(-64, -255, -64));
 
     return cdata;
 }
