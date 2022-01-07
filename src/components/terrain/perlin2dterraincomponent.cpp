@@ -23,7 +23,11 @@ Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int c
         for (int z = 0; z < _zSize; z++) {
             float zNoise = zStart + z * zFrequency;
 
-            const double noise = perlin.octave2D_01(xNoise, zNoise, octaves, persistence);
+            double noise = perlin.octave2D_01(xNoise, zNoise, octaves, persistence);
+
+            // Flatten noise
+            noise = 0.5 + (noise - 0.5) * 0.25;
+
             int groundLevel = (int)(noise * (_ySize - 1));
 
             // Place stone
@@ -99,5 +103,5 @@ Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int c
         }
     }
 
-//    debugPrintLayers();
+    debugPrintLayers();
 }

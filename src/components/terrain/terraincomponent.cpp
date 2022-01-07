@@ -58,7 +58,7 @@ TerrainComponent::TerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize
 }
 
 unsigned char TerrainComponent::getVoxelType(int x, int y, int z, int layerID) {
-    int _currentLayerSizeReductionFactor = pow(layerID, _layerSizeReductionFactor);
+    int _currentLayerSizeReductionFactor = pow(_layerSizeReductionFactor, layerID);
     int xSize = _xSize / _currentLayerSizeReductionFactor;
     int ySize = _ySize / _currentLayerSizeReductionFactor;
     int zSize = _zSize / _currentLayerSizeReductionFactor;
@@ -77,7 +77,7 @@ unsigned char TerrainComponent::getVoxelType(int x, int y, int z, int layerID) {
  *   1 = voxel modified
  **/
 int TerrainComponent::setVoxelType(int x, int y, int z, unsigned char voxelMaterial, int layerID) {
-    int _currentLayerSizeReductionFactor = pow(layerID, _layerSizeReductionFactor);
+    int _currentLayerSizeReductionFactor = pow(_layerSizeReductionFactor, layerID);
     int xSize = _xSize / _currentLayerSizeReductionFactor;
     int ySize = _ySize / _currentLayerSizeReductionFactor;
     int zSize = _zSize / _currentLayerSizeReductionFactor;
