@@ -99,7 +99,7 @@ void OctreeComponent::debugPrintLayers() {
     int i = 0;
     for (auto layer : _layers) {
         cout << "##########     LAYER   " << i++ << "   ##########" << endl << endl;
-        for (unsigned long long  y = 0; y < layer[0].size(); y++) {
+        for (unsigned long long y = 0; y < layer[0].size(); y++) {
             for (unsigned long long z = 0; z < layer[0][0].size(); z++) {
                 for (unsigned long long x = 0; x < layer.size(); x++) {
                     cout << (int)layer[x][y][z] << " ";
