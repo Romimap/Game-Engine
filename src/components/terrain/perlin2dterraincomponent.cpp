@@ -1,16 +1,15 @@
 #include "perlin2dterraincomponent.h"
 
 
-Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkZ,
-                                                   const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, float roughness, GameObject* parent) : Component(parent) {
+Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkZ, const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, float roughness, GameObject* parent) : Component(parent) {
 
     this->_name = "Perlin2dTerrainComponent";
     _octreeComponent = parent->GetComponent<OctreeComponent>();
 
     /** Generate terrain for the most detailed layer using perlin noise **/
 
-    vector<vector<vector<vector<unsigned char>>>> &layers = *_octreeComponent->getLayers();
-    vector<vector<vector<unsigned char>>> &layer = layers[0];
+    std::vector<std::vector<std::vector<std::vector<unsigned char>>>> &layers = *_octreeComponent->getLayers();
+    std::vector<std::vector<std::vector<unsigned char>>> &layer = layers[0];
 
     int xSize = _octreeComponent->getXSize();
     int ySize = _octreeComponent->getYSize();
@@ -59,8 +58,8 @@ Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkZ,
     int layerSizeReductionFactor = _octreeComponent->getLayerSizeReductionFactor();
     for (int layerID = 0; layerID < _octreeComponent->getNumberOfLayers() - 1; layerID++) {
 
-        vector<vector<vector<unsigned char>>> &current_layer = layers[layerID];
-        vector<vector<vector<unsigned char>>> &upper_layer = layers[layerID + 1];
+        std::vector<std::vector<std::vector<unsigned char>>> &current_layer = layers[layerID];
+        std::vector<std::vector<std::vector<unsigned char>>> &upper_layer = layers[layerID + 1];
 
         /** Update upper layer using current layer voxels **/
 

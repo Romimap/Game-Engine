@@ -1,15 +1,21 @@
 #ifndef PLAYERCONTROLLERCOMPONENT_H
 #define PLAYERCONTROLLERCOMPONENT_H
 
-#include "src/component.h"
-#include <Qt>
+
+#include <QCursor>
 #include <QQuaternion>
 #include <QVector3D>
+#include <Qt>
+
+#include "src/component.h"
+#include "src/engine.h"
 #include "src/inputmanager.h"
-#include <QCursor>
-#include "rigidbodycomponent.h"
+
+#include "src/components/rigidbodycomponent.h"
+
 
 class PlayerControllerComponent : public Component {
+    /*** ATTRIBUTES ***/
 private:
     float _speed;
     float _acceleration;
@@ -21,6 +27,7 @@ private:
 
     RigidBodyComponent* _cubeRb;
 
+    /*** METHODS ***/
 public:
     PlayerControllerComponent(float speed, float acceleration, RigidBodyComponent* cubeRb, GameObject* parent);
     virtual ~PlayerControllerComponent();

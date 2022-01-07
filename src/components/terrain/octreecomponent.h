@@ -9,11 +9,8 @@
 #include "libraries/PerlinNoise/PerlinNoise.hpp"
 
 #include "src/component.h"
-#include "src/gameobject.h"
 #include "src/consts.h"
-
-
-using namespace std;
+#include "src/gameobject.h"
 
 
 class OctreeComponent : public Component {
@@ -27,7 +24,7 @@ protected:
     int _ySize;
     int _zSize;
 
-    vector<vector<vector<vector<unsigned char>>>> _layers;
+    std::vector<std::vector<std::vector<std::vector<unsigned char>>>> _layers;
     int _layerSizeReductionFactor;
 
 
@@ -48,8 +45,8 @@ public:
     int getZSize() {return _zSize;}
     int getLayerSizeReductionFactor() {return _layerSizeReductionFactor;}
     int getNumberOfLayers();
-    vector<vector<vector<unsigned char>>> getLayer(int layerID);
-    vector<vector<vector<vector<unsigned char>>>> *getLayers();
+    std::vector<std::vector<std::vector<unsigned char>>> getLayer(int layerID);
+    std::vector<std::vector<std::vector<std::vector<unsigned char>>>> *getLayers();
 
     /** DEBUG **/
     void debugPrintLayers();

@@ -1,8 +1,8 @@
 #include "octreerenderercomponent.h"
-#include "src/components/terrain/octreecomponent.h"
-#include <QVector3D>
+
 
 int OctreeRendererComponent::s_notUpToDateChunks = 0;
+
 
 OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component(parent) {
     this->_name = "OctreeRendererComponent";

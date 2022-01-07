@@ -1,16 +1,20 @@
 #ifndef MESHRENDERERCOMPONENT_H
 #define MESHRENDERERCOMPONENT_H
 
-#include <src/component.h>
-#include <src/material.h>
-#include <src/glmesh.h>
+
 #include <src/camera.h>
+#include <src/component.h>
+#include <src/glmesh.h>
+#include <src/material.h>
+
 
 class MeshRendererComponent : public Component {
+    /*** ATTRIBUTES ***/
 private:
     Material* _material;
     GLMesh* _mesh;
 
+    /*** METHODS ***/
 public:
     MeshRendererComponent(GLMesh* mesh, Material* material, GameObject* parent);
 

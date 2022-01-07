@@ -10,17 +10,16 @@
 #include "src/component.h"
 #include "src/consts.h"
 #include "src/gameobject.h"
+#include "src/octreecollider.h"
 
+#include "src/components/octreerenderercomponent.h"
 #include "src/components/terrain/perlin2dterraincomponent.h"
-
-
-using namespace std;
 
 
 class WorldGeneratorComponent : public Component {
     /*** ATTRIBUTES ***/
 public:
-    string _worldName;
+    std::string _worldName;
 
 protected:
     /** World gen related **/
@@ -48,7 +47,7 @@ protected:
     /*** METHODS ***/
 public:
     /** CONSTRUCTORS/DESTRUCTORS **/
-    WorldGeneratorComponent(string worldName, TerrainType terrainType, siv::PerlinNoise::seed_type seed, GameObject* parent);
+    WorldGeneratorComponent(std::string worldName, TerrainType terrainType, siv::PerlinNoise::seed_type seed, GameObject* parent);
 
     /** CHUNK GENERATION **/
     bool generateChunk(int x, int z);

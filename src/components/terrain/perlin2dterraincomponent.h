@@ -7,16 +7,15 @@
 #include "src/components/terrain/octreecomponent.h"
 
 
-using namespace std;
-
-
 class Perlin2dTerrainComponent : Component {
+    /*** ATTRIBUTES ***/
+protected:
     OctreeComponent* _octreeComponent;
+
     /*** METHODS ***/
 public:
     /** CONSTRUCTORS/DESTRUCTORS **/
-    Perlin2dTerrainComponent(int chunkX, int chunkZ,
-                             const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, float roughness, GameObject* parent);
+    Perlin2dTerrainComponent(int chunkX, int chunkZ, const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, float roughness, GameObject* parent);
 };
 
 #endif // PERLIN2DTERRAINCOMPONENT_H

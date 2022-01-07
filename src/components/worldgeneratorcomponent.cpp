@@ -1,8 +1,7 @@
 #include "worldgeneratorcomponent.h"
-#include "octreerenderercomponent.h"
-#include "src/octreecollider.h"
 
-WorldGeneratorComponent::WorldGeneratorComponent(string worldName, TerrainType terrainType, siv::PerlinNoise::seed_type seed, GameObject* parent)
+
+WorldGeneratorComponent::WorldGeneratorComponent(std::string worldName, TerrainType terrainType, siv::PerlinNoise::seed_type seed, GameObject* parent)
     : Component(parent) {
 
     this->_name = "WorldGeneratorComponent";
@@ -10,11 +9,11 @@ WorldGeneratorComponent::WorldGeneratorComponent(string worldName, TerrainType t
     this->_terrainType = terrainType;
     this->_seed = seed;
 
-    string className = " (WorldGeneratorComponent)";
+    std::string className = " (WorldGeneratorComponent)";
 
-    cout << "Generating world..." << className << endl;
+    std::cout << "Generating world..." << className << std::endl;
 
-    auto start = chrono::high_resolution_clock::now();
+    auto start = std::chrono::high_resolution_clock::now();
 
     this->_perlin = siv::PerlinNoise{seed};
 
@@ -39,19 +38,19 @@ WorldGeneratorComponent::WorldGeneratorComponent(string worldName, TerrainType t
                     new Perlin2dTerrainComponent(x, z, _perlin, _OCTAVES, _FREQUENCY, _PERSISTENCE, _ROUGHNESS, chunk);
                     break;
                 case TerrainType::PERLIN_3D:
-                    cerr << "PERLIN_3D terrain generation not implemented yet, aborting world creation" << endl;
+                    std::cerr << "PERLIN_3D terrain generation not implemented yet, aborting world creation" << std::endl;
                     return;
                 case TerrainType::FLAT:
-                    cerr << "FLAT terrain generation not implemented yet, aborting world creation" << endl;
+                    std::cerr << "FLAT terrain generation not implemented yet, aborting world creation" << std::endl;
                     return;
                 case TerrainType::FLOATING_ISLANDS:
-                    cerr << "FLOATING_ISLANDS terrain generation not implemented yet, aborting world creation" << endl;
+                    std::cerr << "FLOATING_ISLANDS terrain generation not implemented yet, aborting world creation" << std::endl;
                     return;
                 case TerrainType::BIG_CAVES:
-                    cerr << "BIG_CAVES terrain generation not implemented yet, aborting world creation" << endl;
+                    std::cerr << "BIG_CAVES terrain generation not implemented yet, aborting world creation" << std::endl;
                     return;
                 default:
-                    cerr << "Unknown terrain generation specified, aborting world creation" << endl;
+                    std::cerr << "Unknown terrain generation specified, aborting world creation" << std::endl;
                     return;
                 }
 
@@ -63,14 +62,14 @@ WorldGeneratorComponent::WorldGeneratorComponent(string worldName, TerrainType t
                 chunksCount++;
 
                 int percentage = (100 * chunksCount) / totalChunks;
-                cout << "\rProgress: " << chunksCount << "/" << totalChunks << " chunks (" << percentage << "%)" << className << flush;
+                std::cout << "\rProgress: " << chunksCount << "/" << totalChunks << " chunks (" << percentage << "%)" << className << std::flush;
             }
         }
     }
-    cout << endl;
+    std::cout << std::endl;
 
-    auto end = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed = end - start;
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
 
-    cout << "World generation done (created " << chunksCount << " chunks) in " << elapsed.count() << "s" << className << endl;
+    std::cout << "World generation done (created " << chunksCount << " chunks) in " << elapsed.count() << "s" << className << std::endl;
 }

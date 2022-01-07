@@ -20,15 +20,15 @@ OctreeComponent::OctreeComponent(int xSize, int ySize, int zSize, int nbOfLayers
     this->_layers.resize(nbOfLayers);
 
     for (int layerID = 0; layerID < nbOfLayers; layerID++) {
-        vector<vector<vector<unsigned char>>> layer;
+        std::vector<std::vector<std::vector<unsigned char>>> layer;
         layer.resize(current_xSize);
 
         for (int x = 0; x < current_xSize; x++) {
-            vector<vector<unsigned char>> layerX;
+            std::vector<std::vector<unsigned char>> layerX;
             layerX.resize(current_ySize);
 
             for (int y = 0; y < current_ySize; y++) {
-                vector<unsigned char> layerXY;
+                std::vector<unsigned char> layerXY;
                 layerXY.resize(current_zSize);
                 layerX[y] = layerXY;
             }
@@ -51,7 +51,7 @@ unsigned char OctreeComponent::getVoxelType(int x, int y, int z, int layerID) {
     int zSize = _zSize / _currentLayerSizeReductionFactor;
 
     if (x < 0 || x >= xSize || y < 0 || y >= ySize || z < 0 || z >= zSize) {
-        cerr << "Trying to get a voxel (" << x << ", " << y << ", " << z << ") outside of the defined layer (" << layerID << ")" << endl;
+        std::cerr << "Trying to get a voxel (" << x << ", " << y << ", " << z << ") outside of the defined layer (" << layerID << ")" << std::endl;
         return MaterialId::AIR;
     }
 
@@ -70,7 +70,7 @@ int OctreeComponent::setVoxelType(int x, int y, int z, unsigned char voxelMateri
     int zSize = _zSize / _currentLayerSizeReductionFactor;
 
     if (x < 0 || x >= xSize || y < 0 || y >= ySize || z < 0 || z >= zSize) {
-        cerr << "Trying to set a voxel (" << x << ", " << y << ", " << z << ") outside of the defined layer (" << layerID << ")" << endl;
+        std::cerr << "Trying to set a voxel (" << x << ", " << y << ", " << z << ") outside of the defined layer (" << layerID << ")" << std::endl;
         return -1;
     }
 
@@ -82,11 +82,11 @@ int OctreeComponent::getNumberOfLayers() {
     return _layers.size();
 }
 
-vector<vector<vector<unsigned char>>> OctreeComponent::getLayer(int layerID) {
+std::vector<std::vector<std::vector<unsigned char>>> OctreeComponent::getLayer(int layerID) {
     return _layers[layerID];
 }
 
-vector<vector<vector<vector<unsigned char>>>>* OctreeComponent::getLayers() {
+std::vector<std::vector<std::vector<std::vector<unsigned char>>>>* OctreeComponent::getLayers() {
     return &_layers;
 }
 
@@ -95,20 +95,20 @@ vector<vector<vector<vector<unsigned char>>>>* OctreeComponent::getLayers() {
 
 /** DEBUG: print the layers from bottom-up **/
 void OctreeComponent::debugPrintLayers() {
-    cout << "OctreeComponent.debugPrintLayers() <-" << endl;
+    std::cout << "OctreeComponent.debugPrintLayers() <-" << std::endl;
     int i = 0;
     for (auto layer : _layers) {
-        cout << "##########     LAYER   " << i++ << "   ##########" << endl << endl;
+        std::cout << "##########     LAYER   " << i++ << "   ##########" << std::endl << std::endl;
         for (unsigned long long y = 0; y < layer[0].size(); y++) {
             for (unsigned long long z = 0; z < layer[0][0].size(); z++) {
                 for (unsigned long long x = 0; x < layer.size(); x++) {
-                    cout << (int)layer[x][y][z] << " ";
+                    std::cout << (int)layer[x][y][z] << " ";
                 }
-                cout << endl;
+                std::cout << std::endl;
             }
-            cout << endl;
+            std::cout << std::endl;
         }
-        cout << endl;
+        std::cout << std::endl;
     }
-    cout << "OctreeComponent.debugPrintLayers() ->" << endl;
+    std::cout << "OctreeComponent.debugPrintLayers() ->" << std::endl;
 }

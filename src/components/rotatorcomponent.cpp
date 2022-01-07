@@ -1,5 +1,5 @@
 #include "rotatorcomponent.h"
-#include "src/engine.h"
+
 
 RotatorComponent::RotatorComponent(GameObject* parent, float xspeed, float yspeed, float zspeed) : Component(parent), _xspeed(xspeed), _yspeed(yspeed), _zspeed(zspeed) {
     this->_name = "RotatorComponent";
