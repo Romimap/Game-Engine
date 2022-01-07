@@ -189,7 +189,6 @@ void GLMesh::initMesh(std::string path, QOpenGLBuffer* arrayBuffer, QOpenGLBuffe
         }
     }
 
-//! [1]
     // Transfer vertex data to VBO 0
     arrayBuffer->bind();
     arrayBuffer->allocate(&vertexArray.front(), vertexArray.size() * sizeof(VertexData));
@@ -197,11 +196,7 @@ void GLMesh::initMesh(std::string path, QOpenGLBuffer* arrayBuffer, QOpenGLBuffe
     // Transfer index data to VBO 1
     indexBuffer->bind();
     indexBuffer->allocate(&indexArray.front(), indexArray.size() * sizeof(GLushort));
-//! [1]
 }
-
-//! [2]
-
 
 void GLMesh::draw(QOpenGLShaderProgram *program) {
     // Tell OpenGL which VBOs to use
@@ -239,4 +234,3 @@ void GLMesh::draw(QOpenGLShaderProgram *program) {
 
 
 }
-//! [2]

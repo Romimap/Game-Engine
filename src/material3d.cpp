@@ -32,8 +32,6 @@ unsigned int Material3D::addTexture(vector<vector<vector<unsigned char>>> data) 
         for (int y = 0; y < sizeY; y++) {
             for (int x = 0; x < sizeX; x++) {
                 convertedData[index++] = data[x][y][z];
-                if (index < 2000)
-                    cout << x << " " << y << " " << z << endl;
             }
         }
     }

@@ -86,6 +86,7 @@ int main(int argc, char *argv[]) {
     camera->GetTransform()->SetRotation(0, 0, 0);
     camera->GetTransform()->SetScale(1, 1, 1);
 
+
     Engine engine;
     engine.show();
 
@@ -123,22 +124,23 @@ int main(int argc, char *argv[]) {
 
 
     //CHUNK
-    GameObject* octree = new GameObject("Octree", &root);
-    octree->GetTransform()->SetRotation(0, 0, 0);
-    octree->GetTransform()->SetPosition(0, 0, 0);
-    OctreeRendererComponent* octreeRenderer = new OctreeRendererComponent(octree);
+    /*** OCTREE ***/
+    // GameObject* octree = new GameObject("Octree", &root);
+    // octree->GetTransform()->SetRotation(0, 0, 0);
+    // octree->GetTransform()->SetPosition(0, 0, 0);
+    // OctreeRendererComponent* octreeRenderer = new OctreeRendererComponent(octree);
 
-    LinkedQueue<OctreeRendererChange> changes4;
+    // LinkedQueue<OctreeRendererChange> changes4;
 
-    for (int i = 0; i < 1000; i++) {
-        OctreeRendererChange* change = new OctreeRendererChange(rand() % 4, rand() % 16, rand() % 4, rand() % 2);
-        changes4.push_back(change);
-    }
+    // for (int i = 0; i < 1000; i++) {
+    //     OctreeRendererChange* change = new OctreeRendererChange(rand() % 4, rand() % 16, rand() % 4, rand() % 2);
+    //     changes4.push_back(change);
+    // }
 
-    LinkedQueue<OctreeRendererChange> changes16;
-    LinkedQueue<OctreeRendererChange> changes64;
+    // LinkedQueue<OctreeRendererChange> changes16;
+    // LinkedQueue<OctreeRendererChange> changes64;
 
-    octreeRenderer->ApplyChanges(changes4, changes16, changes64);
+    // octreeRenderer->ApplyChanges(changes4, changes16, changes64);
 
 
 
@@ -158,8 +160,8 @@ int main(int argc, char *argv[]) {
     // Currently for testing purposes
 //    GameObject dummy("Dummy");
 
-//    GameObject* worldGenerator = new GameObject("World generator", &root);
-//    new WorldGeneratorComponent("New world", TerrainType::PERLIN_2D, 123456u, worldGenerator);
+    GameObject* worldGenerator = new GameObject("World generator", &root);
+    new WorldGeneratorComponent("New world", TerrainType::PERLIN_2D, 123456u, worldGenerator);
 
     return app.exec();
 }

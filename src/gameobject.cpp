@@ -96,6 +96,7 @@ void GameObject::Start () {
 }
 
 void GameObject::Update (float delta) {
+    if (!_started) Start();
     for (Component* component : _components) {
         component->Update(delta);
     }

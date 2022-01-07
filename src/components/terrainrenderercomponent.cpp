@@ -4,36 +4,29 @@ TerrainRendererComponent::TerrainRendererComponent(GameObject* parent) : Compone
     this->_name = "TerrainRendererComponent";
 
     this->_materiald3D = new Material3D(":/octreevshader.glsl", ":/octreefshader.glsl");
+}
 
-    TerrainComponent* TC = GetParent()->GetComponent<TerrainComponent>();
-    if (TC == nullptr)
-        cout << "nullptr" << endl;
-    else
-        cout << "Found a TerrainComponent" << endl;
-    cout << "Number of layers: " << TC->getNumberOfLayers() << endl;
+void TerrainRendererComponent::Start() {
+    TerrainComponent* TC = GetParent()->GetDerivedComponent<TerrainComponent>();
+    if (TC == nullptr) {
+        cerr << "TerrainRendererComponent::Start() No TerrainComponent found" << endl;
+        return;
+    }
 
     for (int i = TC->getNumberOfLayers() - 1; i >= 0; i--) { // From less to most detailed, TODO: swap
-        cout << "i = " << i << endl;
         _materiald3D->addTexture(TC->getLayer(i));
     }
 }
 
-void TerrainRendererComponent::Start() {
-//    TerrainComponent* TC = GetParent()->GetComponent<TerrainComponent>();
-//    cout << "HELLO" << endl;
-
-//    for (int i = TC->getNumberOfLayers() - 1; i >= 0; i--) { // From less to most detailed, TODO: swap
-//        _materiald3D->addTexture(TC->getLayer(i));
-//    }
-}
-
 void TerrainRendererComponent::Draw() {
-
-    cout << "TerrainRendererComponent::Draw() call" << endl;
 
     /** Bind the 3D textures to the shader **/
 
-    TerrainComponent* TC = GetParent()->GetComponent<TerrainComponent>();
+    TerrainComponent* TC = GetParent()->GetDerivedComponent<TerrainComponent>();
+    if (TC == nullptr) {
+        cerr << "TerrainRendererComponent::Start() No TerrainComponent found" << endl;
+        return;
+    }
     int textureID = TC->getNumberOfLayers() - 1;
 
     _materiald3D->bindTexture(textureID--, 0);
