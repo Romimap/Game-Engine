@@ -15,7 +15,7 @@ class Perlin2dTerrainComponent : public TerrainComponent {
 public:
     /** CONSTRUCTORS/DESTRUCTORS **/
     Perlin2dTerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor,
-                             const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, GameObject* parent);
+                             const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, float roughness, GameObject* parent);
 };
 
 #endif // PERLIN2DTERRAINCOMPONENT_H

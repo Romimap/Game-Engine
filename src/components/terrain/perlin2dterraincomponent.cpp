@@ -2,7 +2,7 @@
 
 
 Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor,
-                                                   const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, GameObject* parent)
+                                                   const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, float roughness, GameObject* parent)
     : TerrainComponent(chunkX, chunkY, chunkZ, xSize, ySize, zSize, nbOfLayers, layerSizeReductionFactor, parent) {
 
     this->_name = "Perlin2dTerrainComponent";
@@ -10,6 +10,8 @@ Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int c
     /** Generate terrain for the most detailed layer using perlin noise **/
 
     vector<vector<vector<unsigned char>>> &layer = _layers[0];
+
+    const double finalRoughness = roughness * (double)((_xSize + _zSize) / 2.0) / (double)_ySize;
 
     float xFrequency = frequency / (float) _xSize;
     float zFrequency = frequency / (float) _zSize;
@@ -26,7 +28,7 @@ Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int c
             double noise = perlin.octave2D_01(xNoise, zNoise, octaves, persistence);
 
             // Flatten noise
-            noise = 0.5 + (noise - 0.5) * 0.25;
+            noise = 0.5 + (noise - 0.5) * finalRoughness;
 
             int groundLevel = (int)(noise * (_ySize - 1));
 

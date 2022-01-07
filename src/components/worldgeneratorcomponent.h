@@ -25,15 +25,16 @@ public:
 
 protected:
     /** World gen related **/
-    siv::PerlinNoise::seed_type _seed;   // [0 ... 2^32-1]
+    siv::PerlinNoise::seed_type _seed;  // [0 ... 2^32-1]
 
     TerrainType _terrainType;
 
     siv::PerlinNoise _perlin;
 
-    const int _OCTAVES = 8;              // [1 ... 16]
-    const float _FREQUENCY = 8.0f;       // [0.1 ... 64.0]
-    const float _PERSISTENCE = 0.5f;     // [0.0 ... 1.0]
+    const int _OCTAVES = 8;             // [1 ... 16]
+    const float _FREQUENCY = 8.0f;      // [0.1 ... 64.0]
+    const float _PERSISTENCE = 0.5f;    // [0.0 ... 1.0]
+    const float _ROUGHNESS = 1.0f;      // [0.1 ... 10.0]
 
     const unsigned int TERRAIN_GEN_SQUARE_RADIUS = 0;
 
