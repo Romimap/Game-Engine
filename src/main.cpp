@@ -96,28 +96,29 @@ int main(int argc, char *argv[]) {
 
     GameObject* cube = new GameObject("White cube", &root);
     cube->GetTransform()->SetRotation(0, 0, 0);
-    cube->GetTransform()->SetPosition(0, 260, 0);
+    cube->GetTransform()->SetPosition(0, 0, 0);
     Material* cubeMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
     cubeMat->SetSlot2D(":/default.png", 0);
     new MeshRendererComponent(cubeMesh, cubeMat, cube);
+    cube->SetCollider(new AABBCollider(1, 1, 1));
 
     GameObject* X = new GameObject("Red cube", &root);
     X->GetTransform()->SetRotation(0, 0, 0);
-    X->GetTransform()->SetPosition(4, 260, 0);
+    X->GetTransform()->SetPosition(4, 0, 0);
     Material* XMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
     XMat->SetSlot2D(":/r.png", 0);
     new MeshRendererComponent(cubeMesh, XMat, X);
 
     GameObject* Y = new GameObject("Green cube", &root);
     Y->GetTransform()->SetRotation(0, 0, 0);
-    Y->GetTransform()->SetPosition(0, 264, 0);
+    Y->GetTransform()->SetPosition(0, 4, 0);
     Material* YMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
     YMat->SetSlot2D(":/g.png", 0);
     new MeshRendererComponent(cubeMesh, YMat, Y);
 
     GameObject* Z = new GameObject("Blue cube", &root);
     Z->GetTransform()->SetRotation(0, 0, 0);
-    Z->GetTransform()->SetPosition(0, 260, 4);
+    Z->GetTransform()->SetPosition(0, 0, 4);
     Material* ZMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
     ZMat->SetSlot2D(":/b.png", 0);
     new MeshRendererComponent(cubeMesh, ZMat, Z);

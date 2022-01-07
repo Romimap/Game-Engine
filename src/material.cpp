@@ -31,6 +31,7 @@ Material::~Material() {
 
 void Material::SetSlot2D(std::string path, int slot) {
     QOpenGLTexture* tex = new QOpenGLTexture(QImage(path.c_str()));
+    tex->setMinMagFilters(QOpenGLTexture::Filter::Nearest, QOpenGLTexture::Filter::Nearest);
     ApplyToSlot(tex, slot);
 }
 

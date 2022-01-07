@@ -3,16 +3,17 @@
 
 #include "gameobject.h"
 #include "collider.h"
-#include "octreedata.h"
-#include "octreegameobject.h"
+#include "components/terrain/octreecomponent.h"
 
 class OctreeCollider : public Collider {
 
 private:
-    OctreeData* _octree;
+    OctreeComponent* _octreeComponent;
 
 public:
-    OctreeCollider(OctreeData* octree);
+    OctreeCollider();
+    void Init() override;
+    void SetAABB() override;
 };
 
 #endif // OCTREECOLLIDER_H

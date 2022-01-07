@@ -6,6 +6,7 @@
 #include "aabb.h"
 #include "collider.h"
 
+
 #include <iostream>
 #include <limits>
 
@@ -20,12 +21,21 @@ class Engine;
 struct RenderData;
 class Component;
 
+struct RayCastHit {
+    float _distance;
+    QVector3D _position;
+    GameObject* _gameobject;
+
+    RayCastHit() : _distance(-1), _position(QVector3D()), _gameobject(nullptr) {
+
+    }
+};
+
 class GameObject {
     //MEMBERS
 protected:
     bool _enabled = true;
     bool _started = false;
-    bool _fixedAABB = false;
 
     GameObject* _parent = nullptr;
 
@@ -58,8 +68,6 @@ public:
     /** GETTERS SETTERS **/
     bool Enabled();
 
-    void SetFixedAABB(QVector3D min, QVector3D max);
-
     GameObject* GetParent();
 
     Transform* GetTransform();
@@ -80,6 +88,8 @@ public:
     void Update(float delta);
     void FixedUpdate(float delta);
     void Collisions(GameObject* current);
+    RayCastHit AABBRayCollision(QVector3D origin, QVector3D direction);
+
     void RefreshAABB();
 
     template <typename T> T* GetComponent() {

@@ -132,3 +132,10 @@ void Engine::keyReleaseEvent(QKeyEvent *event) {
         InputManager::Resease(event->key());
     }
 }
+
+RayCastHit Engine::RayCast(QVector3D origin, QVector3D direction) {
+    RayCastHit hit = GameObject::Root->AABBRayCollision(origin, direction);
+    std::cout << "RAY ! " << hit._distance << std::endl;
+    return hit;
+}
+

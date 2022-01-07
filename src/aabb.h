@@ -10,6 +10,7 @@ struct AABB {
     AABB();
     AABB(QVector3D min, QVector3D max);
     bool intersect(AABB& with);
+    float RayIntersect(QVector3D origin, QVector3D direction);
 };
 
 #endif // AABB_H

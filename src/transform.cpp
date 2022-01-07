@@ -52,8 +52,10 @@ QVector3D Transform::GetPosition() {
 
 QVector3D Transform::GetGlobalPosition() {
     QMatrix4x4 globalMatrix = GlobalTransformMatrix();
-
-    return (globalMatrix * QVector4D(0, 0, 0, 1)).toVector3D();
+    float m30 = globalMatrix.column(3).x();
+    float m31 = globalMatrix.column(3).y();
+    float m32 = globalMatrix.column(3).z();
+    return QVector3D(m30, m31, m32);
 }
 
 void Transform::Rotate (QQuaternion t) {

@@ -1,5 +1,6 @@
 #include "octreerenderercomponent.h"
 #include "src/components/terrain/octreecomponent.h"
+#include <QVector3D>
 
 int OctreeRendererComponent::s_notUpToDateChunks = 0;
 
@@ -20,9 +21,6 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
 
         unsigned char c = OC->getVoxelType(x, y, z, 2);
         data4[k] = c;
-
-        if (x == 0 && y == 15 && z == 3) data4[k] = 1;
-        if (x == 0 && y == 15 && z == 0) data4[k] = 3;
     }
 
     unsigned char* data16 = (unsigned char*)malloc(16*64*16 * sizeof (unsigned char));
@@ -33,9 +31,6 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
 
         unsigned char c = OC->getVoxelType(x, y, z, 1);
         data16[k] = c;
-
-        if (x == 0 && y == 63 && z == 15) data16[k] = 1;
-        if (x == 0 && y == 63 && z == 0) data16[k] = 2;
     }
 
     unsigned char* data64 = (unsigned char*)malloc(64*256*64 * sizeof (unsigned char));
@@ -46,9 +41,6 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
 
         unsigned char c = OC->getVoxelType(x, y, z, 0);
         data64[k] = c;
-
-        if (x == 0 && y == 255 && z == 63) data64[k] = 1;
-        if (x == 0 && y == 255 && z == 0) data64[k] = 2;
     }
 
     _material->SetSlot3D(0, 4, 16, 4, data4);
@@ -88,7 +80,12 @@ void OctreeRendererComponent::Draw() {
     _material->program.setUniformValue("colorlod16", 1);
     _material->program.setUniformValue("colorlod64", 2);
     _material->program.setUniformValue("materials", 3);
-    _material->program.setUniformValue("lod", 0);
+
+
+    float squaredDistanceToCamera = (GetParent()->GetTransform()->GetPosition() - Camera::ActiveCamera->GetTransform()->GetPosition() - QVector3D(32, -128, 32)).length();
+    if (squaredDistanceToCamera > 700) _material->program.setUniformValue("lod", 2);
+    else if (squaredDistanceToCamera > 200) _material->program.setUniformValue("lod", 1);
+    else _material->program.setUniformValue("lod", 0);
 
 
     // Draw Mesh

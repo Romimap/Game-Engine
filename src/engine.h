@@ -43,7 +43,9 @@ public:
     Engine();
 
 public:
-    void DrawScene();
+    RayCastHit RayCast(QVector3D origin, QVector3D direction);
+private:
+    RayCastHit RayCastRecursive(QVector3D origin, QVector3D direction, GameObject *current);
 
 protected:
     void initializeGL() override;

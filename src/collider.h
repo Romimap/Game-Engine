@@ -19,9 +19,9 @@ public:
 public:
     Collider(){}
     virtual ~Collider(){}
-
     virtual void SetAABB(){}
 
+    virtual void Init(){}
     virtual GameObject* GetParent() {return _parent;}
 
     virtual bool Collision(Collider* other) {

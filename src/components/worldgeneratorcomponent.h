@@ -35,7 +35,7 @@ protected:
     const float _PERSISTENCE = 0.5f;    // [0.0 ... 1.0]
     const float _ROUGHNESS = .3f;      // [0.1 ... 10.0]
 
-    const unsigned int TERRAIN_GEN_SQUARE_RADIUS = 2;
+    const unsigned int TERRAIN_GEN_SQUARE_RADIUS = 0;
 
     /** Chunks related **/
     const int _CHUNK_X_SIZE = 64;

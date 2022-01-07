@@ -1,4 +1,5 @@
 #include "playercontrollercomponent.h"
+#include "src/engine.h"
 
 PlayerControllerComponent::PlayerControllerComponent(float speed, float acceleration, RigidBodyComponent* cubeRb, GameObject* parent) : Component(parent), _cubeRb(cubeRb), _speed(speed), _acceleration(acceleration) {
     this->_name = "PlayerControllerComponent";
@@ -20,10 +21,10 @@ void PlayerControllerComponent::Update(float delta) {
     if (InputManager::Key('P')) InputManager::SetCaptureMouse(true);
     if (InputManager::Key('M')) InputManager::SetCaptureMouse(false);
 
-    //PushPull Cube
-    if (InputManager::Key('T') && _cubeRb != nullptr) _cubeRb->_momentum += GetParent()->GetTransform()->Forward();
-    if (InputManager::Key('G') && _cubeRb != nullptr) _cubeRb->_momentum -= GetParent()->GetTransform()->Forward();
-
+    //Raycast
+    if (InputManager::Key('E')) {
+        Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition(), -GetParent()->GetTransform()->Forward());
+    }
     //Movement & Orientation
     float x = InputManager::Key('D') - InputManager::Key('Q');
     float y = InputManager::Key('R') - InputManager::Key('F');
@@ -47,8 +48,8 @@ void PlayerControllerComponent::Update(float delta) {
     GetParent()->GetTransform()->Translate(_momentum * delta);
     GetParent()->GetTransform()->SetRotation(azimuthQuat * elevationQuat);
 
-    qDebug((std::to_string(GetParent()->GetTransform()->GetPosition().x())
-    + " " + std::to_string(GetParent()->GetTransform()->GetPosition().y())
-    + " " + std::to_string(GetParent()->GetTransform()->GetPosition().z())
-    + " (playercontrollercomponent.cpp)").c_str());
+    //qDebug((std::to_string(GetParent()->GetTransform()->GetPosition().x())
+    //+ " " + std::to_string(GetParent()->GetTransform()->GetPosition().y())
+    //+ " " + std::to_string(GetParent()->GetTransform()->GetPosition().z())
+    //+ " (playercontrollercomponent.cpp)").c_str());
 }

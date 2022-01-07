@@ -46,18 +46,6 @@ bool GameObject::Enabled () {
     return _enabled;
 }
 
-void GameObject::SetFixedAABB(QVector3D min, QVector3D max) {
-    this->_fixedAABB = true;
-
-    if (_globalAABB != nullptr)
-        delete _globalAABB;
-    _globalAABB = new AABB(min, max);
-
-    if (_personalGlobalAABB != nullptr)
-        delete _personalGlobalAABB;
-    _personalGlobalAABB = new AABB(min, max);
-}
-
 Transform* GameObject::GetTransform () {
     return _transform;
 }
@@ -80,6 +68,7 @@ void GameObject::SetCollider(Collider *collider) {
         delete _collider;
     _collider = collider;
     _collider->_parent = this;
+    _collider->Init();
 }
 
 //METHODS
@@ -131,15 +120,44 @@ void GameObject::Collisions(GameObject* current) {
     }
 }
 
+RayCastHit GameObject::AABBRayCollision(QVector3D origin, QVector3D direction) {
+    if (_globalAABB == nullptr) return RayCastHit(); //No GlobalAABB, No collision
+
+    RayCastHit hit;
+    hit._distance = _globalAABB->RayIntersect(origin, direction);
+    if (hit._distance <= 0) return RayCastHit(); //Ray missed GlobalAABB, No collision
+
+    hit._distance = MAXFLOAT;
+
+    if (_personalGlobalAABB) {
+        hit._distance = _personalGlobalAABB->RayIntersect(origin, direction);
+        if (hit._distance > 0) { //Ray hit the personal AABB, possible collision
+            //TODO, proper Ray / Collider test
+            if (true) {
+                hit._gameobject = this;
+                hit._position = origin + direction * hit._distance;
+            }
+        }
+    }
+
+    for (GameObject *child : GetChildren()) {
+        RayCastHit tmp;
+        tmp = child->AABBRayCollision(origin, direction);
+        if (tmp._distance > 0) {
+            if (hit._distance <= 0 || tmp._distance < hit._distance) {
+                hit = tmp;
+            }
+        }
+    }
+
+    return hit;
+}
 
 void GameObject::AddComponent(Component *component) {
     _components.push_back(component);
 }
 
 void GameObject::RefreshAABB() {
-    if (_fixedAABB) // Don't update AABBs
-        return;
-
     int minInt = std::numeric_limits<int>::min();
     int maxInt = std::numeric_limits<int>::min();
     QVector3D min(maxInt, maxInt, maxInt);

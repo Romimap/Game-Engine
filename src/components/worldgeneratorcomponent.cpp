@@ -1,5 +1,6 @@
 #include "worldgeneratorcomponent.h"
 #include "octreerenderercomponent.h"
+#include "src/octreecollider.h"
 
 WorldGeneratorComponent::WorldGeneratorComponent(string worldName, TerrainType terrainType, siv::PerlinNoise::seed_type seed, GameObject* parent)
     : Component(parent) {
@@ -53,6 +54,9 @@ WorldGeneratorComponent::WorldGeneratorComponent(string worldName, TerrainType t
                     cerr << "Unknown terrain generation specified, aborting world creation" << endl;
                     return;
                 }
+
+                //NOTE: dont forget to uncomment
+                //chunk->SetCollider(new OctreeCollider());
 
                 new OctreeRendererComponent(chunk);
 

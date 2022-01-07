@@ -25,6 +25,7 @@ SOURCES += src/main.cpp \
     src/material.cpp \
     src/components/rotatorcomponent.cpp \
     src/material3d.cpp \
+    src/octreecollider.cpp \
     src/transform.cpp
 
 HEADERS += \
@@ -49,6 +50,7 @@ HEADERS += \
     src/material.h \
     src/components/rotatorcomponent.h \
     src/material3d.h \
+    src/octreecollider.h \
     src/transform.h \
     libraries/octree/array.h \
     libraries/octree/array2d.h \
@@ -71,4 +73,5 @@ INSTALLS += target
 DISTFILES += \
     misc/Suzanne.obj\
     misc/Cube.obj \
+    misc/chunk.obj \
     misc/plane.obj
