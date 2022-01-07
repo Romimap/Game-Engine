@@ -12,82 +12,35 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
 
     TerrainComponent *TC = (TerrainComponent*)parent->GetDerivedComponent<TerrainComponent>();
 
-    for (int y = 255; y < 256; y++) {
-        for (int x = 0; x < 64; x++) {
-            for (int z = 0; z < 64; z++) {
-                unsigned char c = TC->getVoxelType(x, y, z, 0);
-                cout << (int)c << " ";
-            }
-            cout << endl;
-        }
-        cout << endl;
-        cout << endl;
-        cout << endl;
-    }
-
-    char* data4 = (char*)malloc(4*16*4 * sizeof (char));
+    unsigned char* data4 = (unsigned char*)malloc(4*16*4 * sizeof (unsigned char));
     for (int k = 0; k < 4*16*4; k++) {
-        data4[k] = 0;
-        //data4[k] = (rand() % 5 == 0) * 255;;
+        int x =  k % 4;
+        int y = (k / 4) % 16;
+        int z = (k / 4) / 16;
+
+        unsigned char c = TC->getVoxelType(x, y, z, 2);
+        data4[k] = c;
     }
 
-    char* data16 = (char*)malloc(16*64*16 * sizeof (char));
+    unsigned char* data16 = (unsigned char*)malloc(16*64*16 * sizeof (unsigned char));
     for (int k = 0; k < 16*64*16; k++) {
-        data16[k] = 0;
-        //data16[k] = (rand() % 5 == 0) * 255;;
+        int x =  k % 16;
+        int y = (k / 16) % 64;
+        int z = (k / 16) / 64;
+
+        unsigned char c = TC->getVoxelType(x, y, z, 1);
+        data16[k] = c;
     }
 
-    int ymin = 1000;
-    int ymax = -999;
-    char* data64 = (char*)malloc(64*256*64 * sizeof (char));
+    unsigned char* data64 = (unsigned char*)malloc(64*256*64 * sizeof (unsigned char));
     for (int k = 0; k < 64*256*64; k++) {
         int x =  k % 64;
         int y = (k / 64) % 256;
         int z = (k / 64) / 256;
 
-        ymin = std::min(y, ymin);
-        ymax = std::max(y, ymax);
-
-        int x16 = x / 4;
-        int y16 = y / 4;
-        int z16 = z / 4;
-        int k16 = x16 + 16*y16 + 16*64*z16;
-
-        if (k16 >= 16*64*16) {
-            printf("ERROR 16 k=%d x=%d y=%d z=%d\n", k16, x16, y16, z16);
-            exit(0);
-        }
-
-        int x4 = x16 / 4;
-        int y4 = y16 / 4;
-        int z4 = z16 / 4;
-        int k4 = x4 + 4*y4 + 4*16*z4;
-
-        //printf("64 k=%d x=%d y=%d z=%d\n", k, x, y, z);
-        //printf("16 k=%d x=%d y=%d z=%d\n", k16, x16, y16, z16);
-        //printf("4  k=%d x=%d y=%d z=%d\n\n", k4, x4, y4, z4);
-
-
-        if (k4 >= 4*16*4) {
-            printf("ERROR 4 k=%d x=%d y=%d z=%d\n", k4, x4, y4, z4);
-            exit(0);
-        }
-
-        //if (x == 0 || y == 0 || z == 0) {
-        //unsigned char c = TC->getVoxelType(x, y, z, 0);
-        //if (c) {
-        if (x == 0 && y == 0 && z == 0) {
-            data64[k] = 1;
-            data16[k16] = 1;
-            data4[k4] = 1;
-        } else {
-            data64[k] = 0;
-        }
-        //data1024[k] = 0b11111111;
-        //data64[k] = (rand() % 20 == 0) * 255;
+        unsigned char c = TC->getVoxelType(x, y, z, 0);
+        data64[k] = c;
     }
-
-    cout << "ymin = " << ymin << ", ymax = " << ymax << endl;
 
     _material->SetSlot3D(0, 4, 16, 4, data4);
     _material->SetSlot3D(1, 16, 64, 16, data16);
@@ -126,6 +79,8 @@ void OctreeRendererComponent::Draw() {
     _material->program.setUniformValue("colorlod16", 1);
     _material->program.setUniformValue("colorlod64", 2);
     _material->program.setUniformValue("materials", 3);
+    _material->program.setUniformValue("lod", 0);
+
 
     // Draw Mesh
     _mesh->draw(&_material->program);

@@ -90,7 +90,7 @@ Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int c
 
                     int mostOccuringVoxel_id = 0;
                     int mostOccuringVoxel_count = 0;
-                    for (unsigned int i = 0; i <= MaterialId::MAX_ID; i++) {
+                    for (unsigned int i = 1; i <= MaterialId::MAX_ID; i++) {
                         if (voxelTypeCount[i] > mostOccuringVoxel_count) {
                             mostOccuringVoxel_id = i;
                             mostOccuringVoxel_count = voxelTypeCount[i];

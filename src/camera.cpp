@@ -12,7 +12,7 @@ void Camera::ResizeGL(int w, int h) {
     // Calculate aspect ratio
     qreal aspect = qreal(w) / qreal(h ? h : 1);
 
-    const qreal zNear = .1, zFar = 1000.0, fov = 55.0; //TODO: this but as a member
+    const qreal zNear = .1, zFar = 1000.0, fov = 48.0; //TODO: this but as a member
 
     // Reset projection
     _projectionMatrix.setToIdentity();

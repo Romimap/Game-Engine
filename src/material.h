@@ -24,7 +24,7 @@ public:
     ~Material();
 
     void SetSlot2D(std::string path, int slot);
-    QOpenGLTexture* SetSlot3D(int slot, int sizeX, int sizeY, int sizeZ, char* data);
+    QOpenGLTexture* SetSlot3D(int slot, int sizeX, int sizeY, int sizeZ, unsigned char* data);
 
 protected:
     QOpenGLTexture* ApplyToSlot(QOpenGLTexture* tex, int slot);

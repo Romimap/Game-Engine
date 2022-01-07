@@ -34,7 +34,7 @@ void Material::SetSlot2D(std::string path, int slot) {
     ApplyToSlot(tex, slot);
 }
 
-QOpenGLTexture* Material::SetSlot3D(int slot, int sizeX, int sizeY, int sizeZ, char* data) {
+QOpenGLTexture* Material::SetSlot3D(int slot, int sizeX, int sizeY, int sizeZ, unsigned char* data) {
     if (slot < 0 || slot > 7)
         return nullptr;
 
