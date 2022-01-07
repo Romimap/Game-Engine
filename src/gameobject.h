@@ -94,6 +94,7 @@ public:
         for (Component* c : _components) {
             if (T* tc = dynamic_cast<T*>(c)) return tc;
         }
+        std::cout << "null !" << std::endl;
         return nullptr;
     }
 

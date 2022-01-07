@@ -124,16 +124,20 @@ TMinMax boxFarDistance (vec3 O, vec3 D, vec3 min, vec3 max) {
 
 vec3 getColor(int material, vec3 coord, vec3 n) {
     float shading;
+    vec2 uv;
     if (n.x != 0) {
-        //return vec3(1, 0, 0);
-        return texture2D(materials, mod((coord.yz * 0.015625 * vec2(0.25, 1)), vec2(.25, 1)) + vec2(0.25 * material, 0)).rgb * max(AMBIENTFORCE, n.x) * 0.5;
+        uv =  mod((coord.yz * 0.015625 * vec2(0.25, 1)), vec2(.25, 1)) + vec2(0.25 * material, 0);
+        shading = max(AMBIENTFORCE, n.x) * 0.5;
     } else if (n.y != 0) {
+        uv =  mod((coord.xz * 0.015625 * vec2(0.25, 1)), vec2(1, 1)) + vec2(0.25 * material, 0);
+        shading = max(AMBIENTFORCE, n.y) * 0.1;
         //return vec3(0, 1, 0);
-        return texture2D(materials, mod((coord.xz * 0.015625 * vec2(0.25, 1)), vec2(1, 1)) + vec2(0.25 * material, 0)).rgb * max(AMBIENTFORCE, n.y) * 1;
     } else {
+        uv =  mod((coord.yx * 0.015625 * vec2(0.25, 1)), vec2(.25, 1)) + vec2(0.25 * material, 0);
+        shading = max(AMBIENTFORCE, n.z) * 0.7;
         //return vec3(0, 0, 1);
-        return texture2D(materials, mod((coord.yx * 0.015625 * vec2(0.25, 1)), vec2(.25, 1)) + vec2(0.25 * material, 0)).rgb * max(AMBIENTFORCE, n.z) * 0.7;
     }
+    return texture2D(materials,uv).rgb * shading;
 }
 
 CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
@@ -341,8 +345,6 @@ CollisionData gridDF16 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
     cdata.distance = INFINITY;
     return cdata;
 }
-
-
 
 CollisionData gridDF4 (vec3 O, vec3 D, vec3 gridPos) {
     CollisionData cdata;

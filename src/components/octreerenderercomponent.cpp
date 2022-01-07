@@ -1,4 +1,5 @@
 #include "octreerenderercomponent.h"
+#include "src/components/terrain/terraincomponent.h"
 
 int OctreeRendererComponent::s_notUpToDateChunks = 0;
 
@@ -9,10 +10,20 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
 
     _mesh = new GLMesh("../Game-Engine/misc/chunk.obj");
 
-    //TODO, do that but with an octree
+    TerrainComponent *TC = (TerrainComponent*)parent->GetDerivedComponent<TerrainComponent>();
 
-    QImage heightmap;
-    heightmap.load(":/montagne.png");
+    for (int y = 255; y < 256; y++) {
+        for (int x = 0; x < 64; x++) {
+            for (int z = 0; z < 64; z++) {
+                unsigned char c = TC->getVoxelType(x, y, z, 0);
+                cout << (int)c << " ";
+            }
+            cout << endl;
+        }
+        cout << endl;
+        cout << endl;
+        cout << endl;
+    }
 
     char* data4 = (char*)malloc(4*16*4 * sizeof (char));
     for (int k = 0; k < 4*16*4; k++) {
@@ -26,12 +37,16 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
         //data16[k] = (rand() % 5 == 0) * 255;;
     }
 
+    int ymin = 1000;
+    int ymax = -999;
     char* data64 = (char*)malloc(64*256*64 * sizeof (char));
     for (int k = 0; k < 64*256*64; k++) {
         int x =  k % 64;
         int y = (k / 64) % 256;
         int z = (k / 64) / 256;
 
+        ymin = std::min(y, ymin);
+        ymax = std::max(y, ymax);
 
         int x16 = x / 4;
         int y16 = y / 4;
@@ -58,19 +73,25 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
             exit(0);
         }
 
-        QColor c = heightmap.pixelColor(x * 16, z * 16);
-
         //if (x == 0 || y == 0 || z == 0) {
-        if (c.red() / 16 + 32 < y) {
-            data64[k] = 0b11111111;
-            data16[k16] = 0b11111111;
-            data4[k4] = 0b11111111;
-        } else {
+        //unsigned char c = TC->getVoxelType(x, y, z, 0);
+        //if (c) {
+        if (x == 0 && y == 0 && z == 0) {
+            data64[k] = 1;
+            data16[k16] = 1;
+            data4[k4] = 1;
+        } else if (x == 63 && y == 255 && z == 64) {
+            data64[k] = 2;
+            data16[k16] = 2;
+            data4[k4] = 2;
+        }else {
             data64[k] = 0;
         }
         //data1024[k] = 0b11111111;
         //data64[k] = (rand() % 20 == 0) * 255;
     }
+
+    cout << "ymin = " << ymin << ", ymax = " << ymax << endl;
 
     _material->SetSlot3D(0, 4, 16, 4, data4);
     _material->SetSlot3D(1, 16, 64, 16, data16);
@@ -126,7 +147,7 @@ void OctreeRendererComponent::Update(float delta) {
         OctreeRendererChange* change = _layer4.pop_front();
         change->_value;
         _material->_TexSlot0->bind();
-        glfunc.glTexSubImage3D(GL_TEXTURE_3D, 0, change->_x, change->_y, change->_z, 1, 1, 1, QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, &change->_value);
+        glfunc.glTexSubImage3D  (GL_TEXTURE_3D, 0, change->_x, change->_y, change->_z, 1, 1, 1, QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, &change->_value);
         delete change;
 
         quota--;

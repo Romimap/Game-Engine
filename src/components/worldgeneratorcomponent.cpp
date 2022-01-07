@@ -1,5 +1,5 @@
 #include "worldgeneratorcomponent.h"
-
+#include "octreerenderercomponent.h"
 
 WorldGeneratorComponent::WorldGeneratorComponent(string worldName, TerrainType terrainType, siv::PerlinNoise::seed_type seed, GameObject* parent)
     : Component(parent) {
@@ -52,7 +52,7 @@ WorldGeneratorComponent::WorldGeneratorComponent(string worldName, TerrainType t
                     return;
                 }
 
-                new TerrainRendererComponent(chunk);
+                new OctreeRendererComponent(chunk);
 
                 chunksCount++;
 

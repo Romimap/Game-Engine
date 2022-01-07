@@ -22,7 +22,7 @@ TerrainComponent::TerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize
     GameObject* chunk = GetParent();
     chunk->_name = "Chunk_" + to_string(_chunkX) + "_" + to_string(_chunkY) + "_" + to_string(_chunkZ);
     chunk->GetTransform()->SetPosition(aabbMin.x(), aabbMin.y(), aabbMin.z());
-    chunk->SetFixedAABB(aabbMin, aabbMax);
+    //chunk->SetFixedAABB(aabbMin, aabbMax);
 
     /** Allocate space for each layer **/
 
