@@ -82,15 +82,7 @@ public:
     void Collisions(GameObject* current);
     void RefreshAABB();
 
-    /** METHODS USING TEMPLATES **/
     template <typename T> T* GetComponent() {
-        for (Component* c : _components) {
-            if (typeid (*c) == typeid (T)) return (T*)c;
-        }
-        return nullptr;
-    }
-
-    template <typename T> T* GetDerivedComponent() {
         for (Component* c : _components) {
             if (T* tc = dynamic_cast<T*>(c)) return tc;
         }

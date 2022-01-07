@@ -1,28 +1,33 @@
 #include "perlin2dterraincomponent.h"
 
 
-Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor,
-                                                   const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, float roughness, GameObject* parent)
-    : TerrainComponent(chunkX, chunkY, chunkZ, xSize, ySize, zSize, nbOfLayers, layerSizeReductionFactor, parent) {
+Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkZ,
+                                                   const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, float roughness, GameObject* parent) : Component(parent) {
 
     this->_name = "Perlin2dTerrainComponent";
+    _octreeComponent = parent->GetComponent<OctreeComponent>();
 
     /** Generate terrain for the most detailed layer using perlin noise **/
 
-    vector<vector<vector<unsigned char>>> &layer = _layers[0];
+    vector<vector<vector<vector<unsigned char>>>> &layers = *_octreeComponent->getLayers();
+    vector<vector<vector<unsigned char>>> &layer = layers[0];
 
-    const double finalRoughness = roughness * (double)((_xSize + _zSize) / 2.0) / (double)_ySize;
+    int xSize = _octreeComponent->getXSize();
+    int ySize = _octreeComponent->getYSize();
+    int zSize = _octreeComponent->getZSize();
 
-    float xFrequency = frequency / (float) _xSize;
-    float zFrequency = frequency / (float) _zSize;
+    const double finalRoughness = roughness * (double)((xSize + zSize) / 2.0) / (double)ySize;
+
+    float xFrequency = frequency / (float) xSize;
+    float zFrequency = frequency / (float) zSize;
 
     float xStart = chunkX * frequency;
     float zStart = chunkZ * frequency;
 
-    for (int x = 0; x < _xSize; x++) {
+    for (int x = 0; x < xSize; x++) {
         float xNoise = xStart + x * xFrequency;
 
-        for (int z = 0; z < _zSize; z++) {
+        for (int z = 0; z < zSize; z++) {
             float zNoise = zStart + z * zFrequency;
 
             double noise = perlin.octave2D_01(xNoise, zNoise, octaves, persistence);
@@ -30,7 +35,7 @@ Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int c
             // Flatten noise
             noise = 0.5 + (noise - 0.5) * finalRoughness;
 
-            int groundLevel = (int)(noise * (_ySize - 1));
+            int groundLevel = (int)(noise * (ySize - 1));
 
             // Place stone
             for (int y = 0; y < groundLevel - 2; y++) {
@@ -43,7 +48,7 @@ Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int c
             layer[x][groundLevel][z] = MaterialId::GRASS;
 
             // Place air above
-            for (int y = groundLevel + 1; y < _ySize; y++) {
+            for (int y = groundLevel + 1; y < ySize; y++) {
                 layer[x][y][z] = MaterialId::AIR;
             }
         }
@@ -51,10 +56,11 @@ Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int c
 
     /** Create upper (less detailed) layers **/
 
-    for (int layerID = 0; layerID < nbOfLayers - 1; layerID++) {
+    int layerSizeReductionFactor = _octreeComponent->getLayerSizeReductionFactor();
+    for (int layerID = 0; layerID < _octreeComponent->getNumberOfLayers() - 1; layerID++) {
 
-        vector<vector<vector<unsigned char>>> &current_layer = _layers[layerID];
-        vector<vector<vector<unsigned char>>> &upper_layer = _layers[layerID + 1];
+        vector<vector<vector<unsigned char>>> &current_layer = layers[layerID];
+        vector<vector<vector<unsigned char>>> &upper_layer = layers[layerID + 1];
 
         /** Update upper layer using current layer voxels **/
 
@@ -64,22 +70,22 @@ Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int c
 
         // Use (x0, y0, z0) as coordinates in the upper layer
         for (int x0 = 0; x0 < upper_xSize; x0++) {
-            int x1 = x0 * _layerSizeReductionFactor;
+            int x1 = x0 * layerSizeReductionFactor;
 
             for (int y0 = 0; y0 < upper_ySize; y0++) {
-                int y1 = y0 * _layerSizeReductionFactor;
+                int y1 = y0 * layerSizeReductionFactor;
 
                 for (int z0 = 0; z0 < upper_zSize; z0++) {
-                    int z1 = z0 * _layerSizeReductionFactor;
+                    int z1 = z0 * layerSizeReductionFactor;
 
                     /** Count current layer voxel types **/
 
                     int voxelTypeCount[MaterialId::MAX_ID + 1] = { 0 };
 
                     // Use (x1, y1, z1) as coordinates in the current layer
-                    for (int i = 0; i < _layerSizeReductionFactor; i++) {
-                        for (int j = 0; j < _layerSizeReductionFactor; j++) {
-                            for (int k = 0; k < _layerSizeReductionFactor; k++) {
+                    for (int i = 0; i < layerSizeReductionFactor; i++) {
+                        for (int j = 0; j < layerSizeReductionFactor; j++) {
+                            for (int k = 0; k < layerSizeReductionFactor; k++) {
                                 int voxelType = current_layer[x1 + i][y1 + j][z1 + k];
                                 voxelTypeCount[voxelType]++;
                             }
@@ -104,6 +110,4 @@ Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int c
             }
         }
     }
-
-    debugPrintLayers();
 }

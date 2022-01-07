@@ -1,5 +1,5 @@
-#ifndef TERRAINCOMPONENT_H
-#define TERRAINCOMPONENT_H
+#ifndef OCTREECOMPONENT_H
+#define OCTREECOMPONENT_H
 
 
 #include <cmath>
@@ -16,7 +16,7 @@
 using namespace std;
 
 
-class TerrainComponent : public Component {
+class OctreeComponent : public Component {
     /*** ATTRIBUTES ***/
 protected:
     /** Update method related **/
@@ -30,16 +30,11 @@ protected:
     vector<vector<vector<vector<unsigned char>>>> _layers;
     int _layerSizeReductionFactor;
 
-    /** Position **/
-    int _chunkX;
-    int _chunkY;
-    int _chunkZ;
-
 
     /*** METHODS ***/
-protected:
+public:
     /** CONSTRUCTORS/DESTRUCTORS **/
-    TerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor, GameObject* parent);
+    OctreeComponent(int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor, GameObject* parent);
 
 public:
     /** UPDATE **/
@@ -48,12 +43,17 @@ public:
     /** GETTERS/SETTERS **/
     unsigned char getVoxelType(int x, int y, int z, int layerID = 0);
     int setVoxelType(int x, int y, int z, unsigned char voxelMaterial, int layerID = 0);
-
+    int getXSize() {return _xSize;}
+    int getYSize() {return _ySize;}
+    int getZSize() {return _zSize;}
+    int getLayerSizeReductionFactor() {return _layerSizeReductionFactor;}
     int getNumberOfLayers();
     vector<vector<vector<unsigned char>>> getLayer(int layerID);
+    vector<vector<vector<vector<unsigned char>>>> *getLayers();
 
     /** DEBUG **/
     void debugPrintLayers();
+
 };
 
-#endif // TERRAINCOMPONENT_H
+#endif // OCTREECOMPONENT_H

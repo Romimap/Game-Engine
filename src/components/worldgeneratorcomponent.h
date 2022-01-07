@@ -11,7 +11,6 @@
 #include "src/consts.h"
 #include "src/gameobject.h"
 
-#include "src/components/terrainrenderercomponent.h"
 #include "src/components/terrain/perlin2dterraincomponent.h"
 
 
@@ -32,11 +31,11 @@ protected:
     siv::PerlinNoise _perlin;
 
     const int _OCTAVES = 8;             // [1 ... 16]
-    const float _FREQUENCY = 8.0f;      // [0.1 ... 64.0]
+    const float _FREQUENCY = .8f;      // [0.1 ... 64.0]
     const float _PERSISTENCE = 0.5f;    // [0.0 ... 1.0]
-    const float _ROUGHNESS = 1.0f;      // [0.1 ... 10.0]
+    const float _ROUGHNESS = .3f;      // [0.1 ... 10.0]
 
-    const unsigned int TERRAIN_GEN_SQUARE_RADIUS = 0;
+    const unsigned int TERRAIN_GEN_SQUARE_RADIUS = 2;
 
     /** Chunks related **/
     const int _CHUNK_X_SIZE = 64;

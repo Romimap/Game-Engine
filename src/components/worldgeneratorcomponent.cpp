@@ -30,10 +30,12 @@ WorldGeneratorComponent::WorldGeneratorComponent(string worldName, TerrainType t
         for (int y = yMin; y <= yMax; y++) {
             for (int z = zMin; z <= zMax; z++) {
                 GameObject* chunk = new GameObject("Chunk", GetParent());
+                chunk->GetTransform()->SetPosition(x * _CHUNK_X_SIZE, y * _CHUNK_Y_SIZE, z * _CHUNK_Z_SIZE);
+                new OctreeComponent(_CHUNK_X_SIZE, _CHUNK_Y_SIZE, _CHUNK_Z_SIZE, _CHUNK_NB_OF_LAYERS, _CHUNK_LAYER_SIZE_REDUCTION_FACTOR, chunk);
 
                 switch (_terrainType) {
                 case TerrainType::PERLIN_2D:
-                    new Perlin2dTerrainComponent(x, y, z, _CHUNK_X_SIZE, _CHUNK_Y_SIZE, _CHUNK_Z_SIZE, _CHUNK_NB_OF_LAYERS, _CHUNK_LAYER_SIZE_REDUCTION_FACTOR, _perlin, _OCTAVES, _FREQUENCY, _PERSISTENCE, _ROUGHNESS, chunk);
+                    new Perlin2dTerrainComponent(x, z, _perlin, _OCTAVES, _FREQUENCY, _PERSISTENCE, _ROUGHNESS, chunk);
                     break;
                 case TerrainType::PERLIN_3D:
                     cerr << "PERLIN_3D terrain generation not implemented yet, aborting world creation" << endl;

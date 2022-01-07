@@ -13,7 +13,8 @@ void Engine::initializeGL() {
     qDebug("initializeGL <-");
     initializeOpenGLFunctions();
 
-    resize(1280, 720);
+    //resize(1280, 720);
+    resize(640, 360);
 
     glClearColor(0.212f, 0.224f, 0.247f, 1); // Discord gray
 

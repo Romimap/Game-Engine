@@ -1,28 +1,15 @@
-#include "terraincomponent.h"
+#include "octreecomponent.h"
 
 
-TerrainComponent::TerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor, GameObject* parent)
+OctreeComponent::OctreeComponent(int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor, GameObject* parent)
     : Component(parent) {
 
-    this->_name = "TerrainComponent";
+    this->_name = "OctreeComponent";
     this->_hasChanged = true;
     this->_xSize = xSize;
     this->_ySize = ySize;
     this->_zSize = zSize;
     this->_layerSizeReductionFactor = layerSizeReductionFactor;
-    this->_chunkX = chunkX;
-    this->_chunkY = chunkY;
-    this->_chunkZ = chunkZ;
-
-    /** Setup chunk GameObject's data **/
-
-    QVector3D aabbMin(_chunkX * _xSize, _chunkY * _ySize, _chunkZ * _zSize);
-    QVector3D aabbMax((_chunkX + 1) * _xSize, (_chunkY + 1) * _ySize, (_chunkZ + 1) * _zSize);
-
-    GameObject* chunk = GetParent();
-    chunk->_name = "Chunk_" + to_string(_chunkX) + "_" + to_string(_chunkY) + "_" + to_string(_chunkZ);
-    chunk->GetTransform()->SetPosition(aabbMin.x(), aabbMin.y(), aabbMin.z());
-    //chunk->SetFixedAABB(aabbMin, aabbMax);
 
     /** Allocate space for each layer **/
 
@@ -57,7 +44,7 @@ TerrainComponent::TerrainComponent(int chunkX, int chunkY, int chunkZ, int xSize
     }
 }
 
-unsigned char TerrainComponent::getVoxelType(int x, int y, int z, int layerID) {
+unsigned char OctreeComponent::getVoxelType(int x, int y, int z, int layerID) {
     int _currentLayerSizeReductionFactor = pow(_layerSizeReductionFactor, layerID);
     int xSize = _xSize / _currentLayerSizeReductionFactor;
     int ySize = _ySize / _currentLayerSizeReductionFactor;
@@ -76,7 +63,7 @@ unsigned char TerrainComponent::getVoxelType(int x, int y, int z, int layerID) {
  *   0 = voxel not modified
  *   1 = voxel modified
  **/
-int TerrainComponent::setVoxelType(int x, int y, int z, unsigned char voxelMaterial, int layerID) {
+int OctreeComponent::setVoxelType(int x, int y, int z, unsigned char voxelMaterial, int layerID) {
     int _currentLayerSizeReductionFactor = pow(_layerSizeReductionFactor, layerID);
     int xSize = _xSize / _currentLayerSizeReductionFactor;
     int ySize = _ySize / _currentLayerSizeReductionFactor;
@@ -91,18 +78,24 @@ int TerrainComponent::setVoxelType(int x, int y, int z, unsigned char voxelMater
     return 1;
 }
 
-int TerrainComponent::getNumberOfLayers() {
+int OctreeComponent::getNumberOfLayers() {
     return _layers.size();
 }
 
-vector<vector<vector<unsigned char>>> TerrainComponent::getLayer(int layerID) {
+vector<vector<vector<unsigned char>>> OctreeComponent::getLayer(int layerID) {
     return _layers[layerID];
 }
 
+vector<vector<vector<vector<unsigned char>>>>* OctreeComponent::getLayers() {
+    return &_layers;
+}
+
+
+
 
 /** DEBUG: print the layers from bottom-up **/
-void TerrainComponent::debugPrintLayers() {
-    cout << "TerrainComponent.debugPrintLayers() <-" << endl;
+void OctreeComponent::debugPrintLayers() {
+    cout << "OctreeComponent.debugPrintLayers() <-" << endl;
     int i = 0;
     for (auto layer : _layers) {
         cout << "##########     LAYER   " << i++ << "   ##########" << endl << endl;
@@ -117,5 +110,5 @@ void TerrainComponent::debugPrintLayers() {
         }
         cout << endl;
     }
-    cout << "TerrainComponent.debugPrintLayers() ->" << endl;
+    cout << "OctreeComponent.debugPrintLayers() ->" << endl;
 }

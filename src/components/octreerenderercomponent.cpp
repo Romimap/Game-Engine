@@ -1,5 +1,5 @@
 #include "octreerenderercomponent.h"
-#include "src/components/terrain/terraincomponent.h"
+#include "src/components/terrain/octreecomponent.h"
 
 int OctreeRendererComponent::s_notUpToDateChunks = 0;
 
@@ -10,7 +10,7 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
 
     _mesh = new GLMesh("../Game-Engine/misc/chunk.obj");
 
-    TerrainComponent *TC = (TerrainComponent*)parent->GetDerivedComponent<TerrainComponent>();
+    OctreeComponent *OC = parent->GetComponent<OctreeComponent>();
 
     unsigned char* data4 = (unsigned char*)malloc(4*16*4 * sizeof (unsigned char));
     for (int k = 0; k < 4*16*4; k++) {
@@ -18,8 +18,11 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
         int y = (k / 4) % 16;
         int z = (k / 4) / 16;
 
-        unsigned char c = TC->getVoxelType(x, y, z, 2);
+        unsigned char c = OC->getVoxelType(x, y, z, 2);
         data4[k] = c;
+
+        if (x == 0 && y == 15 && z == 3) data4[k] = 1;
+        if (x == 0 && y == 15 && z == 0) data4[k] = 3;
     }
 
     unsigned char* data16 = (unsigned char*)malloc(16*64*16 * sizeof (unsigned char));
@@ -28,8 +31,11 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
         int y = (k / 16) % 64;
         int z = (k / 16) / 64;
 
-        unsigned char c = TC->getVoxelType(x, y, z, 1);
+        unsigned char c = OC->getVoxelType(x, y, z, 1);
         data16[k] = c;
+
+        if (x == 0 && y == 63 && z == 15) data16[k] = 1;
+        if (x == 0 && y == 63 && z == 0) data16[k] = 2;
     }
 
     unsigned char* data64 = (unsigned char*)malloc(64*256*64 * sizeof (unsigned char));
@@ -38,8 +44,11 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
         int y = (k / 64) % 256;
         int z = (k / 64) / 256;
 
-        unsigned char c = TC->getVoxelType(x, y, z, 0);
+        unsigned char c = OC->getVoxelType(x, y, z, 0);
         data64[k] = c;
+
+        if (x == 0 && y == 255 && z == 63) data64[k] = 1;
+        if (x == 0 && y == 255 && z == 0) data64[k] = 2;
     }
 
     _material->SetSlot3D(0, 4, 16, 4, data4);
