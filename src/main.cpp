@@ -126,7 +126,7 @@ int main(int argc, char *argv[]) {
     GameObject* octree = new GameObject("Octree", &root);
     octree->GetTransform()->SetRotation(0, 0, 0);
     octree->GetTransform()->SetPosition(0, 0, 0);
-    new OctreeRendererComponent(octree);
+    OctreeRendererComponent* octreeRenderer = new OctreeRendererComponent(octree);
 
     LinkedQueue<OctreeRendererChange> changes4;
 
@@ -138,7 +138,7 @@ int main(int argc, char *argv[]) {
     LinkedQueue<OctreeRendererChange> changes16;
     LinkedQueue<OctreeRendererChange> changes64;
 
-    octreeRenderer.ApplyChanges(changes4, changes16, changes64);
+    octreeRenderer->ApplyChanges(changes4, changes16, changes64);
 
 
 

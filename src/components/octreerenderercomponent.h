@@ -7,6 +7,7 @@
 #include "src/gameobject.h"
 #include "src/glmesh.h"
 #include "src/material.h"
+#include "src/linkedqueue.h"
 
 #define OCTREE_RENDERER_VOXELS_FRAME_LIMIT 60
 
