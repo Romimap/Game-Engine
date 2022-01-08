@@ -69,7 +69,7 @@ public:
     void updateChunksToGenerate();
 
     /** QUEUES MANAGEMENT **/
-    void addToChunksToGenerate(int x, int y, int z);
+    int addToChunksToGenerate(int x, int y, int z, bool compareToRenderDistance = true);
     void addToChunksToFinalize(GameObject* chunk);
 
     /** OTHER METHODS **/

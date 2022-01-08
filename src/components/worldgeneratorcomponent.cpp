@@ -12,6 +12,9 @@ WorldGeneratorComponent::WorldGeneratorComponent(std::string worldName, TerrainT
 }
 
 void WorldGeneratorComponent::Start() {
+
+    /** Initialize world generation **/
+
     std::string className = " (WorldGeneratorComponent)";
 
     std::cout << "Generating world..." << className << std::endl;
@@ -20,37 +23,72 @@ void WorldGeneratorComponent::Start() {
 
     this->_perlin = siv::PerlinNoise{_seed};
 
-    int xMin = -Camera::ActiveCamera->getRenderDistance(), xMax = Camera::ActiveCamera->getRenderDistance();
-    int yMin = 0, yMax = 0; // Don't touch until vertical chunks are implemented! y should always = 0
-    int zMin = -Camera::ActiveCamera->getRenderDistance(), zMax = Camera::ActiveCamera->getRenderDistance();
+    /** Get camera coordinates **/
+
+    QVector3D cameraChunkPos = calculateGameObjectChunkPos(Camera::ActiveCamera);
+
+    int x = 0;
+    int y = 0;
+    int z = 0;
+
+    int xOffset = cameraChunkPos.x();
+    int yOffset = cameraChunkPos.y();
+    int zOffset = cameraChunkPos.z();
 
     int chunksCount = 0;
-    int totalChunks = (xMax - xMin + 1) * (yMax - yMin + 1) * (zMax - zMin + 1);
 
     /** Create the chunks **/
 
+    chunksCount += addToChunksToGenerate(x, y, z);
+
+    while (true) {
+        /** Front to right **/
+        z++;
+        while (z > 0) {
+            chunksCount += addToChunksToGenerate(x + xOffset, y + yOffset, z + zOffset);
+            x++;
+            z--;
+        }
+
+        /** Right to back **/
+        while (x > 0) {
+            chunksCount += addToChunksToGenerate(x + xOffset, y + yOffset, z + zOffset);
+            x--;
+            z--;
+        }
+
+        /** Back to left **/
+        while (z < 0) {
+            chunksCount += addToChunksToGenerate(x + xOffset, y + yOffset, z + zOffset);
+            x--;
+            z++;
+        }
+
+        /** Left to front **/
+        while (x < 0) {
+            chunksCount += addToChunksToGenerate(x + xOffset, y + yOffset, z + zOffset);
+            x++;
+            z++;
+        }
+
+        int minDist = sqrt(pow(z/2.0, 2) * 2);
+        if (minDist > Camera::ActiveCamera->getRenderDistance())
+            break;
+    }
+
 //    std::vector<QThread*> threads;
 
-    for (int x = xMin; x <= xMax; x++) {
-        for (int y = yMin; y <= yMax; y++) {
-            for (int z = zMin; z <= zMax; z++) {
-                addToChunksToGenerate(x, y, z);
-//                generateChunk(x, y, z, this);
-//                QThread* chunkGeneratorThread = QThread::create(WorldGeneratorComponent::generateChunk, x, y, z, this);
+//    // WHILE LOOP TO DO FOR THREADS
+//    {
+//        generateChunk(x, y, z, this);
+//        QThread* chunkGeneratorThread = QThread::create(WorldGeneratorComponent::generateChunk, x, y, z, this);
 
-//                chunkGeneratorThread->setObjectName(("Chunk_" + std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z) + "_GeneratorThread").c_str());
-//                chunkGeneratorThread->start();
+//        chunkGeneratorThread->setObjectName(("Chunk_" + std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z) + "_GeneratorThread").c_str());
+//        chunkGeneratorThread->start();
 
-//                threads.push_back(chunkGeneratorThread);
+//        threads.push_back(chunkGeneratorThread);
+//    }
 
-                chunksCount++;
-
-                int percentage = (100 * chunksCount) / totalChunks;
-                std::cout << "\rProgress: " << chunksCount << "/" << totalChunks << " chunks (" << percentage << "%)" << className << std::flush;
-            }
-        }
-    }
-    std::cout << std::endl;
 
 //    int threadCount = 0;
 //    for (auto* thread : threads) {
@@ -109,8 +147,14 @@ void WorldGeneratorComponent::updateChunksToGenerate() {
     _lastUpdate_CameraChunkPos = currentUpdate_CameraChunkPos;
 }
 
-void WorldGeneratorComponent::addToChunksToGenerate(int x, int y, int z) {
+int WorldGeneratorComponent::addToChunksToGenerate(int x, int y, int z, bool compareToRenderDistance) {
+    if (compareToRenderDistance) {
+        QVector3D cameraChunkPos = calculateGameObjectChunkPos(Camera::ActiveCamera);
+        int distanceToCameraChunk = sqrt(pow(x - cameraChunkPos.x(), 2) + pow(z - cameraChunkPos.z(), 2)); // TODO: take y into account if vertical chunks are implemented
+        if (distanceToCameraChunk > Camera::ActiveCamera->getRenderDistance()) return 0;
+    }
     this->_chunksToGenerate.push_back(new QVector3D(x, y, z));
+    return 1;
 }
 
 void WorldGeneratorComponent::addToChunksToFinalize(GameObject* chunk) {
