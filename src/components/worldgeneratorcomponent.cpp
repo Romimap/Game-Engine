@@ -8,7 +8,7 @@ WorldGeneratorComponent::WorldGeneratorComponent(std::string worldName, TerrainT
     this->_worldName = worldName;
     this->_terrainType = terrainType;
 
-    this->_lastUpdate_CameraChunkPos = calculateGameObjectChunkPos(Camera::ActiveCamera);
+    this->_lastUpdate_CameraChunkPos = calculateChunkPos(Camera::ActiveCamera);
 }
 
 void WorldGeneratorComponent::Start() {
@@ -25,7 +25,7 @@ void WorldGeneratorComponent::Start() {
 
     /** Get camera coordinates **/
 
-    QVector3D cameraChunkPos = calculateGameObjectChunkPos(Camera::ActiveCamera);
+    QVector3D cameraChunkPos = calculateChunkPos(Camera::ActiveCamera);
 
     int x = 0;
     int y = 0;
@@ -76,26 +76,26 @@ void WorldGeneratorComponent::Start() {
             break;
     }
 
-//    std::vector<QThread*> threads;
+    //    std::vector<QThread*> threads;
 
-//    // WHILE LOOP TO DO FOR THREADS
-//    {
-//        generateChunk(x, y, z, this);
-//        QThread* chunkGeneratorThread = QThread::create(WorldGeneratorComponent::generateChunk, x, y, z, this);
+    //    // WHILE LOOP TO DO FOR THREADS
+    //    {
+    //        generateChunk(x, y, z, this);
+    //        QThread* chunkGeneratorThread = QThread::create(WorldGeneratorComponent::generateChunk, x, y, z, this);
 
-//        chunkGeneratorThread->setObjectName(("Chunk_" + std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z) + "_GeneratorThread").c_str());
-//        chunkGeneratorThread->start();
+    //        chunkGeneratorThread->setObjectName(("Chunk_" + std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z) + "_GeneratorThread").c_str());
+    //        chunkGeneratorThread->start();
 
-//        threads.push_back(chunkGeneratorThread);
-//    }
+    //        threads.push_back(chunkGeneratorThread);
+    //    }
 
 
-//    int threadCount = 0;
-//    for (auto* thread : threads) {
-//        thread->wait();
-//        std::cout << "\rThread: " << threadCount++ << " has finished" << std::flush;
-//    }
-//    std::cout << std::endl;
+    //    int threadCount = 0;
+    //    for (auto* thread : threads) {
+    //        thread->wait();
+    //        std::cout << "\rThread: " << threadCount++ << " has finished" << std::flush;
+    //    }
+    //    std::cout << std::endl;
 
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
@@ -131,7 +131,7 @@ void WorldGeneratorComponent::Update(float delta) {
 }
 
 void WorldGeneratorComponent::updateChunksToGenerate() {
-    QVector3D currentUpdate_CameraChunkPos = calculateGameObjectChunkPos(Camera::ActiveCamera);
+    QVector3D currentUpdate_CameraChunkPos = calculateChunkPos(Camera::ActiveCamera);
 
     QVector3D deltaChunkPos = _lastUpdate_CameraChunkPos - currentUpdate_CameraChunkPos;
 
@@ -149,7 +149,7 @@ void WorldGeneratorComponent::updateChunksToGenerate() {
 
 int WorldGeneratorComponent::addToChunksToGenerate(int x, int y, int z, bool compareToRenderDistance) {
     if (compareToRenderDistance) {
-        QVector3D cameraChunkPos = calculateGameObjectChunkPos(Camera::ActiveCamera);
+        QVector3D cameraChunkPos = calculateChunkPos(Camera::ActiveCamera);
         int distanceToCameraChunk = sqrt(pow(x - cameraChunkPos.x(), 2) + pow(z - cameraChunkPos.z(), 2)); // TODO: take y into account if vertical chunks are implemented
         if (distanceToCameraChunk > Camera::ActiveCamera->getRenderDistance()) return 0;
     }
@@ -161,25 +161,79 @@ void WorldGeneratorComponent::addToChunksToFinalize(GameObject* chunk) {
     this->_chunksToFinalize.push_back(chunk);
 }
 
-QVector3D WorldGeneratorComponent::calculateGameObjectChunkPos(GameObject* gameObject) {
-    QVector3D gameObjectPos = gameObject->GetTransform()->GetPosition();
-
+QVector3D WorldGeneratorComponent::calculateChunkPos(int x, int y, int z) {
     QVector3D chunkPos;
-    chunkPos.setX((int)(gameObjectPos.x() / _CHUNK_X_SIZE));
-    chunkPos.setY((int)(gameObjectPos.y() / _CHUNK_Y_SIZE));
-    chunkPos.setZ((int)(gameObjectPos.z() / _CHUNK_Z_SIZE));
+    chunkPos.setX((int)(x / _CHUNK_X_SIZE));
+    chunkPos.setY((int)(y / _CHUNK_Y_SIZE));
+    chunkPos.setZ((int)(z / _CHUNK_Z_SIZE));
 
     return chunkPos;
 }
 
-void WorldGeneratorComponent::generateChunk(int x, int y, int z, WorldGeneratorComponent* WGC) {
+std::string WorldGeneratorComponent::getChunkNameFromChunkPos(int chunkX, int chunkY, int chunkZ) {
+    return "Chunk_" + std::to_string(chunkX) + "_" + std::to_string(chunkY) + "_" + std::to_string(chunkZ);
+}
 
-    std::string chunkName = "Chunk_" + std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z);
+QVector3D WorldGeneratorComponent::calculateChunkPos(GameObject* gameObject) {
+    QVector3D gameObjectPos = gameObject->GetTransform()->GetPosition();
+    return calculateChunkPos(gameObjectPos.x(), gameObjectPos.y(), gameObjectPos.z());
+}
+
+GameObject* WorldGeneratorComponent::getChunkFromVoxelPos(int x, int y, int z) {
+    QVector3D chunkPos = calculateChunkPos(x, y, z);
+    std::string chunkName = getChunkNameFromChunkPos(chunkPos.x(), chunkPos.y(), chunkPos.z());
+
+//    GameObject* chunk = this->GetParent()->GetChildrenByName(chunkName);
+    GameObject* chunk = nullptr;
+    for (GameObject* child : this->GetParent()->GetChildren()) {
+        if (child->_name == chunkName) {
+            chunk = child;
+            break;
+        }
+    }
+    if (chunk == nullptr) {
+        std::cerr << "Could not find '" << chunkName << "'" << std::endl;
+        return nullptr;
+    }
+    else {
+        return chunk;
+    }
+}
+
+unsigned char WorldGeneratorComponent::getVoxelType(int x, int y, int z, int layerID) {
+    GameObject* chunk = getChunkFromVoxelPos(x, y, z);
+    if (chunk != nullptr) {
+        int _currentLayerSizeReductionFactor = pow(_CHUNK_LAYER_SIZE_REDUCTION_FACTOR, layerID);
+        int xSize = _CHUNK_X_SIZE / _currentLayerSizeReductionFactor;
+        int ySize = _CHUNK_Y_SIZE / _currentLayerSizeReductionFactor;
+        int zSize = _CHUNK_Z_SIZE / _currentLayerSizeReductionFactor;
+        return chunk->GetComponent<OctreeComponent>()->getVoxelType(x % xSize, y % ySize, z % zSize, layerID);
+    }
+    else {
+        std::cerr << "WorldGeneratorComponent::getVoxelType returning 'AIR' because no chunk was found" << std::endl;
+        return MaterialId::AIR;
+    }
+}
+
+int WorldGeneratorComponent::setVoxelType(int x, int y, int z, unsigned char voxelMaterial) {
+    GameObject* chunk = getChunkFromVoxelPos(x, y, z);
+    if (chunk != nullptr) {
+        return chunk->GetComponent<OctreeComponent>()->setVoxelType(x % _CHUNK_X_SIZE, y % _CHUNK_Y_SIZE, z % _CHUNK_Z_SIZE, voxelMaterial);
+    }
+    else {
+        std::cerr << "WorldGeneratorComponent::setVoxelType returning '-1' because no chunk was found" << std::endl;
+        return -1;
+    }
+}
+
+void WorldGeneratorComponent::generateChunk(int chunkX, int chunkY, int chunkZ, WorldGeneratorComponent* WGC) {
+
+    std::string chunkName = getChunkNameFromChunkPos(chunkX, chunkY, chunkZ);
 
     /** Create the chunk GameObject **/
 
     GameObject* chunk = new GameObject(chunkName, WGC->GetParent(), false); /* /!\ Ensure that the chunk GameObject is not _enabled /!\ */
-    chunk->GetTransform()->SetPosition(x * WGC->_CHUNK_X_SIZE, y * WGC->_CHUNK_Y_SIZE, z * WGC->_CHUNK_Z_SIZE);
+    chunk->GetTransform()->SetPosition(chunkX * WGC->_CHUNK_X_SIZE, chunkY * WGC->_CHUNK_Y_SIZE, chunkZ * WGC->_CHUNK_Z_SIZE);
 
     /** Create and attach its terrain generation related Components **/
 
@@ -187,7 +241,7 @@ void WorldGeneratorComponent::generateChunk(int x, int y, int z, WorldGeneratorC
 
     switch (WGC->_terrainType) {
     case TerrainType::PERLIN_2D:
-        new Perlin2dTerrainComponent(x, y, z, WGC->_perlin, WGC->_octaves, WGC->_frequency, WGC->_persistence, WGC->_roughness, chunk);
+        new Perlin2dTerrainComponent(chunkX, chunkY, chunkZ, WGC->_perlin, WGC->_octaves, WGC->_frequency, WGC->_persistence, WGC->_roughness, chunk);
         break;
     case TerrainType::PERLIN_3D:
         std::cerr << "PERLIN_3D terrain generation not implemented yet, aborting world creation" << std::endl;
@@ -213,7 +267,7 @@ void WorldGeneratorComponent::generateChunk(int x, int y, int z, WorldGeneratorC
 
     WGC->addToChunksToFinalize(chunk);
 
-//    std::cout << chunk->_name << " has been generated." << std::endl;
+    //    std::cout << chunk->_name << " has been generated." << std::endl;
 }
 
 void WorldGeneratorComponent::finalizeChunkCreation(GameObject* chunk) {

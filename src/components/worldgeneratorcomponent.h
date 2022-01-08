@@ -18,6 +18,7 @@
 #include "src/octreecollider.h"
 
 #include "src/components/octreerenderercomponent.h"
+#include "src/components/terrain/octreecomponent.h"
 #include "src/components/terrain/perlin2dterraincomponent.h"
 
 
@@ -73,11 +74,19 @@ public:
     void addToChunksToFinalize(GameObject* chunk);
 
     /** OTHER METHODS **/
-    QVector3D calculateGameObjectChunkPos(GameObject* gameObject);
+    static std::string getChunkNameFromChunkPos(int chunkX, int chunkY, int chunkZ);
+
+    QVector3D calculateChunkPos(GameObject* gameObject);
+    QVector3D calculateChunkPos(int x, int y, int z);
+
+    GameObject* getChunkFromVoxelPos(int x, int y, int z);
+
+    unsigned char getVoxelType(int x, int y, int z, int layerID = 0);
+    int setVoxelType(int x, int y, int z, unsigned char voxelMaterial);
 
 protected:
     /** CHUNK GENERATION **/
-    static void generateChunk(int x, int y, int z, WorldGeneratorComponent* WGC);
+    static void generateChunk(int chunkX, int chunkY, int chunkZ, WorldGeneratorComponent* WGC);
     void finalizeChunkCreation(GameObject* chunk);
 };
 
