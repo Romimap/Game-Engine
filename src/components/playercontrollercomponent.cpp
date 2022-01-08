@@ -72,9 +72,12 @@ void PlayerControllerComponent::Update(float delta) {
     }
 
     //Gravity
-    if (_onGround <= 0) {
-        _momentum += _gravity;
+    if (!_isFloating) {
+        if (_onGround <= 0) {
+            _momentum += _gravity;
+        }
     }
+
     //Ground
     _onGround -= delta;
     if (_momentum.y() <= 0) {
@@ -90,10 +93,18 @@ void PlayerControllerComponent::Update(float delta) {
     float x = InputManager::Key('D') - InputManager::Key('Q');
     float y = InputManager::Key('R') - InputManager::Key('F');
     float z = InputManager::Key('S') - InputManager::Key('Z');
-    QVector3D forward = GetParent()->GetTransform()->Forward();
-    forward.setY(0);
-    forward.normalize();
-    QVector3D desiredMovement = z * forward + x * GetParent()->GetTransform()->Left() + y * GetParent()->GetTransform()->Up();
+
+    QVector3D desiredMovement;
+    if (_isFloating) {
+        desiredMovement = z * GetParent()->GetTransform()->Forward() + x * GetParent()->GetTransform()->Left() + y * GetParent()->GetTransform()->Up();
+    }
+    else {
+        QVector3D forward = GetParent()->GetTransform()->Forward();
+        forward.setY(0);
+        forward.normalize();
+        desiredMovement = z * forward + x * GetParent()->GetTransform()->Left() + y * GetParent()->GetTransform()->Up();
+    }
+
     desiredMovement *= _speed;
     _momentum = desiredMovement * _acceleration + _momentum * (1 - _acceleration);
 
@@ -142,4 +153,8 @@ void PlayerControllerComponent::Update(float delta) {
     //+ " " + std::to_string(GetParent()->GetTransform()->GetPosition().y())
     //+ " " + std::to_string(GetParent()->GetTransform()->GetPosition().z())
     //+ " (playercontrollercomponent.cpp)").c_str());
+}
+
+void PlayerControllerComponent::setIsFloating(bool isFloating) {
+    this->_isFloating = isFloating;
 }

@@ -90,12 +90,13 @@ int main(int argc, char *argv[]) {
 
     GameObject root("Root");
 
-    Camera* camera = new Camera("Camera", 2, &root);
+    Camera* camera = new Camera("Camera", 5, &root);
     camera->GetTransform()->SetPosition(32, 160, 32);
     camera->GetTransform()->SetRotation(45, 0, 0);
     camera->GetTransform()->SetScale(1, 1, 1);
 
-    new PlayerControllerComponent(12, 0.1, nullptr, camera);
+    PlayerControllerComponent* PCC = new PlayerControllerComponent(32, 0.1, nullptr, camera);
+    PCC->setIsFloating(true);
 
     /** Create the Engine **/
 

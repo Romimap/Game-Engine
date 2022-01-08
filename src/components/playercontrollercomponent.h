@@ -18,6 +18,8 @@
 class PlayerControllerComponent : public Component {
     /*** ATTRIBUTES ***/
 private:
+    bool _isFloating = false;
+
     float _speed;
     float _acceleration;
 
@@ -42,6 +44,8 @@ public:
 
     void Start() override;
     void Update(float delta) override;
+
+    void setIsFloating(bool isFloating);
 };
 
 #endif // PLAYERCONTROLLERCOMPONENT_H
