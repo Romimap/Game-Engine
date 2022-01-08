@@ -3,7 +3,10 @@
 
 Engine* Engine::Singleton = nullptr;
 
-Engine::Engine() {
+Engine::Engine(int width, int height) {
+    this->_width = width;
+    this->_height = height;
+
     if (Singleton != nullptr)
         delete Singleton;
     Singleton = this;
@@ -13,8 +16,7 @@ void Engine::initializeGL() {
     qDebug("initializeGL <-");
     initializeOpenGLFunctions();
 
-    //resize(1280, 720);
-    resize(640, 360);
+    resize(_width, _height);
 
     glClearColor(0.212f, 0.224f, 0.247f, 1); // Discord gray
 
@@ -71,7 +73,9 @@ void Engine::paintGL() {
     }
 
     // Draw GameObjects
+    std::cout << "Draw call stars at: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
     Draw(GameObject::Root);
+    std::cout << "Draw call ends at: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
 
 //    qDebug((std::to_string(deltaTime) + " (engine.cpp)").c_str());
 

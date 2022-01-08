@@ -49,6 +49,9 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
     _material->SetSlot2D(":/Textures.png", 3);
 }
 
+void OctreeRendererComponent::Start() {
+
+}
 
 void OctreeRendererComponent::Draw() {
     _material->_TexSlot0->bind(0);

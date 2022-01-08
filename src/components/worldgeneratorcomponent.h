@@ -3,7 +3,10 @@
 
 
 #include <chrono>
+#include <future>
 #include <iostream>
+
+#include <QThread>
 
 #include "libraries/PerlinNoise/PerlinNoise.hpp"
 
@@ -12,6 +15,7 @@
 #include "src/gameobject.h"
 #include "src/octreecollider.h"
 
+#include "src/components/chunkfinalizercomponent.h"
 #include "src/components/octreerenderercomponent.h"
 #include "src/components/terrain/perlin2dterraincomponent.h"
 
@@ -21,20 +25,19 @@ class WorldGeneratorComponent : public Component {
 public:
     std::string _worldName;
 
+    /** World gen related **/
+    siv::PerlinNoise::seed_type _seed = 123456u;  // [0 ... 2^32-1]
+
+    const int _octaves = 8;             // [1 ... 16]
+    const float _frequency = .8f;      // [0.1 ... 64.0]
+    const float _persistence = 0.5f;    // [0.0 ... 1.0]
+    const float _roughness = .3f;      // [0.0 ... 10.0]
+
 protected:
     /** World gen related **/
-    siv::PerlinNoise::seed_type _seed;  // [0 ... 2^32-1]
-
     TerrainType _terrainType;
 
     siv::PerlinNoise _perlin;
-
-    const int _OCTAVES = 8;             // [1 ... 16]
-    const float _FREQUENCY = .8f;      // [0.1 ... 64.0]
-    const float _PERSISTENCE = 0.5f;    // [0.0 ... 1.0]
-    const float _ROUGHNESS = .3f;      // [0.1 ... 10.0]
-
-    const unsigned int TERRAIN_GEN_SQUARE_RADIUS = 2;
 
     /** Chunks related **/
     const int _CHUNK_X_SIZE = 64;
@@ -47,10 +50,23 @@ protected:
     /*** METHODS ***/
 public:
     /** CONSTRUCTORS/DESTRUCTORS **/
-    WorldGeneratorComponent(std::string worldName, TerrainType terrainType, siv::PerlinNoise::seed_type seed, GameObject* parent);
+    WorldGeneratorComponent(std::string worldName, TerrainType terrainType, GameObject* parent);
 
+    /** GENERIC COMPONENT METHODS */
+    void Start() override;
+
+    /** GETTERS/SETTERS **/
+    TerrainType getTerrainType();
+    siv::PerlinNoise getPerlinNoise();
+    int getChunkXSize();
+    int getChunkYSize();
+    int getChunkZSize();
+    int getChunkNbOfLayers();
+    int getChunkLayerSizeReductionFactor();
+
+protected:
     /** CHUNK GENERATION **/
-    bool generateChunk(int x, int z);
+    static void generateChunk(int x, int y, int z, WorldGeneratorComponent* WGC);
 };
 
 #endif // WORLDGENERATORCOMPONENT_H

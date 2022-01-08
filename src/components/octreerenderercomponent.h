@@ -43,6 +43,7 @@ private:
 public:
     OctreeRendererComponent(GameObject* parent);
 
+    void Start() override;
     void Draw() override;
     void Update(float delta) override;
     void ApplyChanges(LinkedQueue<OctreeRendererChange> &layer4, LinkedQueue<OctreeRendererChange> &layer16, LinkedQueue<OctreeRendererChange> &layer64);

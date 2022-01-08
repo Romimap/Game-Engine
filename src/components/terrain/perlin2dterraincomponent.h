@@ -15,7 +15,7 @@ protected:
     /*** METHODS ***/
 public:
     /** CONSTRUCTORS/DESTRUCTORS **/
-    Perlin2dTerrainComponent(int chunkX, int chunkZ, const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, float roughness, GameObject* parent);
+    Perlin2dTerrainComponent(int chunkX, int chunkY, int chunkZ, const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, float roughness, GameObject* parent);
 };
 
 #endif // PERLIN2DTERRAINCOMPONENT_H

@@ -1,7 +1,7 @@
 #include "perlin2dterraincomponent.h"
 
 
-Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkZ, const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, float roughness, GameObject* parent) : Component(parent) {
+Perlin2dTerrainComponent::Perlin2dTerrainComponent(int chunkX, int chunkY, int chunkZ, const siv::PerlinNoise &perlin, int octaves, float frequency, float persistence, float roughness, GameObject* parent) : Component(parent) {
 
     this->_name = "Perlin2dTerrainComponent";
     _octreeComponent = parent->GetComponent<OctreeComponent>();

@@ -48,6 +48,9 @@
 **
 ****************************************************************************/
 
+#include <chrono>
+#include <iostream>
+
 #include <QApplication>
 #include <QLabel>
 #include <QSurfaceFormat>
@@ -70,6 +73,9 @@
 
 
 int main(int argc, char *argv[]) {
+
+    /** Create the application **/
+
     QApplication app(argc, argv);
 
     QSurfaceFormat format;
@@ -79,19 +85,24 @@ int main(int argc, char *argv[]) {
     app.setApplicationName("Voxel Game Engine");
     app.setApplicationVersion("0.1");
 
+    /** Create the root GameObject and the Camera with a controller **/
+
     GameObject root("Root");
 
-    Camera* camera = new Camera("Camera", &root);
-    camera->GetTransform()->SetPosition(0, 270, 0);
+    Camera* camera = new Camera("Camera", 5, &root);
+    camera->GetTransform()->SetPosition(32, 160, 32);
     camera->GetTransform()->SetRotation(0, 0, 0);
     camera->GetTransform()->SetScale(1, 1, 1);
 
+    new PlayerControllerComponent(32, 0.1, nullptr, camera);
 
-    Engine engine;
+    /** Create the Engine **/
+
+    Engine engine(1280, 720);
     engine.show();
 
+    /** Add reference objects to the scene **/
 
-    //ORIGIN (OFFSET 0 260 0)
     GLMesh* cubeMesh = new GLMesh("../Game-Engine/misc/Cube.obj");
 
     GameObject* cube = new GameObject("White cube", &root);
@@ -122,6 +133,13 @@ int main(int argc, char *argv[]) {
     Material* ZMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
     ZMat->SetSlot2D(":/b.png", 0);
     new MeshRendererComponent(cubeMesh, ZMat, Z);
+
+    /** Create a world generator GameObject **/
+
+    std::cout << "World gen starts at: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
+
+    GameObject* worldGenerator = new GameObject("World generator", &root);
+    new WorldGeneratorComponent("New world", TerrainType::PERLIN_2D, worldGenerator);
 
 
     //CHUNK
@@ -154,15 +172,6 @@ int main(int argc, char *argv[]) {
     //skybox.GetTransform()->SetRotation(90, 0, 0);
     //skybox.GetTransform()->SetPosition(0, 0, -0.75);
     //skybox.SetRenderData(&skyboxRenderData);
-
-    new PlayerControllerComponent(32, 0.1, nullptr, camera);
-
-
-    // Currently for testing purposes
-//    GameObject dummy("Dummy");
-
-    GameObject* worldGenerator = new GameObject("World generator", &root);
-    new WorldGeneratorComponent("New world", TerrainType::PERLIN_2D, 123456u, worldGenerator);
 
     return app.exec();
 }

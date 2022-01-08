@@ -13,7 +13,7 @@ class GameObject;
 
 class Component {
     /*** ATTRIBUTES ***/
-private:
+protected:
     GameObject* _parent;
 
 public:
