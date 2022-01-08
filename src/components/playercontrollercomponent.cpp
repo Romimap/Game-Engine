@@ -102,6 +102,32 @@ void PlayerControllerComponent::Update(float delta) {
     if (_azimuth > 180) _azimuth -= 360;
 
 
+    //Wall collision test
+    if (_momentum.x() > 0) {
+        RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition() + QVector3D(0, 0.9, 0), QVector3D(1, 0.01, 0.01));
+        if (hit._gameobject != nullptr && hit._distance <= _playerWidth) { //We are going down to the ground
+            GetParent()->GetTransform()->Translate(QVector3D(-(_playerWidth - hit._distance) / 2,  0, 0));
+        }
+    } else {
+        RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition() + QVector3D(0, 0.9, 0), QVector3D(-1, 0.01, 0.01));
+        if (hit._gameobject != nullptr && hit._distance <= _playerWidth) { //We are going down to the ground
+            GetParent()->GetTransform()->Translate(QVector3D((_playerWidth - hit._distance) / 2,  0, 0));
+        }
+    }
+    if (_momentum.z() > 0) {
+        RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition() + QVector3D(0, 0.9, 0), QVector3D(0.01, 0.01, 1));
+        if (hit._gameobject != nullptr && hit._distance <= _playerWidth) { //We are going down to the ground
+            GetParent()->GetTransform()->Translate(QVector3D(0, 0, -(_playerWidth - hit._distance) / 2));
+        }
+    } else {
+        RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition() + QVector3D(0, 0.9, 0), QVector3D(0.01, 0.01, -1));
+        if (hit._gameobject != nullptr && hit._distance <= _playerWidth) { //We are going down to the ground
+            GetParent()->GetTransform()->Translate(QVector3D(0, 0, (_playerWidth - hit._distance) / 2));
+        }
+    }
+
+
+
     QQuaternion elevationQuat = QQuaternion::fromAxisAndAngle(QVector3D(1, 0, 0), _elevation);
     QQuaternion azimuthQuat = QQuaternion::fromAxisAndAngle(QVector3D(0, 1, 0), _azimuth);;
 
