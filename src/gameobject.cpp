@@ -17,12 +17,12 @@ GameObject::GameObject(std::string name, GameObject* parent, bool enabled) : _pa
     _transform = new Transform(this);
 
     if (parent != nullptr) {
-        parent->_children.push_back(this);
+        parent->_children.insert(std::pair<std::string, GameObject*>(this->_name, this));
     }
 }
 
 GameObject::~GameObject() {
-//    std::cout << "Deleting '" << _name << "' GameObject..." << std::endl;
+    //    std::cout << "Deleting '" << _name << "' GameObject..." << std::endl;
     if (_transform != nullptr)
         delete _transform;
     if (_collider != nullptr)
@@ -37,7 +37,8 @@ GameObject::~GameObject() {
             delete component;
     }
 
-    for (auto* child : _children) {
+    for (auto it = _children.begin(); it != _children.end(); it++) {
+        GameObject* child = it->second;
         if (child != nullptr)
             delete child;
     }
@@ -62,8 +63,20 @@ GameObject* GameObject::GetParent() {
     return _parent;
 }
 
-std::vector<GameObject*> GameObject::GetChildren() {
+std::map<std::string, GameObject*> GameObject::GetChildren() {
     return _children;
+}
+
+GameObject* GameObject::GetChildrenByName(std::string name) {
+    auto it = _children.find(name);
+
+    if (it == _children.end()) {
+        std::cerr << "No GameObject named '" << name << "' was found as child of '" << this->_name << "'" << std::endl;
+        return nullptr;
+    }
+    else {
+        return it->second;
+    }
 }
 
 void GameObject::SetCollider(Collider *collider) {
@@ -85,7 +98,7 @@ void GameObject::Disable() {
 void GameObject::Start() {
     if (!_enabled || _started) return;
 
-    for (Component* component : _components) {
+    for (auto* component : _components) {
         component->Start();
     }
     _started = true;
@@ -94,7 +107,7 @@ void GameObject::Start() {
 void GameObject::Update(float delta) {
     if (!_started) Start();
 
-    for (Component* component : _components) {
+    for (auto* component : _components) {
         component->Update(delta);
     }
 }
@@ -102,7 +115,7 @@ void GameObject::Update(float delta) {
 void GameObject::FixedUpdate(float delta) {
     if (!_started) Start();
 
-    for (Component* component : _components) {
+    for (auto* component : _components) {
         component->FixedUpdate(delta);
     }
 }
@@ -118,12 +131,13 @@ void GameObject::Collisions(GameObject* current) {
                     //qDebug("%s", (NAME + " is colliding with " + current->NAME).c_str());
                     //NOTE: now if A collide with B, only A is notified as B will be computed later
                     //Possible optimisation : notify A and B, and mark that collision as solved. When we test B to A, skip the test
-                    for (Component* c : _components) {
+                    for (auto* c : _components) {
                         c->Collision(current->GetCollider());
                     }
                 }
             }
-            for (GameObject* child : current->GetChildren()) { //Possible children collision
+            for (auto it = _children.begin(); it != _children.end(); it++) { //Possible children collision
+                GameObject* child = it->second;
                 Collisions(child);
             }
         }
@@ -150,7 +164,8 @@ RayCastHit GameObject::AABBRayCollision(QVector3D origin, QVector3D direction) {
         }
     }
 
-    for (GameObject *child : GetChildren()) {
+    for (auto it = _children.begin(); it != _children.end(); it++) {
+        GameObject* child = it->second;
         RayCastHit tmp;
         tmp = child->AABBRayCollision(origin, direction);
         if (tmp._distance > 0) {
@@ -212,7 +227,8 @@ void GameObject::RefreshAABB() {
     }
 
     //Finally, we do that recursively for each child. The _globalAABB of a game object contains itself and all children
-    for(GameObject* child : _children) {
+    for (auto it = _children.begin(); it != _children.end(); it++) {
+        GameObject* child = it->second;
         child->RefreshAABB();
         AABB* current = child->_globalAABB;
 
@@ -238,7 +254,7 @@ void GameObject::RefreshAABB() {
 void GameObject::Draw() {
     if (!_started) Start();
 
-    for (Component* c : _components) {
+    for (auto* c : _components) {
         c->Draw();
     }
 }

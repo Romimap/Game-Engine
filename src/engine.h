@@ -5,6 +5,7 @@
 #include <chrono>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <sstream>
 
 #include <QKeyEvent>

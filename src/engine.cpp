@@ -66,6 +66,7 @@ void Engine::paintGL() {
     Collisions(GameObject::Root);
 
     // Update GameObjects
+    std::cout << "#####   CALL TO UPDATE   #####" << std::endl;
     Update(GameObject::Root, deltaTime);
     while (_fixedDeltaTime > _fixedUpdateLen) {
         _fixedDeltaTime -= _fixedUpdateLen;
@@ -75,14 +76,16 @@ void Engine::paintGL() {
     // Draw GameObjects
     Draw(GameObject::Root);
 
-//    qDebug((std::to_string(deltaTime) + " (engine.cpp)").c_str());
+    //    qDebug((std::to_string(deltaTime) + " (engine.cpp)").c_str());
 
     update();
 }
 
 void Engine::Draw(GameObject* current) {
     current->Draw();
-    for (GameObject* child : current->GetChildren()) {
+    std::map<std::string, GameObject*> children = current->GetChildren();
+    for (auto it = children.begin(); it != children.end(); it++) {
+        GameObject* child = it->second;
         Draw(child);
     }
 }
@@ -91,7 +94,10 @@ void Engine::Start(GameObject* current) {
     if (!current->Enabled()) return;
 
     current->Start();
-    for (GameObject* child : current->GetChildren()) {
+
+    std::map<std::string, GameObject*> children = current->GetChildren();
+    for (auto it = children.begin(); it != children.end(); it++) {
+        GameObject* child = it->second;
         Start(child);
     }
 }
@@ -100,7 +106,10 @@ void Engine::Update(GameObject* current, double deltaTime) {
     if (!current->Enabled()) return;
 
     current->Update(deltaTime);
-    for (GameObject* child : current->GetChildren()) {
+
+    std::map<std::string, GameObject*> children = current->GetChildren();
+    for (auto it = children.begin(); it != children.end(); it++) {
+        GameObject* child = it->second;
         Update(child, deltaTime);
     }
 }
@@ -109,7 +118,10 @@ void Engine::FixedUpdate(GameObject* current, double deltaTime) {
     if (!current->Enabled()) return;
 
     current->FixedUpdate(deltaTime);
-    for (GameObject* child : current->GetChildren()) {
+
+    std::map<std::string, GameObject*> children = current->GetChildren();
+    for (auto it = children.begin(); it != children.end(); it++) {
+        GameObject* child = it->second;
         FixedUpdate(child, deltaTime);
     }
 }
@@ -117,7 +129,10 @@ void Engine::FixedUpdate(GameObject* current, double deltaTime) {
 void Engine::Collisions(GameObject* current) {
     if (current->Enabled()) {
         if (current->GetPersonalGlobalAABB() != nullptr) current->Collisions(GameObject::Root);
-        for (GameObject* child : current->GetChildren()) {
+
+        std::map<std::string, GameObject*> children = current->GetChildren();
+        for (auto it = children.begin(); it != children.end(); it++) {
+            GameObject* child = it->second;
             Collisions(child);
         }
     }
@@ -148,4 +163,3 @@ RayCastHit Engine::RayCast(QVector3D origin, QVector3D direction) {
     }
     return hit;
 }
-

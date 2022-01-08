@@ -8,7 +8,7 @@
 #include <cmath>
 #include <iostream>
 #include <limits>
-#include <vector>
+#include <map>
 
 #include "src/aabb.h"
 #include "src/collider.h"
@@ -39,7 +39,7 @@ protected:
     // The AABB that contains the collider of that gameobject, in global space
     AABB* _personalGlobalAABB = nullptr;
 
-    std::vector<GameObject*> _children;
+    std::map<std::string, GameObject*> _children;
     std::vector<Component*> _components;
 
 public:
@@ -69,7 +69,8 @@ public:
     AABB* GetGlobalAABB() {return _globalAABB;}
     AABB* GetPersonalGlobalAABB() {return _personalGlobalAABB;}
 
-    std::vector<GameObject*> GetChildren();
+    std::map<std::string, GameObject*> GetChildren();
+    GameObject* GetChildrenByName(std::string name);
 
     /** GENERIC METHODS **/
     void Enable();

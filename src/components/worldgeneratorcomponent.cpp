@@ -185,7 +185,9 @@ GameObject* WorldGeneratorComponent::getChunkFromVoxelPos(int x, int y, int z) {
 
 //    GameObject* chunk = this->GetParent()->GetChildrenByName(chunkName);
     GameObject* chunk = nullptr;
-    for (GameObject* child : this->GetParent()->GetChildren()) {
+    std::map<std::string, GameObject*> children = this->GetParent()->GetChildren();
+    for (auto it = children.begin(); it != children.end(); it++) {
+        GameObject* child = it->second;
         if (child->_name == chunkName) {
             chunk = child;
             break;
