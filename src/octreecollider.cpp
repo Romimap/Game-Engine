@@ -76,11 +76,6 @@ bool OctreeCollider::BoxIntersect(QVector3D origin, QVector3D direction, QVector
 
 
 RayCastHit OctreeCollider::GridTreeIntersect (QVector3D O, QVector3D D, QVector3D gridPos, QVector3D offset, QVector3D gridSize, int layer) {
-        std::cout << "layer    : " << layer << std::endl;
-        std::cout << "gridpos  : " << gridPos.x() << ", " << gridPos.y() << ", " << gridPos.z() << std::endl;
-        std::cout << "gridsize : " << gridSize.x() << ", " << gridSize.y() << ", " << gridSize.z() << std::endl;
-        std::cout << "offset   : " << offset.x() << ", " << offset.y() << ", " << offset.z() << std::endl;
-
         float voxelSize = 64. / gridSize.x();
 
         RayCastHit hit;

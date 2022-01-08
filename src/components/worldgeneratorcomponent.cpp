@@ -113,7 +113,7 @@ void WorldGeneratorComponent::generateChunk(int x, int y, int z, WorldGeneratorC
     }
 
     // NOTE: dont forget to uncomment
-    // chunk->SetCollider(new OctreeCollider());
+    chunk->SetCollider(new OctreeCollider());
 
     /** Add the chunk to the LinkedQueue of chunks to send to the GPU **/
 

@@ -30,7 +30,7 @@ void Transform::Translate (QVector3D t) {
 }
 
 void Transform::GlobalTranslate (QVector3D t) {
-    t = GlobalTransformMatrix() * t; //Not sure about that
+    t = (GlobalTransformMatrix().inverted() * QVector4D(t, 0)).toVector3D(); //Not sure about that
     Translate(t);
 }
 

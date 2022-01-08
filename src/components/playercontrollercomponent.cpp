@@ -21,15 +21,29 @@ void PlayerControllerComponent::Update(float delta) {
     if (InputManager::Key('P')) InputManager::SetCaptureMouse(true);
     if (InputManager::Key('M')) InputManager::SetCaptureMouse(false);
 
-    //Raycast
-    if (InputManager::Key('E')) {
-        Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition(), -GetParent()->GetTransform()->Forward());
+    //Gravity
+    if (_onGround <= 0) {
+        _momentum += _gravity;
     }
+    //Ground
+    _onGround -= delta;
+    if (_momentum.y() <= 0) {
+        RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition(), QVector3D(0.01, -1, 0.01));
+        if (hit._gameobject != nullptr && hit._distance <= _playerHeight + 1.5) { //We are going down to the ground
+            _momentum.setY(0);
+            _onGround = _coyoteTime;
+            GetParent()->GetTransform()->Translate(QVector3D(0, (_playerHeight - hit._distance) / 8, 0));
+        }
+    }
+
     //Movement & Orientation
     float x = InputManager::Key('D') - InputManager::Key('Q');
     float y = InputManager::Key('R') - InputManager::Key('F');
     float z = InputManager::Key('S') - InputManager::Key('Z');
-    QVector3D desiredMovement = z * GetParent()->GetTransform()->Forward() + x * GetParent()->GetTransform()->Left() + y * GetParent()->GetTransform()->Up();
+    QVector3D forward = GetParent()->GetTransform()->Forward();
+    forward.setY(0);
+    forward.normalize();
+    QVector3D desiredMovement = z * forward + x * GetParent()->GetTransform()->Left() + y * GetParent()->GetTransform()->Up();
     desiredMovement *= _speed;
     _momentum = desiredMovement * _acceleration + _momentum * (1 - _acceleration);
 

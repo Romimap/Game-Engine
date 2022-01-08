@@ -14,6 +14,7 @@ SOURCES += src/main.cpp \
     src/components/octreerenderercomponent.cpp \
     src/components/playercontrollercomponent.cpp \
     src/components/rigidbodycomponent.cpp \
+    src/components/skyboxrenderercomponent.cpp \
     src/components/terrain/octreecomponent.cpp \
     src/components/terrain/perlin2dterraincomponent.cpp \
     src/components/worldgeneratorcomponent.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     src/components/octreerenderercomponent.h \
     src/components/playercontrollercomponent.h \
     src/components/rigidbodycomponent.h \
+    src/components/skyboxrenderercomponent.h \
     src/components/terrain/octreecomponent.h \
     src/components/terrain/perlin2dterraincomponent.h \
     src/components/worldgeneratorcomponent.h \

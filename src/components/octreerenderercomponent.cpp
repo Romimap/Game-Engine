@@ -86,8 +86,8 @@ void OctreeRendererComponent::Draw() {
 
 
     float squaredDistanceToCamera = (GetParent()->GetTransform()->GetPosition() - Camera::ActiveCamera->GetTransform()->GetPosition() - QVector3D(32, -128, 32)).length();
-    if (squaredDistanceToCamera > 700) _material->program.setUniformValue("lod", 2);
-    else if (squaredDistanceToCamera > 200) _material->program.setUniformValue("lod", 1);
+    if (squaredDistanceToCamera > 512) _material->program.setUniformValue("lod", 2);
+    else if (squaredDistanceToCamera > 256) _material->program.setUniformValue("lod", 1);
     else _material->program.setUniformValue("lod", 0);
 
 

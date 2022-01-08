@@ -32,7 +32,6 @@ public:
     virtual RayCastHit RayCast(QVector3D origin, QVector3D direction){}
 
     virtual bool Collision(Collider* other) {
-        qDebug("COLLISION VIRTUAL");
         return false;
     }
 };

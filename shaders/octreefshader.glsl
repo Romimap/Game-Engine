@@ -48,7 +48,7 @@ const int VOXEL64Z = 4;
 
 //LIGHTING
 const vec3 SUNDIR = vec3(-0.234, -0.801, -0.567);
-const float FOGINTENSITY = 0.002;
+const float FOGINTENSITY = 0.005;
 const vec3 AMBIENTCOLOR = vec3(.5, .8, .9);
 const float AMBIENTFORCE = 0.3;
 const vec3 SUNCOLOR = vec3(1, 0.97, 0.75);

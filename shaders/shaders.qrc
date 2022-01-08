@@ -5,5 +5,6 @@
         <file>skyboxfshader.glsl</file>
         <file>meshvshader.glsl</file>
         <file>meshfshader.glsl</file>
+        <file>skyboxvshader.glsl</file>
     </qresource>
 </RCC>

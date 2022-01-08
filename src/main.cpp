@@ -70,6 +70,7 @@
 #include "components/octreerenderercomponent.h"
 #include "components/meshrenderercomponent.h"
 #include "components/worldgeneratorcomponent.h"
+#include "components/skyboxrenderercomponent.h"
 
 
 int main(int argc, char *argv[]) {
@@ -94,7 +95,7 @@ int main(int argc, char *argv[]) {
     camera->GetTransform()->SetRotation(45, 0, 0);
     camera->GetTransform()->SetScale(1, 1, 1);
 
-    new PlayerControllerComponent(32, 0.1, nullptr, camera);
+    new PlayerControllerComponent(12, 0.1, nullptr, camera);
 
     /** Create the Engine **/
 
@@ -162,16 +163,10 @@ int main(int argc, char *argv[]) {
     // octreeRenderer->ApplyChanges(changes4, changes16, changes64);
 
 
-
-
-    //Material* skyboxMat = new Material(nullptr, ":/vshader.glsl", ":/skyboxfshader.glsl");
-    //
-    //RenderData skyboxRenderData(skyboxMat, plane);
-    //
-    //GameObject skybox(&camera);
-    //skybox.GetTransform()->SetRotation(90, 0, 0);
-    //skybox.GetTransform()->SetPosition(0, 0, -0.75);
-    //skybox.SetRenderData(&skyboxRenderData);
+    GameObject *skybox = new GameObject("Skybox", camera);
+    skybox->GetTransform()->SetRotation(90, 0, 0);
+    skybox->GetTransform()->SetPosition(0, 0, -0.75);
+    new SkyboxRendererComponent(skybox);
 
     return app.exec();
 }
