@@ -136,7 +136,7 @@ void OctreeRendererComponent::Update(float delta) {
     if (_layer4.empty() && _layer16.empty() && _layer64.empty()) s_notUpToDateChunks--;
 }
 
-void OctreeRendererComponent::ApplyChanges(LinkedQueue<OctreeRendererChange> &layer4, LinkedQueue<OctreeRendererChange> &layer16, LinkedQueue<OctreeRendererChange> &layer64) {
+void OctreeRendererComponent::ApplyChanges(LinkedQueue<OctreeRendererChange*> &layer4, LinkedQueue<OctreeRendererChange*> &layer16, LinkedQueue<OctreeRendererChange*> &layer64) {
     if (_layer4.empty() && _layer16.empty() && _layer64.empty()
     && (!layer4.empty() || !layer16.empty() || !layer64.empty())) {
         s_notUpToDateChunks++;

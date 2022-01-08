@@ -61,6 +61,7 @@
 #include "engine.h"
 #include "gameobject.h"
 #include "glmesh.h"
+#include "linkedqueue.h"
 #include "material.h"
 
 #include "components/playercontrollercomponent.h"
@@ -69,7 +70,6 @@
 #include "components/octreerenderercomponent.h"
 #include "components/meshrenderercomponent.h"
 #include "components/worldgeneratorcomponent.h"
-#include "linkedqueue.h"
 
 
 int main(int argc, char *argv[]) {
@@ -89,9 +89,9 @@ int main(int argc, char *argv[]) {
 
     GameObject root("Root");
 
-    Camera* camera = new Camera("Camera", 5, &root);
-    camera->GetTransform()->SetPosition(32, 160, 32);
-    camera->GetTransform()->SetRotation(0, 0, 0);
+    Camera* camera = new Camera("Camera", 2, &root);
+    camera->GetTransform()->SetPosition(32, 500, 32);
+    camera->GetTransform()->SetRotation(90, 0, 0);
     camera->GetTransform()->SetScale(1, 1, 1);
 
     new PlayerControllerComponent(32, 0.1, nullptr, camera);

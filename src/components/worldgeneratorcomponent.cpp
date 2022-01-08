@@ -27,24 +27,36 @@ void WorldGeneratorComponent::Start() {
 
     /** Create the chunks **/
 
+//    std::vector<QThread*> threads;
+
     for (int x = xMin; x <= xMax; x++) {
         for (int y = yMin; y <= yMax; y++) {
             for (int z = zMin; z <= zMax; z++) {
-                QThread* chunkGeneratorThread = QThread::create(WorldGeneratorComponent::generateChunk, x, y, z, this);
+//                QThread* chunkGeneratorThread = QThread::create(WorldGeneratorComponent::generateChunk, x, y, z, this);
+                generateChunk(x, y, z, this);
 
-                chunkGeneratorThread->setObjectName(("Chunk_" + std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z) + "_GeneratorThread").c_str());
-                chunkGeneratorThread->start();
+//                chunkGeneratorThread->setObjectName(("Chunk_" + std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z) + "_GeneratorThread").c_str());
+//                chunkGeneratorThread->start();
+
+//                threads.push_back(chunkGeneratorThread);
 
                 // std::future<void> fut = std::async(WorldGeneratorComponent::generateChunk, x, y, z, this);
 
                 chunksCount++;
 
                 int percentage = (100 * chunksCount) / totalChunks;
-//                std::cout << "\rProgress: " << chunksCount << "/" << totalChunks << " chunks (" << percentage << "%)" << className << std::flush;
+                std::cout << "\rProgress: " << chunksCount << "/" << totalChunks << " chunks (" << percentage << "%)" << className << std::flush;
             }
         }
     }
     std::cout << std::endl;
+
+//    int threadCount = 0;
+//    for (auto* thread : threads) {
+//        thread->wait();
+//        std::cout << "\rThread: " << threadCount++ << " has finished" << std::flush;
+//    }
+//    std::cout << std::endl;
 
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
@@ -52,22 +64,30 @@ void WorldGeneratorComponent::Start() {
     std::cout << "World generation done (created " << chunksCount << " chunks) in " << elapsed.count() << "s" << className << std::endl;
 }
 
+void WorldGeneratorComponent::Update(float delta) {
+    if (_chunksToFinalize.empty()) return;
+
+    std::cout << "### Has " << _chunksToFinalize.size() << " chunks to finalize ###" << std::endl;
+
+    int remainingQuota = std::min(_CHUNKS_PER_UPDATE, _chunksToFinalize.size());
+    while (remainingQuota-- > 0) {
+        GameObject* chunk = _chunksToFinalize.pop_front();
+        finalizeChunkCreation(chunk);
+    }
+}
+
+void WorldGeneratorComponent::addToChunksToFinalize(GameObject* chunk) {
+    this->_chunksToFinalize.push_back(chunk);
+}
+
 void WorldGeneratorComponent::generateChunk(int x, int y, int z, WorldGeneratorComponent* WGC) {
 
     std::string chunkName = "Chunk_" + std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z);
-
-    std::cout << "Begining generating " << chunkName << "..." << std::endl;
-
-    auto start = std::chrono::high_resolution_clock::now();
 
     /** Create the chunk GameObject **/
 
     GameObject* chunk = new GameObject(chunkName, WGC->GetParent(), false); /* /!\ Ensure that the chunk GameObject is not _enabled /!\ */
     chunk->GetTransform()->SetPosition(x * WGC->_CHUNK_X_SIZE, y * WGC->_CHUNK_Y_SIZE, z * WGC->_CHUNK_Z_SIZE);
-
-    /** Create and attach a ChunkFinalizerComponent **/
-
-    new ChunkFinalizerComponent(chunk);
 
     /** Create and attach its terrain generation related Components **/
 
@@ -97,12 +117,14 @@ void WorldGeneratorComponent::generateChunk(int x, int y, int z, WorldGeneratorC
     // NOTE: dont forget to uncomment
     // chunk->SetCollider(new OctreeCollider());
 
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
+    /** Add the chunk to the LinkedQueue of chunks to send to the GPU **/
 
-    std::cout << "--> Finished generating Chunk(" << x << ", " << y << ", " << z << ") (in " << elapsed.count() << "s)" << std::endl;
+    WGC->addToChunksToFinalize(chunk);
 
-    /** Enable the chunk GameObject, as it is ready to be used by the ChunkFinalizerComponent **/
+    std::cout << chunk->_name << " has been generated." << std::endl;
+}
 
+void WorldGeneratorComponent::finalizeChunkCreation(GameObject* chunk) {
+    new OctreeRendererComponent(chunk);
     chunk->Enable();
 }

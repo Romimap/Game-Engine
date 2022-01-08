@@ -13,9 +13,9 @@
 #include "src/component.h"
 #include "src/consts.h"
 #include "src/gameobject.h"
+#include "src/linkedqueue.h"
 #include "src/octreecollider.h"
 
-#include "src/components/chunkfinalizercomponent.h"
 #include "src/components/octreerenderercomponent.h"
 #include "src/components/terrain/perlin2dterraincomponent.h"
 
@@ -47,6 +47,11 @@ protected:
     const int _CHUNK_NB_OF_LAYERS = 3;
     const int _CHUNK_LAYER_SIZE_REDUCTION_FACTOR = 4;
 
+    /** Chunk creation finalization queue **/
+    const int _CHUNKS_PER_UPDATE = 1;
+
+    LinkedQueue<GameObject*> _chunksToFinalize;
+
     /*** METHODS ***/
 public:
     /** CONSTRUCTORS/DESTRUCTORS **/
@@ -54,19 +59,15 @@ public:
 
     /** GENERIC COMPONENT METHODS */
     void Start() override;
+    void Update(float delta) override;
 
-    /** GETTERS/SETTERS **/
-    TerrainType getTerrainType();
-    siv::PerlinNoise getPerlinNoise();
-    int getChunkXSize();
-    int getChunkYSize();
-    int getChunkZSize();
-    int getChunkNbOfLayers();
-    int getChunkLayerSizeReductionFactor();
+    /** FINALIZATION QUEUE MANAGEMENT **/
+    void addToChunksToFinalize(GameObject* chunk);
 
 protected:
     /** CHUNK GENERATION **/
     static void generateChunk(int x, int y, int z, WorldGeneratorComponent* WGC);
+    void finalizeChunkCreation(GameObject* chunk);
 };
 
 #endif // WORLDGENERATORCOMPONENT_H

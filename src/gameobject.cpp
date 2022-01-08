@@ -99,7 +99,7 @@ void GameObject::Update(float delta) {
     }
 }
 
-void GameObject::FixedUpdate (float delta) {
+void GameObject::FixedUpdate(float delta) {
     if (!_started) Start();
 
     for (Component* component : _components) {

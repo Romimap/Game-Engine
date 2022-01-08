@@ -73,9 +73,7 @@ void Engine::paintGL() {
     }
 
     // Draw GameObjects
-    std::cout << "Draw call stars at: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
     Draw(GameObject::Root);
-    std::cout << "Draw call ends at: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
 
 //    qDebug((std::to_string(deltaTime) + " (engine.cpp)").c_str());
 

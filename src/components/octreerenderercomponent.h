@@ -33,9 +33,9 @@ private:
     Material* _material;
     GLMesh* _mesh;
 
-    LinkedQueue<OctreeRendererChange> _layer4;
-    LinkedQueue<OctreeRendererChange> _layer16;
-    LinkedQueue<OctreeRendererChange> _layer64;
+    LinkedQueue<OctreeRendererChange*> _layer4;
+    LinkedQueue<OctreeRendererChange*> _layer16;
+    LinkedQueue<OctreeRendererChange*> _layer64;
 
     static int s_notUpToDateChunks;
 
@@ -46,7 +46,7 @@ public:
     void Start() override;
     void Draw() override;
     void Update(float delta) override;
-    void ApplyChanges(LinkedQueue<OctreeRendererChange> &layer4, LinkedQueue<OctreeRendererChange> &layer16, LinkedQueue<OctreeRendererChange> &layer64);
+    void ApplyChanges(LinkedQueue<OctreeRendererChange*> &layer4, LinkedQueue<OctreeRendererChange*> &layer16, LinkedQueue<OctreeRendererChange*> &layer64);
 };
 
 #endif // OCTREERENDERERCOMPONENT_H

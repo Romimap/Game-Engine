@@ -10,7 +10,6 @@ SOURCES += src/main.cpp \
     src/aabbcollider.cpp \
     src/camera.cpp \
     src/component.cpp \
-    src/components/chunkfinalizercomponent.cpp \
     src/components/meshrenderercomponent.cpp \
     src/components/octreerenderercomponent.cpp \
     src/components/playercontrollercomponent.cpp \
@@ -22,7 +21,6 @@ SOURCES += src/main.cpp \
     src/gameobject.cpp \
     src/glmesh.cpp \
     src/inputmanager.cpp \
-    src/linkedqueue.cpp \
     src/material.cpp \
     src/components/rotatorcomponent.cpp \
     src/material3d.cpp \
@@ -35,7 +33,6 @@ HEADERS += \
     src/camera.h \
     src/collider.h \
     src/component.h \
-    src/components/chunkfinalizercomponent.h \
     src/components/meshrenderercomponent.h \
     src/components/octreerenderercomponent.h \
     src/components/playercontrollercomponent.h \
