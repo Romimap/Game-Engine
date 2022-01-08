@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
 
     GameObject root("Root");
 
-    Camera* camera = new Camera("Camera", 5, &root);
+    Camera* camera = new Camera("Camera", 2, &root);
     camera->GetTransform()->SetPosition(32, 160, 32);
     camera->GetTransform()->SetRotation(45, 0, 0);
     camera->GetTransform()->SetScale(1, 1, 1);
@@ -135,38 +135,17 @@ int main(int argc, char *argv[]) {
     ZMat->SetSlot2D(":/b.png", 0);
     new MeshRendererComponent(cubeMesh, ZMat, Z);
 
-    /** Create a world generator GameObject **/
-
-    std::cout << "World gen starts at: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() << std::endl;
-
-    GameObject* worldGenerator = new GameObject("World generator", &root);
-    new WorldGeneratorComponent("New world", TerrainType::PERLIN_2D, worldGenerator);
-
-
-    //CHUNK
-    /*** OCTREE ***/
-    // GameObject* octree = new GameObject("Octree", &root);
-    // octree->GetTransform()->SetRotation(0, 0, 0);
-    // octree->GetTransform()->SetPosition(0, 0, 0);
-    // OctreeRendererComponent* octreeRenderer = new OctreeRendererComponent(octree);
-
-    // LinkedQueue<OctreeRendererChange> changes4;
-
-    // for (int i = 0; i < 1000; i++) {
-    //     OctreeRendererChange* change = new OctreeRendererChange(rand() % 4, rand() % 16, rand() % 4, rand() % 2);
-    //     changes4.push_back(change);
-    // }
-
-    // LinkedQueue<OctreeRendererChange> changes16;
-    // LinkedQueue<OctreeRendererChange> changes64;
-
-    // octreeRenderer->ApplyChanges(changes4, changes16, changes64);
-
+    /** Add a skybox to the world **/
 
     GameObject *skybox = new GameObject("Skybox", camera);
     skybox->GetTransform()->SetRotation(90, 0, 0);
     skybox->GetTransform()->SetPosition(0, 0, -0.75);
     new SkyboxRendererComponent(skybox);
+
+    /** Create a world generator GameObject **/
+
+    GameObject* worldGenerator = new GameObject("World generator", &root);
+    new WorldGeneratorComponent("New world", TerrainType::PERLIN_2D, worldGenerator);
 
     return app.exec();
 }
