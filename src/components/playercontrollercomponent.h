@@ -12,6 +12,7 @@
 #include "src/inputmanager.h"
 
 #include "src/components/rigidbodycomponent.h"
+#include "src/components/worldgeneratorcomponent.h"
 
 
 class PlayerControllerComponent : public Component {

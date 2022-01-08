@@ -11,11 +11,14 @@
 #include "src/component.h"
 #include "src/consts.h"
 #include "src/gameobject.h"
-#include "src/components/octreerenderercomponent.h"
 #include "src/linkedqueue.h"
+
+#include "src/components/octreerenderercomponent.h"
 
 
 struct OctreeRendererChange;
+
+
 class OctreeComponent : public Component {
     /*** ATTRIBUTES ***/
 protected:

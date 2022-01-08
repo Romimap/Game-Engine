@@ -25,8 +25,10 @@ void PlayerControllerComponent::Update(float delta) {
     if (InputManager::Key('E')) {
         RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition(), -GetParent()->GetTransform()->Forward());
         if (hit._gameobject != nullptr) {
-            OctreeComponent* octreeComponent = hit._gameobject->GetComponent<OctreeComponent>();
-            if (octreeComponent != nullptr) {
+
+            WorldGeneratorComponent *WGC = hit._gameobject->GetParent()->GetComponent<WorldGeneratorComponent>();
+
+            if (WGC != nullptr) {
                 QVector3D coord = GetParent()->GetTransform()->GetGlobalPosition() + (-GetParent()->GetTransform()->Forward() * (hit._distance + 0.1));
                 coord = coord - hit._gameobject->GetTransform()->GetPosition();
 
@@ -35,7 +37,7 @@ void PlayerControllerComponent::Update(float delta) {
                         for (int z = -_editRadius; z <= _editRadius; z++) {
                             QVector3D r(x, y, z);
                             if (r.length() <= _editRadius + 0.1) {
-                                octreeComponent->setVoxelType(coord.x() + x, coord.y() + y, coord.z() + z, MaterialId::AIR);
+                                WGC->setVoxelType(coord.x() + x, coord.y() + y, coord.z() + z, MaterialId::AIR);
                             }
                         }
                     }
@@ -48,8 +50,10 @@ void PlayerControllerComponent::Update(float delta) {
     if (InputManager::Key('A')) {
         RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition(), -GetParent()->GetTransform()->Forward());
         if (hit._gameobject != nullptr) {
-            OctreeComponent* octreeComponent = hit._gameobject->GetComponent<OctreeComponent>();
-            if (octreeComponent != nullptr) {
+
+            WorldGeneratorComponent *WGC = hit._gameobject->GetParent()->GetComponent<WorldGeneratorComponent>();
+
+            if (WGC != nullptr) {
                 QVector3D coord = GetParent()->GetTransform()->GetGlobalPosition() + (-GetParent()->GetTransform()->Forward() * (hit._distance + 0.1));
                 coord = coord - hit._gameobject->GetTransform()->GetPosition();
 
@@ -58,7 +62,7 @@ void PlayerControllerComponent::Update(float delta) {
                         for (int z = -_editRadius; z <= _editRadius; z++) {
                             QVector3D r(x, y, z);
                             if (r.length() <= _editRadius + 0.1) {
-                                octreeComponent->setVoxelType(coord.x() + x, coord.y() + y, coord.z() + z, MaterialId::STONE);
+                                WGC->setVoxelType(coord.x() + x, coord.y() + y, coord.z() + z, MaterialId::STONE);
                             }
                         }
                     }
