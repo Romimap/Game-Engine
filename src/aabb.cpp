@@ -63,8 +63,8 @@ float AABB::RayIntersect(QVector3D origin, QVector3D direction) {
     if (tzmax < tmax)
         tmax = tzmax;
 
-    if (tmin > 0) return tmin;
-    if (tmax > 0) return tmax;
+    if (tmin > 0 && tmin < 1000) return tmin;
+    if (tmax > 0 && tmax < 1000) return tmax;
     return -1;
 }
 

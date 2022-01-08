@@ -14,24 +14,13 @@
 #include "src/collider.h"
 #include "src/component.h"
 #include "src/transform.h"
-
+#include "src/structs.h"
 
 class Collider;
 class Transform;
 class Engine;
 struct RenderData;
 class Component;
-
-
-struct RayCastHit {
-    float _distance;
-    QVector3D _position;
-    GameObject* _gameobject;
-
-    RayCastHit() : _distance(-1), _position(QVector3D()), _gameobject(nullptr) {
-
-    }
-};
 
 
 class GameObject {

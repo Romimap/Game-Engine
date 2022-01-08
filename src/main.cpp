@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
     Material* cubeMat = new Material(":/meshvshader.glsl", ":/meshfshader.glsl");
     cubeMat->SetSlot2D(":/default.png", 0);
     new MeshRendererComponent(cubeMesh, cubeMat, cube);
-    cube->SetCollider(new AABBCollider(1, 1, 1));
+    //cube->SetCollider(new AABBCollider(1, 1, 1));
 
     GameObject* X = new GameObject("Red cube", &root);
     X->GetTransform()->SetRotation(0, 0, 0);

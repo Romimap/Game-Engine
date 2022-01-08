@@ -55,7 +55,7 @@ WorldGeneratorComponent::WorldGeneratorComponent(std::string worldName, TerrainT
                 }
 
                 //NOTE: dont forget to uncomment
-                //chunk->SetCollider(new OctreeCollider());
+                chunk->SetCollider(new OctreeCollider());
 
                 new OctreeRendererComponent(chunk);
 

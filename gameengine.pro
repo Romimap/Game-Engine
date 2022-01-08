@@ -51,6 +51,7 @@ HEADERS += \
     src/components/rotatorcomponent.h \
     src/material3d.h \
     src/octreecollider.h \
+    src/structs.h \
     src/transform.h \
     libraries/octree/array.h \
     libraries/octree/array2d.h \
