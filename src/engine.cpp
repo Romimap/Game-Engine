@@ -66,7 +66,6 @@ void Engine::paintGL() {
     Collisions(GameObject::Root);
 
     // Update GameObjects
-    std::cout << "#####   CALL TO UPDATE   #####" << std::endl;
     Update(GameObject::Root, deltaTime);
     while (_fixedDeltaTime > _fixedUpdateLen) {
         _fixedDeltaTime -= _fixedUpdateLen;

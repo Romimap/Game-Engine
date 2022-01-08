@@ -2,11 +2,15 @@
 #define OCTREECOLLIDER_H
 
 
+#define EPSILON 0.0001
+
+
 #include "src/collider.h"
 #include "src/gameobject.h"
 
+#include "src/components/worldgeneratorcomponent.h"
 #include "src/components/terrain/octreecomponent.h"
-#define EPSILON 0.0001
+
 
 class OctreeCollider : public Collider {
     /*** ATTRIBUTES ***/
