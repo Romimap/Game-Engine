@@ -36,6 +36,9 @@ class GameObject;
 class Engine : public QOpenGLWidget, protected QOpenGLFunctions_3_1 {
     /*** ATTRIBUTES ***/
 private:
+    int _width;
+    int _height;
+
     QMatrix4x4 _projection;
     std::chrono::time_point<std::chrono::system_clock> _beginTime;
     std::chrono::time_point<std::chrono::system_clock> _lastTime;
@@ -48,7 +51,7 @@ public:
 
     /*** METHODS ***/
 public:
-    Engine();
+    Engine(int width = 640, int height = 360);
 
     RayCastHit RayCast(QVector3D origin, QVector3D direction);
 

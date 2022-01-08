@@ -13,6 +13,8 @@ private:
     int _w;
     int _h;
 
+    int _renderDistance;
+
 public:
     static Camera* ActiveCamera;
 
@@ -20,13 +22,15 @@ public:
 
     /*** METHODS ***/
 public:
-    Camera(std::string name, GameObject* parent);
+    Camera(std::string name, int renderDistance, GameObject* parent);
 
     void ResizeGL(int w, int h);
 
     void SetActive();
     QVector2D ScreenSize();
     QVector2D GetScreenRatios();
+    int getRenderDistance();
+    void setRenderDistance(int renderDistance);
 };
 
 #endif // CAMERA_H

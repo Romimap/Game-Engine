@@ -4,7 +4,9 @@
 Camera* Camera::ActiveCamera = nullptr;
 
 
-Camera::Camera(std::string name, GameObject* parent) : GameObject(name, parent) {
+Camera::Camera(std::string name, int renderDistance, GameObject* parent) : GameObject(name, parent) {
+    this->_renderDistance = renderDistance;
+
     if (ActiveCamera == nullptr)
         ActiveCamera = this;
 }
@@ -40,4 +42,12 @@ QVector2D Camera::ScreenSize() {
 QVector2D Camera::GetScreenRatios() {
     //Values for 85° FOV
     return QVector2D(0.91633111496 * (float(_w) / float(_h)), 0.91633111496);
+}
+
+int Camera::getRenderDistance() {
+    return _renderDistance;
+}
+
+void Camera::setRenderDistance(int renderDistance) {
+    this->_renderDistance = renderDistance;
 }

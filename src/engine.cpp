@@ -3,7 +3,10 @@
 
 Engine* Engine::Singleton = nullptr;
 
-Engine::Engine() {
+Engine::Engine(int width, int height) {
+    this->_width = width;
+    this->_height = height;
+
     if (Singleton != nullptr)
         delete Singleton;
     Singleton = this;
@@ -13,8 +16,7 @@ void Engine::initializeGL() {
     qDebug("initializeGL <-");
     initializeOpenGLFunctions();
 
-    //resize(1280, 720);
-    resize(640, 360);
+    resize(_width, _height);
 
     glClearColor(0.212f, 0.224f, 0.247f, 1); // Discord gray
 

@@ -4,8 +4,9 @@
 GameObject* GameObject::Root = nullptr;
 
 
-GameObject::GameObject(std::string name, GameObject* parent) : _parent(parent) {
+GameObject::GameObject(std::string name, GameObject* parent, bool enabled) : _parent(parent) {
     this->_name = name;
+    this->_enabled = enabled;
 
     if (parent == nullptr && Root == nullptr) {
         Root = this;
@@ -43,20 +44,21 @@ GameObject::~GameObject() {
 }
 
 //GETTERS SETTERS
-bool GameObject::Enabled () {
+bool GameObject::Enabled() {
     return _enabled;
 }
 
-Transform* GameObject::GetTransform () {
+Transform* GameObject::GetTransform() {
     return _transform;
 }
-///Dont forget to free t
+
 void GameObject::SetTransform(Transform* t) {
     if (_transform != nullptr)
         delete _transform;
     _transform = new Transform(t, this);
 }
-GameObject* GameObject::GetParent () {
+
+GameObject* GameObject::GetParent() {
     return _parent;
 }
 
@@ -73,26 +75,33 @@ void GameObject::SetCollider(Collider *collider) {
 }
 
 //METHODS
-void GameObject::Enable () {//TODO
+void GameObject::Enable() {
+    _enabled = true;
 }
-void GameObject::Disable () {//TODO
+void GameObject::Disable() {
+    _enabled = false;
 }
 
-void GameObject::Start () {
+void GameObject::Start() {
+    if (!_enabled || _started) return;
+
     for (Component* component : _components) {
         component->Start();
     }
     _started = true;
 }
 
-void GameObject::Update (float delta) {
+void GameObject::Update(float delta) {
     if (!_started) Start();
+
     for (Component* component : _components) {
         component->Update(delta);
     }
 }
 
-void GameObject::FixedUpdate (float delta) {
+void GameObject::FixedUpdate(float delta) {
+    if (!_started) Start();
+
     for (Component* component : _components) {
         component->FixedUpdate(delta);
     }
@@ -227,6 +236,8 @@ void GameObject::RefreshAABB() {
 
 
 void GameObject::Draw() {
+    if (!_started) Start();
+
     for (Component* c : _components) {
         c->Draw();
     }

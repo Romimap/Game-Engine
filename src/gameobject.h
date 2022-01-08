@@ -50,7 +50,7 @@ public:
     /*** METHODS ***/
 public:
     /** CONSTRUCTORS/DESTRUCTORS **/
-    GameObject(std::string name, GameObject* parent = nullptr);
+    GameObject(std::string name, GameObject* parent = nullptr, bool enabled = true);
     ~GameObject();
 
     /** METHODS **/

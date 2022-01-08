@@ -4,8 +4,8 @@
 
 #include <iostream>
 
-#include "src/gameobject.h"
 #include "src/collider.h"
+#include "src/gameobject.h"
 
 
 class GameObject;
@@ -13,7 +13,7 @@ class GameObject;
 
 class Component {
     /*** ATTRIBUTES ***/
-private:
+protected:
     GameObject* _parent;
 
 public:
