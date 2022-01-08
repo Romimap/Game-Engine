@@ -32,15 +32,13 @@ void WorldGeneratorComponent::Start() {
     for (int x = xMin; x <= xMax; x++) {
         for (int y = yMin; y <= yMax; y++) {
             for (int z = zMin; z <= zMax; z++) {
-//                QThread* chunkGeneratorThread = QThread::create(WorldGeneratorComponent::generateChunk, x, y, z, this);
                 generateChunk(x, y, z, this);
+//                QThread* chunkGeneratorThread = QThread::create(WorldGeneratorComponent::generateChunk, x, y, z, this);
 
 //                chunkGeneratorThread->setObjectName(("Chunk_" + std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z) + "_GeneratorThread").c_str());
 //                chunkGeneratorThread->start();
 
 //                threads.push_back(chunkGeneratorThread);
-
-                // std::future<void> fut = std::async(WorldGeneratorComponent::generateChunk, x, y, z, this);
 
                 chunksCount++;
 
@@ -67,7 +65,7 @@ void WorldGeneratorComponent::Start() {
 void WorldGeneratorComponent::Update(float delta) {
     if (_chunksToFinalize.empty()) return;
 
-    std::cout << "### Has " << _chunksToFinalize.size() << " chunks to finalize ###" << std::endl;
+//    std::cout << "### Has " << _chunksToFinalize.size() << " chunks to finalize ###" << std::endl;
 
     int remainingQuota = std::min(_CHUNKS_PER_UPDATE, _chunksToFinalize.size());
     while (remainingQuota-- > 0) {
@@ -121,7 +119,7 @@ void WorldGeneratorComponent::generateChunk(int x, int y, int z, WorldGeneratorC
 
     WGC->addToChunksToFinalize(chunk);
 
-    std::cout << chunk->_name << " has been generated." << std::endl;
+//    std::cout << chunk->_name << " has been generated." << std::endl;
 }
 
 void WorldGeneratorComponent::finalizeChunkCreation(GameObject* chunk) {
