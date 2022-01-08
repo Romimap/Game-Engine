@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include <QThread>
+#include <QVector3D>
 
 #include "libraries/PerlinNoise/PerlinNoise.hpp"
 
@@ -39,6 +40,8 @@ protected:
 
     siv::PerlinNoise _perlin;
 
+    QVector3D _lastUpdate_CameraChunkPos;
+
     /** Chunks related **/
     const int _CHUNK_X_SIZE = 64;
     const int _CHUNK_Y_SIZE = 256;
@@ -47,9 +50,10 @@ protected:
     const int _CHUNK_NB_OF_LAYERS = 3;
     const int _CHUNK_LAYER_SIZE_REDUCTION_FACTOR = 4;
 
-    /** Chunk creation finalization queue **/
+    /** Chunk generation queues **/
     const int _CHUNKS_PER_UPDATE = 1;
 
+    LinkedQueue<QVector3D*> _chunksToGenerate;
     LinkedQueue<GameObject*> _chunksToFinalize;
 
     /*** METHODS ***/
@@ -61,8 +65,15 @@ public:
     void Start() override;
     void Update(float delta) override;
 
-    /** FINALIZATION QUEUE MANAGEMENT **/
+    /** GENERATION QUEUE UPDATE **/
+    void updateChunksToGenerate();
+
+    /** QUEUES MANAGEMENT **/
+    void addToChunksToGenerate(int x, int y, int z);
     void addToChunksToFinalize(GameObject* chunk);
+
+    /** OTHER METHODS **/
+    QVector3D calculateGameObjectChunkPos(GameObject* gameObject);
 
 protected:
     /** CHUNK GENERATION **/

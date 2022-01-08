@@ -7,6 +7,8 @@ WorldGeneratorComponent::WorldGeneratorComponent(std::string worldName, TerrainT
     this->_name = "WorldGeneratorComponent";
     this->_worldName = worldName;
     this->_terrainType = terrainType;
+
+    this->_lastUpdate_CameraChunkPos = calculateGameObjectChunkPos(Camera::ActiveCamera);
 }
 
 void WorldGeneratorComponent::Start() {
@@ -32,7 +34,8 @@ void WorldGeneratorComponent::Start() {
     for (int x = xMin; x <= xMax; x++) {
         for (int y = yMin; y <= yMax; y++) {
             for (int z = zMin; z <= zMax; z++) {
-                generateChunk(x, y, z, this);
+                addToChunksToGenerate(x, y, z);
+//                generateChunk(x, y, z, this);
 //                QThread* chunkGeneratorThread = QThread::create(WorldGeneratorComponent::generateChunk, x, y, z, this);
 
 //                chunkGeneratorThread->setObjectName(("Chunk_" + std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z) + "_GeneratorThread").c_str());
@@ -63,19 +66,66 @@ void WorldGeneratorComponent::Start() {
 }
 
 void WorldGeneratorComponent::Update(float delta) {
-    if (_chunksToFinalize.empty()) return;
+    updateChunksToGenerate();
 
-//    std::cout << "### Has " << _chunksToFinalize.size() << " chunks to finalize ###" << std::endl;
+    /** Generate chunks using the quota **/
 
-    int remainingQuota = std::min(_CHUNKS_PER_UPDATE, _chunksToFinalize.size());
-    while (remainingQuota-- > 0) {
-        GameObject* chunk = _chunksToFinalize.pop_front();
-        finalizeChunkCreation(chunk);
+    if (!_chunksToGenerate.empty()) {
+        int remainingQuota = std::min(_CHUNKS_PER_UPDATE, _chunksToGenerate.size());
+        while (remainingQuota-- > 0) {
+            QVector3D* chunkPos = _chunksToGenerate.pop_front();
+            std::cout << "Generating chunk... " << chunkPos->x() << " " << chunkPos->y() << " " << chunkPos->z() << std::endl;
+            generateChunk(chunkPos->x(), chunkPos->y(), chunkPos->z(), this);
+            delete chunkPos;
+        }
     }
+
+    /** Finalize chunks using the quota **/
+
+    if (!_chunksToFinalize.empty()) {
+        int remainingQuota = std::min(_CHUNKS_PER_UPDATE, _chunksToFinalize.size());
+        while (remainingQuota-- > 0) {
+            GameObject* chunk = _chunksToFinalize.pop_front();
+            std::cout << "Finalizing " << chunk->_name << std::endl;
+            finalizeChunkCreation(chunk);
+        }
+    }
+}
+
+void WorldGeneratorComponent::updateChunksToGenerate() {
+    QVector3D currentUpdate_CameraChunkPos = calculateGameObjectChunkPos(Camera::ActiveCamera);
+
+    QVector3D deltaChunkPos = _lastUpdate_CameraChunkPos - currentUpdate_CameraChunkPos;
+
+    if ((int)(deltaChunkPos.x()) != 0)
+        std::cout << "Moved from chunk x = " << (int)(_lastUpdate_CameraChunkPos.x()) << " to " << (int)(currentUpdate_CameraChunkPos.x()) << std::endl;
+    if ((int)(deltaChunkPos.y()) != 0)
+        std::cout << "Moved from chunk y = " << (int)(_lastUpdate_CameraChunkPos.y()) << " to " << (int)(currentUpdate_CameraChunkPos.y()) << std::endl;
+    if ((int)(deltaChunkPos.z()) != 0)
+        std::cout << "Moved from chunk z = " << (int)(_lastUpdate_CameraChunkPos.z()) << " to " << (int)(currentUpdate_CameraChunkPos.z()) << std::endl;
+
+    // TODO: addToChunksToGenerate()
+
+    _lastUpdate_CameraChunkPos = currentUpdate_CameraChunkPos;
+}
+
+void WorldGeneratorComponent::addToChunksToGenerate(int x, int y, int z) {
+    this->_chunksToGenerate.push_back(new QVector3D(x, y, z));
 }
 
 void WorldGeneratorComponent::addToChunksToFinalize(GameObject* chunk) {
     this->_chunksToFinalize.push_back(chunk);
+}
+
+QVector3D WorldGeneratorComponent::calculateGameObjectChunkPos(GameObject* gameObject) {
+    QVector3D gameObjectPos = gameObject->GetTransform()->GetPosition();
+
+    QVector3D chunkPos;
+    chunkPos.setX((int)(gameObjectPos.x() / _CHUNK_X_SIZE));
+    chunkPos.setY((int)(gameObjectPos.y() / _CHUNK_Y_SIZE));
+    chunkPos.setZ((int)(gameObjectPos.z() / _CHUNK_Z_SIZE));
+
+    return chunkPos;
 }
 
 void WorldGeneratorComponent::generateChunk(int x, int y, int z, WorldGeneratorComponent* WGC) {
