@@ -1,6 +1,5 @@
 #include "octreecomponent.h"
 
-
 OctreeComponent::OctreeComponent(int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor, GameObject* parent)
     : Component(parent) {
 
@@ -63,18 +62,88 @@ unsigned char OctreeComponent::getVoxelType(int x, int y, int z, int layerID) {
  *   0 = voxel not modified
  *   1 = voxel modified
  **/
-int OctreeComponent::setVoxelType(int x, int y, int z, unsigned char voxelMaterial, int layerID) {
-    int _currentLayerSizeReductionFactor = pow(_layerSizeReductionFactor, layerID);
-    int xSize = _xSize / _currentLayerSizeReductionFactor;
-    int ySize = _ySize / _currentLayerSizeReductionFactor;
-    int zSize = _zSize / _currentLayerSizeReductionFactor;
+int OctreeComponent::setVoxelType(int x, int y, int z, unsigned char voxelMaterial) {
+    int xSize = _xSize;
+    int ySize = _ySize;
+    int zSize = _zSize;
 
     if (x < 0 || x >= xSize || y < 0 || y >= ySize || z < 0 || z >= zSize) {
-        std::cerr << "Trying to set a voxel (" << x << ", " << y << ", " << z << ") outside of the defined layer (" << layerID << ")" << std::endl;
+        //std::cerr << "Trying to set a voxel (" << x << ", " << y << ", " << z << ") outside of the defined layer (0)" << std::endl;
         return -1;
     }
 
+    if (_layers[0][x][y][z] == voxelMaterial) { //Not modified
+        return 0;
+    }
+
+
     _layers[0][x][y][z] = voxelMaterial;
+
+    OctreeRendererChange *change = new OctreeRendererChange();
+    change->_value = voxelMaterial;
+    change->_x = x;
+    change->_y = y;
+    change->_z = z;
+    list64.push_back(change);
+
+    int blocX = x;
+    int blocY = y;
+    int blocZ = z;
+    for (int i = 1; i < _layers.size(); i++) {
+        blocX /= _layerSizeReductionFactor;
+        blocY /= _layerSizeReductionFactor;
+        blocZ /= _layerSizeReductionFactor;
+
+        int voxelTypeCount[MaterialId::MAX_ID + 1] = { 0 };
+        for (int x = 0; x < _layerSizeReductionFactor; x++) {
+            for (int y = 0; y < _layerSizeReductionFactor; y++) {
+                for (int z = 0; z < _layerSizeReductionFactor; z++) {
+                    voxelTypeCount[
+                        _layers[i - 1]
+                        [x + blocX * _layerSizeReductionFactor]
+                        [y + blocY * _layerSizeReductionFactor]
+                        [z + blocZ * _layerSizeReductionFactor]
+                    ]++;
+                }
+            }
+        }
+
+
+
+
+        int maxMat = voxelTypeCount[MaterialId::AIR];//Init as air
+        int maxId = 0;
+
+        if (maxMat < _layerSizeReductionFactor * _layerSizeReductionFactor * _layerSizeReductionFactor) {//Not empty
+            maxId = 1;
+            maxMat = voxelTypeCount[maxId]; //Init with air
+
+            for (int x = 2; x < MaterialId::MAX_ID + 1; x++) {
+                if (voxelTypeCount[i] > maxMat) {
+                    maxMat = voxelTypeCount[i];
+                    maxId = i;
+                }
+            }
+        }
+
+        if(_layers[i][blocX][blocY][blocZ] == maxId) //The top layer did not change his value, we break
+            break;
+
+        _layers[i][blocX][blocY][blocZ] = maxId;
+
+        OctreeRendererChange *change = new OctreeRendererChange();
+        change->_value = maxId;
+        change->_x = blocX;
+        change->_y = blocY;
+        change->_z = blocZ;
+
+        if (i == 1) {
+            list16.push_back(change);
+        } else if (i == 2) {
+            list4.push_back(change);
+        }
+    }
+
     return 1;
 }
 
@@ -90,6 +159,13 @@ std::vector<std::vector<std::vector<std::vector<unsigned char>>>>* OctreeCompone
     return &_layers;
 }
 
+
+void OctreeComponent::Update(float delta) {
+    if (list4.size() > 0 || list16.size() > 0 || list64.size() > 0) {
+        OctreeRendererComponent* octreeRendererComponent = GetParent()->GetComponent<OctreeRendererComponent>();
+        octreeRendererComponent->ApplyChanges(list4, list16, list64);
+    }
+}
 
 
 

@@ -1,5 +1,5 @@
 #include "playercontrollercomponent.h"
-
+#include "src/components/terrain/octreecomponent.h"
 
 PlayerControllerComponent::PlayerControllerComponent(float speed, float acceleration, RigidBodyComponent* cubeRb, GameObject* parent) : Component(parent), _cubeRb(cubeRb), _speed(speed), _acceleration(acceleration) {
     this->_name = "PlayerControllerComponent";
@@ -20,6 +20,52 @@ void PlayerControllerComponent::Update(float delta) {
     //Mouse Capture
     if (InputManager::Key('P')) InputManager::SetCaptureMouse(true);
     if (InputManager::Key('M')) InputManager::SetCaptureMouse(false);
+
+    //Dig
+    if (InputManager::Key('E')) {
+        RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition(), -GetParent()->GetTransform()->Forward());
+        if (hit._gameobject != nullptr) {
+            OctreeComponent* octreeComponent = hit._gameobject->GetComponent<OctreeComponent>();
+            if (octreeComponent != nullptr) {
+                QVector3D coord = GetParent()->GetTransform()->GetGlobalPosition() + (-GetParent()->GetTransform()->Forward() * (hit._distance + 0.1));
+                coord = coord - hit._gameobject->GetTransform()->GetPosition();
+
+                for (int x = -_editRadius; x <= _editRadius; x++) {
+                    for (int y = -_editRadius; y <= _editRadius; y++) {
+                        for (int z = -_editRadius; z <= _editRadius; z++) {
+                            QVector3D r(x, y, z);
+                            if (r.length() <= _editRadius + 0.1) {
+                                octreeComponent->setVoxelType(coord.x() + x, coord.y() + y, coord.z() + z, MaterialId::AIR);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //Fill
+    if (InputManager::Key('A')) {
+        RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition(), -GetParent()->GetTransform()->Forward());
+        if (hit._gameobject != nullptr) {
+            OctreeComponent* octreeComponent = hit._gameobject->GetComponent<OctreeComponent>();
+            if (octreeComponent != nullptr) {
+                QVector3D coord = GetParent()->GetTransform()->GetGlobalPosition() + (-GetParent()->GetTransform()->Forward() * (hit._distance + 0.1));
+                coord = coord - hit._gameobject->GetTransform()->GetPosition();
+
+                for (int x = -_editRadius; x <= _editRadius; x++) {
+                    for (int y = -_editRadius; y <= _editRadius; y++) {
+                        for (int z = -_editRadius; z <= _editRadius; z++) {
+                            QVector3D r(x, y, z);
+                            if (r.length() <= _editRadius + 0.1) {
+                                octreeComponent->setVoxelType(coord.x() + x, coord.y() + y, coord.z() + z, MaterialId::STONE);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     //Gravity
     if (_onGround <= 0) {

@@ -14,7 +14,7 @@
 #include "src/components/terrain/octreecomponent.h"
 
 
-#define OCTREE_RENDERER_VOXELS_FRAME_LIMIT 60
+#define OCTREE_RENDERER_VOXELS_FRAME_LIMIT 6000
 
 
 struct OctreeRendererChange {
@@ -23,6 +23,7 @@ struct OctreeRendererChange {
     int _z;
     unsigned char _value;
 
+    OctreeRendererChange() : _x(0), _y(0), _z(0), _value(0) {}
     OctreeRendererChange(int x, int y, int z, unsigned char value) : _x(x), _y(y), _z(z), _value(value){}
 };
 

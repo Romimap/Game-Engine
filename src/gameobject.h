@@ -90,6 +90,7 @@ public:
     template <typename T> T* GetComponent() {
         for (Component* c : _components) {
             if (T* tc = dynamic_cast<T*>(c)) return tc;
+            if (typeid (T) == typeid (*c)) return (T*)c;
         }
         std::cerr << "GameObject::GetComponent<>() has not found the searched component" << std::endl;
         return nullptr;

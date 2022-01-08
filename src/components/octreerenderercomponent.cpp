@@ -107,7 +107,7 @@ void OctreeRendererComponent::Update(float delta) {
         OctreeRendererChange* change = _layer4.pop_front();
         change->_value;
         _material->_TexSlot0->bind();
-        glfunc.glTexSubImage3D  (GL_TEXTURE_3D, 0, change->_x, change->_y, change->_z, 1, 1, 1, QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, &change->_value);
+        glfunc.glTexSubImage3D(GL_TEXTURE_3D, 0, change->_x, change->_y, change->_z, 1, 1, 1, QOpenGLTexture::PixelFormat::Red, QOpenGLTexture::PixelType::UInt8, &change->_value);
         delete change;
 
         quota--;

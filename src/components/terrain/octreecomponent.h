@@ -11,8 +11,11 @@
 #include "src/component.h"
 #include "src/consts.h"
 #include "src/gameobject.h"
+#include "src/components/octreerenderercomponent.h"
+#include "src/linkedqueue.h"
 
 
+struct OctreeRendererChange;
 class OctreeComponent : public Component {
     /*** ATTRIBUTES ***/
 protected:
@@ -23,6 +26,10 @@ protected:
     int _xSize;
     int _ySize;
     int _zSize;
+
+    LinkedQueue<OctreeRendererChange*> list4;
+    LinkedQueue<OctreeRendererChange*> list16;
+    LinkedQueue<OctreeRendererChange*> list64;
 
     std::vector<std::vector<std::vector<std::vector<unsigned char>>>> _layers;
     int _layerSizeReductionFactor;
@@ -35,11 +42,11 @@ public:
 
 public:
     /** UPDATE **/
-    void update();
+    void Update(float delta) override;
 
     /** GETTERS/SETTERS **/
     unsigned char getVoxelType(int x, int y, int z, int layerID = 0);
-    int setVoxelType(int x, int y, int z, unsigned char voxelMaterial, int layerID = 0);
+    int setVoxelType(int x, int y, int z, unsigned char voxelMaterial);
     int getXSize() {return _xSize;}
     int getYSize() {return _ySize;}
     int getZSize() {return _zSize;}

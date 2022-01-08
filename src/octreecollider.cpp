@@ -97,7 +97,6 @@ RayCastHit OctreeCollider::GridTreeIntersect (QVector3D O, QVector3D D, QVector3
 
         QVector3D hitPos = O;
         if (tmin > 0) {
-            std::cout << "TMIN" << std::endl;
             hitPos += D * (tmin + EPSILON);
         }
 

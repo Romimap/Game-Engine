@@ -29,6 +29,7 @@ private:
     float _coyoteTime = 0.1;
     float _onGround = 5;
     float _playerHeight = 1;
+    int _editRadius = 8;
 
     RigidBodyComponent* _cubeRb;
 
