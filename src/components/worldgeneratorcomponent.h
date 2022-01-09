@@ -56,7 +56,7 @@ protected:
 
     LinkedQueue<QVector3D*> _chunksToGenerate;
     LinkedQueue<GameObject*> _chunksToFinalize;
-    LinkedQueue<GameObject*> _chunksToDelete;
+    LinkedQueue<std::string*> _chunksToDelete;
 
     /*** METHODS ***/
 public:
@@ -80,11 +80,12 @@ protected:
 
     static void generateChunk(int chunkX, int chunkY, int chunkZ, WorldGeneratorComponent* WGC);
     void finalizeChunkCreation(GameObject* chunk);
+    bool deleteChunk(std::string chunkName);
 
     /** QUEUES MANAGEMENT **/
     int addToChunksToGenerate(int chunkX, int chunkY, int chunkZ, bool compareToRenderDistance = true);
     void addToChunksToFinalize(GameObject* chunk);
-    void addToChunksToDelete(GameObject* chunk);
+    void addToChunksToDelete(std::string chunkName);
 
     /** OTHER METHODS **/
     static std::string getChunkNameFromChunkPos(int chunkX, int chunkY, int chunkZ);

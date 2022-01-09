@@ -38,10 +38,12 @@ void WorldGeneratorComponent::Update(float delta) {
 
     if (!_chunksToDelete.empty()) {
         int remainingQuota = std::min(_CHUNKS_PER_UPDATE, _chunksToDelete.size());
-        while (remainingQuota-- > 0) {
-            GameObject* chunk = _chunksToDelete.pop_front();
-//            std::cout << "Deleting " << chunk->_name << std::endl;
-            delete chunk;
+        while (remainingQuota-- > 0 && !_chunksToDelete.empty()) {
+            std::string* chunkName = _chunksToDelete.pop_front();
+            if (!deleteChunk(*chunkName)) {
+                remainingQuota++;
+            }
+            delete chunkName;
         }
     }
 
@@ -195,11 +197,14 @@ void WorldGeneratorComponent::removeDistantChunks() {
     std::map<std::string, GameObject*> chunks = _parent->GetChildren();
     for (auto it = chunks.begin(); it != chunks.end(); it++) {
         GameObject* chunk = it->second;
+        if (chunk == nullptr) {
+            std::cout << "removeDistantChunks found a nullptr chunk" << std::endl;
+        }
         QVector3D chunkPos = getChunkPos(chunk);
 
         int distanceToCameraChunk = getDistanceFromCameraToChunk(chunkPos.x(), 0, chunkPos.z()); // TODO: take y into account if vertical chunks are implemented
         if (distanceToCameraChunk > Camera::ActiveCamera->getRenderDistance()){
-            addToChunksToDelete(chunk);
+            addToChunksToDelete(chunk->_name);
         }
     }
 }
@@ -273,6 +278,17 @@ void WorldGeneratorComponent::finalizeChunkCreation(GameObject* chunk) {
     chunk->Enable();
 }
 
+bool WorldGeneratorComponent::deleteChunk(std::string chunkName) {
+    GameObject* chunk = _parent->GetChildByName(chunkName);
+    if (chunk == nullptr) {
+        return false;
+    }
+    else {
+        delete chunk;
+        return true;
+    }
+}
+
 
 // --------------------------------------------------------------------------------
 // QUEUES MANAGEMENT
@@ -304,8 +320,8 @@ void WorldGeneratorComponent::addToChunksToFinalize(GameObject* chunk) {
     this->_chunksToFinalize.push_back(chunk);
 }
 
-void WorldGeneratorComponent::addToChunksToDelete(GameObject* chunk) {
-    this->_chunksToDelete.push_back(chunk);
+void WorldGeneratorComponent::addToChunksToDelete(std::string chunkName) {
+    this->_chunksToDelete.push_back(new std::string(chunkName));
 }
 
 

@@ -27,9 +27,6 @@ private:
 public:
     Transform(GameObject* gameObject);
     Transform(Transform* transform, GameObject* gameObject);
-    ~Transform() {
-
-    }
 
     QVector3D Forward();
     QVector3D Up();

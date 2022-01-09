@@ -22,7 +22,8 @@ GameObject::GameObject(std::string name, GameObject* parent, bool enabled) : _pa
 }
 
 GameObject::~GameObject() {
-    //    std::cout << "Deleting '" << _name << "' GameObject..." << std::endl;
+//    std::cout << "Deleting '" << _name << "' GameObject..." << std::endl;
+
     if (_transform != nullptr)
         delete _transform;
     if (_collider != nullptr)
@@ -43,7 +44,8 @@ GameObject::~GameObject() {
             delete child;
     }
 
-    _parent->DeleteChildByName(_name);
+    if (_parent != nullptr)
+        _parent->DeleteChildByName(_name);
 }
 
 //GETTERS SETTERS
