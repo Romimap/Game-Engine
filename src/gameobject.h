@@ -84,7 +84,7 @@ public:
     void AddComponent(Component* component);
 
     void Collisions(GameObject* current);
-    RayCastHit AABBRayCollision(QVector3D origin, QVector3D direction);
+    void AABBRayCollision(QVector3D origin, QVector3D direction, std::vector<std::pair<GameObject*, float>> *gameObjectDistance);
 
     void RefreshAABB();
 

@@ -34,7 +34,7 @@ float AABB::RayIntersect(QVector3D origin, QVector3D direction) {
     }
 
     if ((tmin > tymax) || (tymin > tmax)) {
-        return -1;
+        return std::numeric_limits<float>::max();
     }
 
     if (tymin > tmin) {
@@ -55,7 +55,7 @@ float AABB::RayIntersect(QVector3D origin, QVector3D direction) {
     }
 
     if ((tmin > tzmax) || (tzmin > tmax)) {
-        return -1;
+        return std::numeric_limits<float>::max();
     }
 
     if (tzmin > tmin)
@@ -63,8 +63,9 @@ float AABB::RayIntersect(QVector3D origin, QVector3D direction) {
     if (tzmax < tmax)
         tmax = tzmax;
 
+    if (tmin < 0 && tmax > 0) return 0;
     if (tmin > 0 && tmin < 1000) return tmin;
     if (tmax > 0 && tmax < 1000) return tmax;
-    return -1;
+    return std::numeric_limits<float>::max();
 }
 

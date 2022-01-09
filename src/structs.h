@@ -9,7 +9,7 @@ struct RayCastHit {
     QVector3D _position;
     GameObject* _gameobject;
 
-    RayCastHit() : _distance(-1), _position(QVector3D()), _gameobject(nullptr) {
+    RayCastHit() : _distance(std::numeric_limits<float>::max()), _position(QVector3D()), _gameobject(nullptr) {
 
     }
 };

@@ -1,5 +1,5 @@
 #include "engine.h"
-
+#include <map>
 
 Engine* Engine::Singleton = nullptr;
 
@@ -149,16 +149,29 @@ void Engine::keyReleaseEvent(QKeyEvent *event) {
     }
 }
 
-RayCastHit Engine::RayCast(QVector3D origin, QVector3D direction) {
-    RayCastHit hit = GameObject::Root->AABBRayCollision(origin, direction);
-    if (hit._gameobject != nullptr) {
-        GameObject* gameobject = hit._gameobject;
-        hit = gameobject->GetCollider()->RayCast(origin, direction);
-        if (hit._distance < std::numeric_limits<float>::max()) {
-            hit._gameobject = gameobject;
-        }
+bool cmp(std::pair<GameObject*, float> &a,
+         std::pair<GameObject*, float> &b) {
+    return a.second < b.second;
+}
 
-        return hit;
+RayCastHit Engine::RayCast(QVector3D origin, QVector3D direction) {
+    std::vector<std::pair<GameObject*, float>> gameObjectDistance;
+
+    GameObject::Root->AABBRayCollision(origin, direction, &gameObjectDistance);
+
+    std::sort(gameObjectDistance.begin(), gameObjectDistance.end(), cmp);
+
+    for (int i = 0; i < gameObjectDistance.size(); i++) {
+        GameObject *current = gameObjectDistance[i].first;
+        if (current != nullptr && current->GetCollider() != nullptr) {
+            RayCastHit hit = current->GetCollider()->RayCast(origin, direction);
+            if (hit._distance < std::numeric_limits<float>::max()) {
+                hit._gameobject = gameObjectDistance[i].first;
+                hit._position = origin + direction * hit._distance;
+                return hit;
+            }
+        }
     }
-    return hit;
+
+    return RayCastHit();
 }

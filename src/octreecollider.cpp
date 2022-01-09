@@ -15,8 +15,24 @@ void OctreeCollider::SetAABB() {
     _localAABB._max = QVector3D(_octreeComponent->getXSize(), _octreeComponent->getYSize(), _octreeComponent->getZSize());
 }
 
-RayCastHit OctreeCollider::RayCast(QVector3D origin, QVector3D destination) {
-    return GridTreeIntersect(origin, destination, GetParent()->GetTransform()->GetGlobalPosition(), QVector3D(), QVector3D(4, 16, 4), 2);
+RayCastHit OctreeCollider::RayCast(QVector3D origin, QVector3D direction) {
+    std::vector<RayCastHit> hits;
+    hits.push_back(GridTreeIntersect(origin, direction, GetParent()->GetTransform()->GetPosition() + QVector3D(0, 0, 0)     , QVector3D(0, 0, 0)    , QVector3D(4, 4, 4), 16, 2));
+    hits.push_back(GridTreeIntersect(origin, direction, GetParent()->GetTransform()->GetPosition() + QVector3D(0, 64, 0)    , QVector3D(0, 4, 0)    , QVector3D(4, 4, 4), 16, 2));
+    hits.push_back(GridTreeIntersect(origin, direction, GetParent()->GetTransform()->GetPosition() + QVector3D(0, 128, 0)   , QVector3D(0, 8, 0)    , QVector3D(4, 4, 4), 16, 2));
+    hits.push_back(GridTreeIntersect(origin, direction, GetParent()->GetTransform()->GetPosition() + QVector3D(0, 192, 0)   , QVector3D(0, 12, 0)   , QVector3D(4, 4, 4), 16, 2));
+
+    float minDistance = std::numeric_limits<float>::max();
+    int minIndex = 0;
+
+    for (int i = 0; i < 4; i++) {
+        if (hits[i]._distance < minDistance) {
+            minDistance = hits[i]._distance;
+            minIndex = i;
+        }
+    }
+
+    return hits[minIndex];
 }
 
 
@@ -69,32 +85,29 @@ bool OctreeCollider::BoxIntersect(QVector3D origin, QVector3D direction, QVector
     if (tzmax < tmax)
         tmax = tzmax;
 
-    if (tmin > 0 && tmin < 1000) return true;
-    if (tmax > 0 && tmax < 1000) return true;
+    if (tmin > 0) return true;
+    if (tmin <= 0 && tmax > 0) return true;
     return false;
 }
 
 
-RayCastHit OctreeCollider::GridTreeIntersect (QVector3D O, QVector3D D, QVector3D gridPos, QVector3D offset, QVector3D gridSize, int layer) {
-    float voxelSize = 64. / gridSize.x();
+RayCastHit OctreeCollider::GridTreeIntersect (QVector3D O, QVector3D D, QVector3D gridPos, QVector3D offset, QVector3D gridSize, float voxelSize, int layer) {
+
 
     RayCastHit hit;
     hit._distance = std::numeric_limits<float>::max();
 
-    WorldGeneratorComponent *WGC = _parent->GetParent()->GetComponent<WorldGeneratorComponent>();
+    OctreeComponent *octreeComponent = GetParent()->GetComponent<OctreeComponent>();
 
     if (layer <= -1) {
-        offset /= SCALEFACTOR;
-        if (WGC->getVoxelType(offset.x(), offset.y(), offset.z(), layer + 1) != MaterialId::AIR) {
             hit._distance = 0;
-        }
         return hit;
     }
 
 
     float tmin, tmax;
-    BoxIntersect(O, D, gridPos, gridPos + gridSize * voxelSize, tmin, tmax);
-    if (tmax == std::numeric_limits<float>::max()) return hit;
+    bool intersect = BoxIntersect(O, D, gridPos, gridPos + gridSize * voxelSize, tmin, tmax);
+    if (!intersect) return hit;
 
     QVector3D hitPos = O;
     if (tmin > 0) {
@@ -107,12 +120,15 @@ RayCastHit OctreeCollider::GridTreeIntersect (QVector3D O, QVector3D D, QVector3
     Y = floor(((hitPos - gridPos) / voxelSize).y());
     Z = floor(((hitPos - gridPos) / voxelSize).z());
 
-    bool isFull = WGC->getVoxelType(X + offset.x(), Y + offset.y(), Z + offset.z(), layer) != MaterialId::AIR;
+    bool isFull = octreeComponent->getVoxelType(X + offset.x(), Y + offset.y(), Z + offset.z(), layer) != MaterialId::AIR;
     if (isFull) {
         hit._distance = 0;
 
-        RayCastHit rhit = GridTreeIntersect(O + D * (hit._distance - EPSILON), D, gridPos + QVector3D(X * voxelSize, Y * voxelSize, Z * voxelSize), offset * SCALEFACTOR + QVector3D(X, Y, Z) * SCALEFACTOR, gridSize * SCALEFACTOR, layer - 1);
-        if (rhit._distance < std::numeric_limits<float>::max()) return rhit;
+        RayCastHit rhit = GridTreeIntersect(O + D * (hit._distance - EPSILON), D, gridPos + QVector3D(X, Y, Z) * voxelSize, (offset + QVector3D(X, Y, Z)) * SCALEFACTOR, gridSize, voxelSize / SCALEFACTOR, layer - 1);
+        if (rhit._distance < std::numeric_limits<float>::max()) {
+            rhit._distance += (O - hitPos).length();
+            return rhit;
+        }
     }
 
     float tx, ty, tz;
@@ -146,13 +162,13 @@ RayCastHit OctreeCollider::GridTreeIntersect (QVector3D O, QVector3D D, QVector3
         if (tmaxx < tmaxy && tmaxx < tmaxz) {
             X += Xstep;
             if (X >= 0 && X < gridSize.x()) {
-                isFull = WGC->getVoxelType(X + offset.x(), Y + offset.y(), Z + offset.z(), layer) != MaterialId::AIR;
+                isFull = octreeComponent->getVoxelType(X + offset.x(), Y + offset.y(), Z + offset.z(), layer) != MaterialId::AIR;
                 if (isFull) {
                     hit._distance = tmaxx * voxelSize;
 
-                    RayCastHit rhit = GridTreeIntersect(O + D * (hit._distance - EPSILON), D, gridPos + QVector3D(X, Y, Z) * voxelSize, offset * SCALEFACTOR + QVector3D(X, Y, Z) * SCALEFACTOR, gridSize * SCALEFACTOR, layer - 1);
+                    RayCastHit rhit = GridTreeIntersect(O + D * (hit._distance - EPSILON), D, gridPos + QVector3D(X, Y, Z) * voxelSize, (offset + QVector3D(X, Y, Z)) * SCALEFACTOR, gridSize, voxelSize / SCALEFACTOR, layer - 1);
                     if (rhit._distance < std::numeric_limits<float>::max()) {
-                        rhit._distance += hit._distance;
+                        rhit._distance += hit._distance - EPSILON;
                         return rhit;
                     }
                 }
@@ -163,13 +179,13 @@ RayCastHit OctreeCollider::GridTreeIntersect (QVector3D O, QVector3D D, QVector3
         } else if (tmaxy < tmaxz) {
             Y += Ystep;
             if (Y >= 0 && Y < gridSize.y()) {
-                isFull = WGC->getVoxelType(X + offset.x(), Y + offset.y(), Z + offset.z(), layer) != MaterialId::AIR;
+                isFull = octreeComponent->getVoxelType(X + offset.x(), Y + offset.y(), Z + offset.z(), layer) != MaterialId::AIR;
                 if (isFull) {
                     hit._distance = tmaxy * voxelSize;
 
-                    RayCastHit rhit = GridTreeIntersect(O + D * (hit._distance - EPSILON), D, gridPos + QVector3D(X, Y, Z) * voxelSize, offset * SCALEFACTOR + QVector3D(X, Y, Z) * SCALEFACTOR, gridSize * SCALEFACTOR, layer - 1);
+                    RayCastHit rhit = GridTreeIntersect(O + D * (hit._distance - EPSILON), D, gridPos + QVector3D(X, Y, Z) * voxelSize, (offset + QVector3D(X, Y, Z)) * SCALEFACTOR, gridSize, voxelSize / SCALEFACTOR, layer - 1);
                     if (rhit._distance < std::numeric_limits<float>::max()) {
-                        rhit._distance += hit._distance;
+                        rhit._distance += hit._distance - EPSILON;
                         return rhit;
                     }
                 }
@@ -180,13 +196,13 @@ RayCastHit OctreeCollider::GridTreeIntersect (QVector3D O, QVector3D D, QVector3
         } else {
             Z += Zstep;
             if (Z >= 0 && Z < gridSize.z()) {
-                isFull = WGC->getVoxelType(X + offset.x(), Y + offset.y(), Z + offset.z(), layer) != MaterialId::AIR;
+                isFull = octreeComponent->getVoxelType(X + offset.x(), Y + offset.y(), Z + offset.z(), layer) != MaterialId::AIR;
                 if (isFull) {
                     hit._distance = tmaxz * voxelSize;
 
-                    RayCastHit rhit = GridTreeIntersect(O + D * (hit._distance - EPSILON), D, gridPos + QVector3D(X, Y, Z) * voxelSize, offset * SCALEFACTOR + QVector3D(X, Y, Z) * SCALEFACTOR, gridSize * SCALEFACTOR, layer - 1);
+                    RayCastHit rhit = GridTreeIntersect(O + D * (hit._distance - EPSILON), D, gridPos + QVector3D(X, Y, Z) * voxelSize, (offset + QVector3D(X, Y, Z)) * SCALEFACTOR, gridSize, voxelSize / SCALEFACTOR, layer - 1);
                     if (rhit._distance < std::numeric_limits<float>::max()) {
-                        rhit._distance += hit._distance;
+                        rhit._distance += hit._distance - EPSILON;
                         return rhit;
                     }
                 }

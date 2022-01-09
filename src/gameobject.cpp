@@ -149,38 +149,25 @@ void GameObject::Collisions(GameObject* current) {
     }
 }
 
-RayCastHit GameObject::AABBRayCollision(QVector3D origin, QVector3D direction) {
-    if (_globalAABB == nullptr) return RayCastHit(); //No GlobalAABB, No collision
+void GameObject::AABBRayCollision(QVector3D origin, QVector3D direction, std::vector<std::pair<GameObject*, float>> *gameObjectDistance) {
+    if (_globalAABB == nullptr) return; //No GlobalAABB, No collision
 
-    RayCastHit hit;
-    hit._distance = _globalAABB->RayIntersect(origin, direction);
-    if (hit._distance <= 0) return RayCastHit(); //Ray missed GlobalAABB, No collision
+    float distance;
+    distance = _globalAABB->RayIntersect(origin, direction);
+    if (distance < std::numeric_limits<float>::max()) { //Hit global AABB, process self & children
+        distance = std::numeric_limits<float>::max();
 
-    hit._distance = std::numeric_limits<float>::max();
-
-    if (_personalGlobalAABB) {
-        hit._distance = _personalGlobalAABB->RayIntersect(origin, direction);
-        if (hit._distance > 0) { //Ray hit the personal AABB, possible collision
-            //TODO, proper Ray / Collider test
-            if (true) {
-                hit._gameobject = this;
-                hit._position = origin + direction * hit._distance;
+        if (_personalGlobalAABB != nullptr) {
+            distance = _personalGlobalAABB->RayIntersect(origin, direction);
+            if (distance < std::numeric_limits<float>::max()) { //Ray hit the personal AABB, possible collision
+                gameObjectDistance->push_back(std::pair<GameObject*, float>(this, distance));
             }
         }
-    }
 
-    for (auto it = _children.begin(); it != _children.end(); it++) {
-        GameObject* child = it->second;
-        RayCastHit tmp;
-        tmp = child->AABBRayCollision(origin, direction);
-        if (tmp._distance > 0) {
-            if (hit._distance <= 0 || tmp._distance < hit._distance) {
-                hit = tmp;
-            }
+        for (std::pair<std::string, GameObject*> child : GetChildren()) {
+            child.second->AABBRayCollision(origin, direction, gameObjectDistance);
         }
     }
-
-    return hit;
 }
 
 void GameObject::AddComponent(Component *component) {

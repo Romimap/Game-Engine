@@ -27,7 +27,7 @@ public:
 
 private:
     bool BoxIntersect(QVector3D origin, QVector3D direction, QVector3D min, QVector3D max, float &tmin, float &tmax);
-    RayCastHit GridTreeIntersect (QVector3D O, QVector3D D, QVector3D gridPos, QVector3D offset, QVector3D gridSize, int layer);
+    RayCastHit GridTreeIntersect (QVector3D O, QVector3D D, QVector3D gridPos, QVector3D offset, QVector3D gridSize, float voxelSize, int layer);
 };
 
 #endif // OCTREECOLLIDER_H
