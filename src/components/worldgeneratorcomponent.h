@@ -90,13 +90,12 @@ protected:
     static std::string getChunkNameFromChunkPos(int chunkX, int chunkY, int chunkZ);
 
     GameObject* getChunkFromVoxelPos(int x, int y, int z);
+    QVector3D getLocalVoxelCoordinates(int x, int y, int z, int layerID = 0);
 
-    QVector3D calculateChunkPos(GameObject* gameObject);
-    QVector3D calculateChunkPos(int x, int y, int z);
+    QVector3D getChunkPos(GameObject* gameObject);
+    QVector3D getChunkPos(int x, int y, int z);
 
-    float calculateDistanceFromCameraToChunk(int chunkX, int chunkY, int chunkZ);
-
-    /** CHUNK GENERATION **/
+    float getDistanceFromCameraToChunk(int chunkX, int chunkY, int chunkZ);
 };
 
 #endif // WORLDGENERATORCOMPONENT_H
