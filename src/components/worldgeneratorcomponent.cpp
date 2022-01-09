@@ -203,6 +203,7 @@ void WorldGeneratorComponent::removeDistantChunks() {
         QVector3D chunkPos = getChunkPos(chunk);
 
         int distanceToCameraChunk = getDistanceFromCameraToChunk(chunkPos.x(), 0, chunkPos.z()); // TODO: take y into account if vertical chunks are implemented
+        std::cout << "Distance from camera to (" << chunkPos.x() << ", " << chunkPos.y() << ", " << chunkPos.z() << ") = " << distanceToCameraChunk << std::endl;
         if (distanceToCameraChunk > Camera::ActiveCamera->getRenderDistance()){
             addToChunksToDelete(chunk->_name);
         }
@@ -224,9 +225,10 @@ void WorldGeneratorComponent::updateChunksGen() {
         std::chrono::duration<double> elapsed = end - start;
 
         std::cout << "World update done in " << elapsed.count() << "s (WorldGeneratorComponent)" << std::endl;
-    }
 
-    _lastUpdate_CameraChunkPos = currentUpdate_CameraChunkPos;
+        _lastUpdate_CameraChunkPos = currentUpdate_CameraChunkPos;
+        std::cout << "Camera chunk pos is now: (" << _lastUpdate_CameraChunkPos.x() << ", " << _lastUpdate_CameraChunkPos.y() << ", " << _lastUpdate_CameraChunkPos.z() << ")" << std::endl;
+    }
 }
 
 void WorldGeneratorComponent::generateChunk(int chunkX, int chunkY, int chunkZ, WorldGeneratorComponent* WGC) {

@@ -47,6 +47,15 @@ OctreeRendererComponent::OctreeRendererComponent(GameObject* parent) : Component
     _material->SetSlot3D(1, 16, 64, 16, data16);
     _material->SetSlot3D(2, 64, 256, 64, data64);
     _material->SetSlot2D(":/Textures.png", 3);
+
+    free(data4);
+    free(data16);
+    free(data64);
+}
+
+OctreeRendererComponent::~OctreeRendererComponent() {
+    delete _material;
+    delete _mesh;
 }
 
 void OctreeRendererComponent::Start() {

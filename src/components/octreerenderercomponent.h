@@ -43,6 +43,7 @@ private:
     /*** METHODS ***/
 public:
     OctreeRendererComponent(GameObject* parent);
+    ~OctreeRendererComponent();
 
     void Start() override;
     void Draw() override;
