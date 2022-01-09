@@ -110,8 +110,10 @@ RayCastHit OctreeCollider::GridTreeIntersect (QVector3D O, QVector3D D, QVector3
     if (!intersect) return hit;
 
     QVector3D hitPos = O;
+    float distanceOffset = 0;
     if (tmin > 0) {
-        hitPos += D * (tmin + EPSILON);
+        distanceOffset = tmin + EPSILON;
+        hitPos += D * distanceOffset;
     }
 
     float X, Y, Z;
@@ -122,9 +124,9 @@ RayCastHit OctreeCollider::GridTreeIntersect (QVector3D O, QVector3D D, QVector3
 
     bool isFull = octreeComponent->getVoxelType(X + offset.x(), Y + offset.y(), Z + offset.z(), layer) != MaterialId::AIR;
     if (isFull) {
-        hit._distance = 0;
+        hit._distance = distanceOffset;
 
-        RayCastHit rhit = GridTreeIntersect(O + D * (hit._distance - EPSILON), D, gridPos + QVector3D(X, Y, Z) * voxelSize, (offset + QVector3D(X, Y, Z)) * SCALEFACTOR, gridSize, voxelSize / SCALEFACTOR, layer - 1);
+        RayCastHit rhit = GridTreeIntersect(O + D * (hit._distance + EPSILON), D, gridPos + QVector3D(X, Y, Z) * voxelSize, (offset + QVector3D(X, Y, Z)) * SCALEFACTOR, gridSize, voxelSize / SCALEFACTOR, layer - 1);
         if (rhit._distance < std::numeric_limits<float>::max()) {
             rhit._distance += (O - hitPos).length();
             return rhit;
@@ -164,11 +166,11 @@ RayCastHit OctreeCollider::GridTreeIntersect (QVector3D O, QVector3D D, QVector3
             if (X >= 0 && X < gridSize.x()) {
                 isFull = octreeComponent->getVoxelType(X + offset.x(), Y + offset.y(), Z + offset.z(), layer) != MaterialId::AIR;
                 if (isFull) {
-                    hit._distance = tmaxx * voxelSize;
+                    hit._distance = distanceOffset + tmaxx * voxelSize;
 
                     RayCastHit rhit = GridTreeIntersect(O + D * (hit._distance - EPSILON), D, gridPos + QVector3D(X, Y, Z) * voxelSize, (offset + QVector3D(X, Y, Z)) * SCALEFACTOR, gridSize, voxelSize / SCALEFACTOR, layer - 1);
                     if (rhit._distance < std::numeric_limits<float>::max()) {
-                        rhit._distance += hit._distance - EPSILON;
+                        rhit._distance += hit._distance;
                         return rhit;
                     }
                 }
@@ -181,11 +183,11 @@ RayCastHit OctreeCollider::GridTreeIntersect (QVector3D O, QVector3D D, QVector3
             if (Y >= 0 && Y < gridSize.y()) {
                 isFull = octreeComponent->getVoxelType(X + offset.x(), Y + offset.y(), Z + offset.z(), layer) != MaterialId::AIR;
                 if (isFull) {
-                    hit._distance = tmaxy * voxelSize;
+                    hit._distance = distanceOffset + tmaxy * voxelSize;
 
                     RayCastHit rhit = GridTreeIntersect(O + D * (hit._distance - EPSILON), D, gridPos + QVector3D(X, Y, Z) * voxelSize, (offset + QVector3D(X, Y, Z)) * SCALEFACTOR, gridSize, voxelSize / SCALEFACTOR, layer - 1);
                     if (rhit._distance < std::numeric_limits<float>::max()) {
-                        rhit._distance += hit._distance - EPSILON;
+                        rhit._distance += hit._distance;
                         return rhit;
                     }
                 }
@@ -198,11 +200,11 @@ RayCastHit OctreeCollider::GridTreeIntersect (QVector3D O, QVector3D D, QVector3
             if (Z >= 0 && Z < gridSize.z()) {
                 isFull = octreeComponent->getVoxelType(X + offset.x(), Y + offset.y(), Z + offset.z(), layer) != MaterialId::AIR;
                 if (isFull) {
-                    hit._distance = tmaxz * voxelSize;
+                    hit._distance = distanceOffset + tmaxz * voxelSize;
 
                     RayCastHit rhit = GridTreeIntersect(O + D * (hit._distance - EPSILON), D, gridPos + QVector3D(X, Y, Z) * voxelSize, (offset + QVector3D(X, Y, Z)) * SCALEFACTOR, gridSize, voxelSize / SCALEFACTOR, layer - 1);
                     if (rhit._distance < std::numeric_limits<float>::max()) {
-                        rhit._distance += hit._distance - EPSILON;
+                        rhit._distance += hit._distance;
                         return rhit;
                     }
                 }

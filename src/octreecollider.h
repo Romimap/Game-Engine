@@ -2,7 +2,7 @@
 #define OCTREECOLLIDER_H
 
 
-#define EPSILON 0.0001
+#define EPSILON 0.1
 
 
 #include "src/collider.h"
