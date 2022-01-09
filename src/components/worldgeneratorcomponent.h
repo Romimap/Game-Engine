@@ -56,6 +56,7 @@ protected:
 
     LinkedQueue<QVector3D*> _chunksToGenerate;
     LinkedQueue<GameObject*> _chunksToFinalize;
+    LinkedQueue<GameObject*> _chunksToDelete;
 
     /*** METHODS ***/
 public:
@@ -66,28 +67,36 @@ public:
     void Start() override;
     void Update(float delta) override;
 
-    /** GENERATION QUEUE UPDATE **/
-    void updateChunksToGenerate();
-
-    /** QUEUES MANAGEMENT **/
-    int addToChunksToGenerate(int x, int y, int z, bool compareToRenderDistance = true);
-    void addToChunksToFinalize(GameObject* chunk);
-
     /** OTHER METHODS **/
-    static std::string getChunkNameFromChunkPos(int chunkX, int chunkY, int chunkZ);
-
-    QVector3D calculateChunkPos(GameObject* gameObject);
-    QVector3D calculateChunkPos(int x, int y, int z);
-
-    GameObject* getChunkFromVoxelPos(int x, int y, int z);
-
     unsigned char getVoxelType(int x, int y, int z, int layerID = 0);
     int setVoxelType(int x, int y, int z, unsigned char voxelMaterial);
 
 protected:
     /** CHUNK GENERATION **/
+    void generateChunksAroundActiveCamera();
+    void removeDistantChunks();
+
+    void updateChunksGen();
+
     static void generateChunk(int chunkX, int chunkY, int chunkZ, WorldGeneratorComponent* WGC);
     void finalizeChunkCreation(GameObject* chunk);
+
+    /** QUEUES MANAGEMENT **/
+    int addToChunksToGenerate(int chunkX, int chunkY, int chunkZ, bool compareToRenderDistance = true);
+    void addToChunksToFinalize(GameObject* chunk);
+    void addToChunksToDelete(GameObject* chunk);
+
+    /** OTHER METHODS **/
+    static std::string getChunkNameFromChunkPos(int chunkX, int chunkY, int chunkZ);
+
+    GameObject* getChunkFromVoxelPos(int x, int y, int z);
+
+    QVector3D calculateChunkPos(GameObject* gameObject);
+    QVector3D calculateChunkPos(int x, int y, int z);
+
+    float calculateDistanceFromCameraToChunk(int chunkX, int chunkY, int chunkZ);
+
+    /** CHUNK GENERATION **/
 };
 
 #endif // WORLDGENERATORCOMPONENT_H

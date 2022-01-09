@@ -70,7 +70,8 @@ public:
     AABB* GetPersonalGlobalAABB() {return _personalGlobalAABB;}
 
     std::map<std::string, GameObject*> GetChildren();
-    GameObject* GetChildrenByName(std::string name);
+    GameObject* GetChildByName(std::string name);
+    void DeleteChildByName(std::string childName);
 
     /** GENERIC METHODS **/
     void Enable();

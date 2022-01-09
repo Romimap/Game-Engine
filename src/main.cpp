@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
 
     GameObject root("Root");
 
-    Camera* camera = new Camera("Camera", 5, &root);
+    Camera* camera = new Camera("Camera", 2, &root);
     camera->GetTransform()->SetPosition(32, 160, 32);
     camera->GetTransform()->SetRotation(45, 0, 0);
     camera->GetTransform()->SetScale(1, 1, 1);

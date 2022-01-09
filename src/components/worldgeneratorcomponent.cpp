@@ -1,6 +1,10 @@
 #include "worldgeneratorcomponent.h"
 
 
+// --------------------------------------------------------------------------------
+// CONSTRUCTORS/DESTRUCTORS
+// --------------------------------------------------------------------------------
+
 WorldGeneratorComponent::WorldGeneratorComponent(std::string worldName, TerrainType terrainType, GameObject* parent)
     : Component(parent) {
 
@@ -11,17 +15,101 @@ WorldGeneratorComponent::WorldGeneratorComponent(std::string worldName, TerrainT
     this->_lastUpdate_CameraChunkPos = calculateChunkPos(Camera::ActiveCamera);
 }
 
+
+// --------------------------------------------------------------------------------
+// GENERIC COMPONENT METHODS
+// --------------------------------------------------------------------------------
+
 void WorldGeneratorComponent::Start() {
 
     /** Initialize world generation **/
 
+    this->_perlin = siv::PerlinNoise{_seed};
+    generateChunksAroundActiveCamera();
+}
+
+void WorldGeneratorComponent::Update(float delta) {
+
+    /** Verify if new chunks should be created or distant chunks be deleted **/
+
+    updateChunksGen();
+
+    /** Delete chunks using the quota **/
+
+    if (!_chunksToDelete.empty()) {
+        int remainingQuota = std::min(_CHUNKS_PER_UPDATE, _chunksToDelete.size());
+        while (remainingQuota-- > 0) {
+            GameObject* chunk = _chunksToDelete.pop_front();
+//            std::cout << "Deleting " << chunk->_name << std::endl;
+            delete chunk;
+        }
+    }
+
+    /** Generate chunks using the quota **/
+
+    if (!_chunksToGenerate.empty()) {
+        int remainingQuota = std::min(_CHUNKS_PER_UPDATE, _chunksToGenerate.size());
+        while (remainingQuota-- > 0) {
+            QVector3D* chunkPos = _chunksToGenerate.pop_front();
+//            std::cout << "Generating chunk... " << chunkPos->x() << " " << chunkPos->y() << " " << chunkPos->z() << std::endl;
+            generateChunk(chunkPos->x(), chunkPos->y(), chunkPos->z(), this);
+            delete chunkPos;
+        }
+    }
+
+    /** Finalize chunks using the quota **/
+
+    if (!_chunksToFinalize.empty()) {
+        int remainingQuota = std::min(_CHUNKS_PER_UPDATE, _chunksToFinalize.size());
+        while (remainingQuota-- > 0) {
+            GameObject* chunk = _chunksToFinalize.pop_front();
+//            std::cout << "Finalizing " << chunk->_name << std::endl;
+            finalizeChunkCreation(chunk);
+        }
+    }
+}
+
+
+// --------------------------------------------------------------------------------
+// OTHER METHODS
+// --------------------------------------------------------------------------------
+
+unsigned char WorldGeneratorComponent::getVoxelType(int x, int y, int z, int layerID) {
+    GameObject* chunk = getChunkFromVoxelPos(x, y, z);
+    if (chunk != nullptr) {
+        int _currentLayerSizeReductionFactor = pow(_CHUNK_LAYER_SIZE_REDUCTION_FACTOR, layerID);
+        int xSize = _CHUNK_X_SIZE / _currentLayerSizeReductionFactor;
+        int ySize = _CHUNK_Y_SIZE / _currentLayerSizeReductionFactor;
+        int zSize = _CHUNK_Z_SIZE / _currentLayerSizeReductionFactor;
+        return chunk->GetComponent<OctreeComponent>()->getVoxelType(x % xSize, y % ySize, z % zSize, layerID);
+    }
+    else {
+        std::cerr << "WorldGeneratorComponent::getVoxelType returning 'AIR' because no chunk was found" << std::endl;
+        return MaterialId::AIR;
+    }
+}
+
+int WorldGeneratorComponent::setVoxelType(int x, int y, int z, unsigned char voxelMaterial) {
+    GameObject* chunk = getChunkFromVoxelPos(x, y, z);
+    if (chunk != nullptr) {
+        return chunk->GetComponent<OctreeComponent>()->setVoxelType(x % _CHUNK_X_SIZE, y % _CHUNK_Y_SIZE, z % _CHUNK_Z_SIZE, voxelMaterial);
+    }
+    else {
+        std::cerr << "WorldGeneratorComponent::setVoxelType returning '-1' because no chunk was found" << std::endl;
+        return -1;
+    }
+}
+
+
+// --------------------------------------------------------------------------------
+// CHUNK GENERATION
+// --------------------------------------------------------------------------------
+
+void WorldGeneratorComponent::generateChunksAroundActiveCamera() {
+
     std::string className = " (WorldGeneratorComponent)";
 
-    std::cout << "Generating world..." << className << std::endl;
-
     auto start = std::chrono::high_resolution_clock::now();
-
-    this->_perlin = siv::PerlinNoise{_seed};
 
     /** Get camera coordinates **/
 
@@ -103,129 +191,37 @@ void WorldGeneratorComponent::Start() {
     std::cout << "World generation done (created " << chunksCount << " chunks) in " << elapsed.count() << "s" << className << std::endl;
 }
 
-void WorldGeneratorComponent::Update(float delta) {
-    updateChunksToGenerate();
+void WorldGeneratorComponent::removeDistantChunks() {
+    std::map<std::string, GameObject*> chunks = _parent->GetChildren();
+    for (auto it = chunks.begin(); it != chunks.end(); it++) {
+        GameObject* chunk = it->second;
+        QVector3D chunkPos = calculateChunkPos(chunk);
 
-    /** Generate chunks using the quota **/
-
-    if (!_chunksToGenerate.empty()) {
-        int remainingQuota = std::min(_CHUNKS_PER_UPDATE, _chunksToGenerate.size());
-        while (remainingQuota-- > 0) {
-            QVector3D* chunkPos = _chunksToGenerate.pop_front();
-            std::cout << "Generating chunk... " << chunkPos->x() << " " << chunkPos->y() << " " << chunkPos->z() << std::endl;
-            generateChunk(chunkPos->x(), chunkPos->y(), chunkPos->z(), this);
-            delete chunkPos;
-        }
-    }
-
-    /** Finalize chunks using the quota **/
-
-    if (!_chunksToFinalize.empty()) {
-        int remainingQuota = std::min(_CHUNKS_PER_UPDATE, _chunksToFinalize.size());
-        while (remainingQuota-- > 0) {
-            GameObject* chunk = _chunksToFinalize.pop_front();
-            std::cout << "Finalizing " << chunk->_name << std::endl;
-            finalizeChunkCreation(chunk);
+        int distanceToCameraChunk = calculateDistanceFromCameraToChunk(chunkPos.x(), 0, chunkPos.z()); // TODO: take y into account if vertical chunks are implemented
+        if (distanceToCameraChunk > Camera::ActiveCamera->getRenderDistance()){
+            addToChunksToDelete(chunk);
         }
     }
 }
 
-void WorldGeneratorComponent::updateChunksToGenerate() {
+void WorldGeneratorComponent::updateChunksGen() {
     QVector3D currentUpdate_CameraChunkPos = calculateChunkPos(Camera::ActiveCamera);
 
     QVector3D deltaChunkPos = _lastUpdate_CameraChunkPos - currentUpdate_CameraChunkPos;
 
-    if ((int)(deltaChunkPos.x()) != 0)
-        std::cout << "Moved from chunk x = " << (int)(_lastUpdate_CameraChunkPos.x()) << " to " << (int)(currentUpdate_CameraChunkPos.x()) << std::endl;
-    if ((int)(deltaChunkPos.y()) != 0)
-        std::cout << "Moved from chunk y = " << (int)(_lastUpdate_CameraChunkPos.y()) << " to " << (int)(currentUpdate_CameraChunkPos.y()) << std::endl;
-    if ((int)(deltaChunkPos.z()) != 0)
-        std::cout << "Moved from chunk z = " << (int)(_lastUpdate_CameraChunkPos.z()) << " to " << (int)(currentUpdate_CameraChunkPos.z()) << std::endl;
+    if (deltaChunkPos.length() != 0) {
+        auto start = std::chrono::high_resolution_clock::now();
 
-    // TODO: addToChunksToGenerate()
+        removeDistantChunks();
+        generateChunksAroundActiveCamera();
+
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed = end - start;
+
+        std::cout << "World update done in " << elapsed.count() << "s (WorldGeneratorComponent)" << std::endl;
+    }
 
     _lastUpdate_CameraChunkPos = currentUpdate_CameraChunkPos;
-}
-
-int WorldGeneratorComponent::addToChunksToGenerate(int x, int y, int z, bool compareToRenderDistance) {
-    if (compareToRenderDistance) {
-        QVector3D cameraChunkPos = calculateChunkPos(Camera::ActiveCamera);
-        int distanceToCameraChunk = sqrt(pow(x - cameraChunkPos.x(), 2) + pow(z - cameraChunkPos.z(), 2)); // TODO: take y into account if vertical chunks are implemented
-        if (distanceToCameraChunk > Camera::ActiveCamera->getRenderDistance()) return 0;
-    }
-    this->_chunksToGenerate.push_back(new QVector3D(x, y, z));
-    return 1;
-}
-
-void WorldGeneratorComponent::addToChunksToFinalize(GameObject* chunk) {
-    this->_chunksToFinalize.push_back(chunk);
-}
-
-QVector3D WorldGeneratorComponent::calculateChunkPos(int x, int y, int z) {
-    QVector3D chunkPos;
-    chunkPos.setX((int)(x / _CHUNK_X_SIZE));
-    chunkPos.setY((int)(y / _CHUNK_Y_SIZE));
-    chunkPos.setZ((int)(z / _CHUNK_Z_SIZE));
-
-    return chunkPos;
-}
-
-std::string WorldGeneratorComponent::getChunkNameFromChunkPos(int chunkX, int chunkY, int chunkZ) {
-    return "Chunk_" + std::to_string(chunkX) + "_" + std::to_string(chunkY) + "_" + std::to_string(chunkZ);
-}
-
-QVector3D WorldGeneratorComponent::calculateChunkPos(GameObject* gameObject) {
-    QVector3D gameObjectPos = gameObject->GetTransform()->GetPosition();
-    return calculateChunkPos(gameObjectPos.x(), gameObjectPos.y(), gameObjectPos.z());
-}
-
-GameObject* WorldGeneratorComponent::getChunkFromVoxelPos(int x, int y, int z) {
-    QVector3D chunkPos = calculateChunkPos(x, y, z);
-    std::string chunkName = getChunkNameFromChunkPos(chunkPos.x(), chunkPos.y(), chunkPos.z());
-
-//    GameObject* chunk = this->GetParent()->GetChildrenByName(chunkName);
-    GameObject* chunk = nullptr;
-    std::map<std::string, GameObject*> children = this->GetParent()->GetChildren();
-    for (auto it = children.begin(); it != children.end(); it++) {
-        GameObject* child = it->second;
-        if (child->_name == chunkName) {
-            chunk = child;
-            break;
-        }
-    }
-    if (chunk == nullptr) {
-        std::cerr << "Could not find '" << chunkName << "'" << std::endl;
-        return nullptr;
-    }
-    else {
-        return chunk;
-    }
-}
-
-unsigned char WorldGeneratorComponent::getVoxelType(int x, int y, int z, int layerID) {
-    GameObject* chunk = getChunkFromVoxelPos(x, y, z);
-    if (chunk != nullptr) {
-        int _currentLayerSizeReductionFactor = pow(_CHUNK_LAYER_SIZE_REDUCTION_FACTOR, layerID);
-        int xSize = _CHUNK_X_SIZE / _currentLayerSizeReductionFactor;
-        int ySize = _CHUNK_Y_SIZE / _currentLayerSizeReductionFactor;
-        int zSize = _CHUNK_Z_SIZE / _currentLayerSizeReductionFactor;
-        return chunk->GetComponent<OctreeComponent>()->getVoxelType(x % xSize, y % ySize, z % zSize, layerID);
-    }
-    else {
-        std::cerr << "WorldGeneratorComponent::getVoxelType returning 'AIR' because no chunk was found" << std::endl;
-        return MaterialId::AIR;
-    }
-}
-
-int WorldGeneratorComponent::setVoxelType(int x, int y, int z, unsigned char voxelMaterial) {
-    GameObject* chunk = getChunkFromVoxelPos(x, y, z);
-    if (chunk != nullptr) {
-        return chunk->GetComponent<OctreeComponent>()->setVoxelType(x % _CHUNK_X_SIZE, y % _CHUNK_Y_SIZE, z % _CHUNK_Z_SIZE, voxelMaterial);
-    }
-    else {
-        std::cerr << "WorldGeneratorComponent::setVoxelType returning '-1' because no chunk was found" << std::endl;
-        return -1;
-    }
 }
 
 void WorldGeneratorComponent::generateChunk(int chunkX, int chunkY, int chunkZ, WorldGeneratorComponent* WGC) {
@@ -275,4 +271,89 @@ void WorldGeneratorComponent::generateChunk(int chunkX, int chunkY, int chunkZ, 
 void WorldGeneratorComponent::finalizeChunkCreation(GameObject* chunk) {
     new OctreeRendererComponent(chunk);
     chunk->Enable();
+}
+
+
+// --------------------------------------------------------------------------------
+// QUEUES MANAGEMENT
+// --------------------------------------------------------------------------------
+
+int WorldGeneratorComponent::addToChunksToGenerate(int chunkX, int chunkY, int chunkZ, bool compareToRenderDistance) {
+
+    /** Verify is the chunk is already loaded, if so, return **/
+
+    GameObject* chunk = _parent->GetChildByName(getChunkNameFromChunkPos(chunkX, 0, chunkZ)); // TODO: take y into account if vertical chunks are implemented
+    if (chunk != nullptr)
+        return 0;
+
+    /** Verify the distance from the camera **/
+
+    if (compareToRenderDistance) {
+        int distanceToCameraChunk = calculateDistanceFromCameraToChunk(chunkX, 0, chunkZ);
+        if (distanceToCameraChunk > Camera::ActiveCamera->getRenderDistance())
+            return 0;
+    }
+
+    /** Set the chunk to be generated **/
+
+    this->_chunksToGenerate.push_back(new QVector3D(chunkX, 0, chunkZ)); // TODO: take y into account if vertical chunks are implemented
+    return 1;
+}
+
+void WorldGeneratorComponent::addToChunksToFinalize(GameObject* chunk) {
+    this->_chunksToFinalize.push_back(chunk);
+}
+
+void WorldGeneratorComponent::addToChunksToDelete(GameObject* chunk) {
+    this->_chunksToDelete.push_back(chunk);
+}
+
+
+// --------------------------------------------------------------------------------
+// OTHER METHODS
+// --------------------------------------------------------------------------------
+
+std::string WorldGeneratorComponent::getChunkNameFromChunkPos(int chunkX, int chunkY, int chunkZ) {
+    return "Chunk_" + std::to_string(chunkX) + "_" + std::to_string(chunkY) + "_" + std::to_string(chunkZ);
+}
+
+GameObject* WorldGeneratorComponent::getChunkFromVoxelPos(int x, int y, int z) {
+    QVector3D chunkPos = calculateChunkPos(x, y, z);
+    std::string chunkName = getChunkNameFromChunkPos(chunkPos.x(), chunkPos.y(), chunkPos.z());
+
+    GameObject* chunk = nullptr;
+    std::map<std::string, GameObject*> children = this->GetParent()->GetChildren();
+    for (auto it = children.begin(); it != children.end(); it++) {
+        GameObject* child = it->second;
+        if (child->_name == chunkName) {
+            chunk = child;
+            break;
+        }
+    }
+    if (chunk == nullptr) {
+        std::cerr << "Could not find '" << chunkName << "'" << std::endl;
+        return nullptr;
+    }
+    else {
+        return chunk;
+    }
+}
+
+QVector3D WorldGeneratorComponent::calculateChunkPos(GameObject* gameObject) {
+    QVector3D gameObjectPos = gameObject->GetTransform()->GetPosition();
+    return calculateChunkPos(gameObjectPos.x(), gameObjectPos.y(), gameObjectPos.z());
+}
+
+QVector3D WorldGeneratorComponent::calculateChunkPos(int x, int y, int z) {
+    QVector3D chunkPos;
+    chunkPos.setX((int)(x / _CHUNK_X_SIZE));
+    chunkPos.setY((int)(y / _CHUNK_Y_SIZE));
+    chunkPos.setZ((int)(z / _CHUNK_Z_SIZE));
+
+    return chunkPos;
+}
+
+float WorldGeneratorComponent::calculateDistanceFromCameraToChunk(int chunkX, int chunkY, int chunkZ) {
+    QVector3D cameraChunkPos = calculateChunkPos(Camera::ActiveCamera);
+    return sqrt(pow(chunkX - cameraChunkPos.x(), 2) + pow(chunkZ - cameraChunkPos.z(), 2)); // TODO: take y into account if vertical chunks are implemented
 }

@@ -42,6 +42,8 @@ GameObject::~GameObject() {
         if (child != nullptr)
             delete child;
     }
+
+    _parent->DeleteChildByName(_name);
 }
 
 //GETTERS SETTERS
@@ -67,16 +69,19 @@ std::map<std::string, GameObject*> GameObject::GetChildren() {
     return _children;
 }
 
-GameObject* GameObject::GetChildrenByName(std::string name) {
+GameObject* GameObject::GetChildByName(std::string name) {
     auto it = _children.find(name);
 
     if (it == _children.end()) {
-        std::cerr << "No GameObject named '" << name << "' was found as child of '" << this->_name << "'" << std::endl;
         return nullptr;
     }
     else {
         return it->second;
     }
+}
+
+void GameObject::DeleteChildByName(std::string childName) {
+    _children.erase(childName);
 }
 
 void GameObject::SetCollider(Collider *collider) {
