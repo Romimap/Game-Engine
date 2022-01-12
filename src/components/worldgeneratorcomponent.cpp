@@ -28,6 +28,7 @@ void WorldGeneratorComponent::Start() {
     generateChunksAroundActiveCamera();
 }
 
+///Handles chunk creation and deletion @ each frame
 void WorldGeneratorComponent::Update(float delta) {
 
     /** Verify if new chunks should be created or distant chunks be deleted **/
@@ -76,6 +77,7 @@ void WorldGeneratorComponent::Update(float delta) {
 // OTHER METHODS
 // --------------------------------------------------------------------------------
 
+///Returns the voxel at <x, y, z>, on the layer <layerID>, layer 0 being the most detailed layer
 unsigned char WorldGeneratorComponent::getVoxelType(int x, int y, int z, int layerID) {
     if (layerID != 0)
         std::cout << "Used with layerID != 0" << std::endl;
@@ -90,6 +92,7 @@ unsigned char WorldGeneratorComponent::getVoxelType(int x, int y, int z, int lay
     }
 }
 
+///Sets the voxel at <x, y, z>, with the material <voxelMaterial>
 int WorldGeneratorComponent::setVoxelType(int x, int y, int z, unsigned char voxelMaterial) {
     GameObject* chunk = getChunkFromVoxelPos(x, y, z);
     if (chunk != nullptr) {
@@ -107,6 +110,7 @@ int WorldGeneratorComponent::setVoxelType(int x, int y, int z, unsigned char vox
 // CHUNK GENERATION
 // --------------------------------------------------------------------------------
 
+///Generates chunks around the active camera
 void WorldGeneratorComponent::generateChunksAroundActiveCamera() {
 
     std::string className = " (WorldGeneratorComponent)";
@@ -193,6 +197,8 @@ void WorldGeneratorComponent::generateChunksAroundActiveCamera() {
     std::cout << "World generation done (created " << chunksCount << " chunks) in " << elapsed.count() << "s" << className << std::endl;
 }
 
+
+///Removes chunks based on their distance to the active camera.
 void WorldGeneratorComponent::removeDistantChunks() {
     std::map<std::string, GameObject*> chunks = _parent->GetChildren();
     for (auto it = chunks.begin(); it != chunks.end(); it++) {
@@ -210,6 +216,7 @@ void WorldGeneratorComponent::removeDistantChunks() {
     }
 }
 
+///Called by Update(), Creates & Delete chunks
 void WorldGeneratorComponent::updateChunksGen() {
     QVector3D currentUpdate_CameraChunkPos = getChunkPos(Camera::ActiveCamera);
 
@@ -231,6 +238,7 @@ void WorldGeneratorComponent::updateChunksGen() {
     }
 }
 
+///Generates a new chunk
 void WorldGeneratorComponent::generateChunk(int chunkX, int chunkY, int chunkZ, WorldGeneratorComponent* WGC) {
 
     std::string chunkName = getChunkNameFromChunkPos(chunkX, chunkY, chunkZ);
@@ -275,11 +283,13 @@ void WorldGeneratorComponent::generateChunk(int chunkX, int chunkY, int chunkZ, 
     //    std::cout << chunk->_name << " has been generated." << std::endl;
 }
 
+///Called when the chunk is ready, adds a renderer to it and enables it
 void WorldGeneratorComponent::finalizeChunkCreation(GameObject* chunk) {
     new OctreeRendererComponent(chunk);
     chunk->Enable();
 }
 
+///Deletes a chunk
 bool WorldGeneratorComponent::deleteChunk(std::string chunkName) {
     GameObject* chunk = _parent->GetChildByName(chunkName);
     if (chunk == nullptr) {
@@ -295,7 +305,6 @@ bool WorldGeneratorComponent::deleteChunk(std::string chunkName) {
 // --------------------------------------------------------------------------------
 // QUEUES MANAGEMENT
 // --------------------------------------------------------------------------------
-
 int WorldGeneratorComponent::addToChunksToGenerate(int chunkX, int chunkY, int chunkZ, bool compareToRenderDistance) {
 
     /** Verify is the chunk is already loaded, if so, return **/

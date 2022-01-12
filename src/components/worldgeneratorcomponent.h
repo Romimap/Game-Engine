@@ -1,3 +1,7 @@
+/*
+    WORLDGENERATORCOMPONENT.H
+    Handles world generation, creations & deletions of chunks.
+*/
 #ifndef WORLDGENERATORCOMPONENT_H
 #define WORLDGENERATORCOMPONENT_H
 

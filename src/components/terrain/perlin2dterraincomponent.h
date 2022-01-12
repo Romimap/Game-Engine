@@ -1,3 +1,7 @@
+/*
+    PERLIN2DTERRAINCOMPONENT.H
+    a component used to initialize an OctreeComponent
+*/
 #ifndef PERLIN2DTERRAINCOMPONENT_H
 #define PERLIN2DTERRAINCOMPONENT_H
 

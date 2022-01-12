@@ -6,6 +6,7 @@ SkyboxRendererComponent::SkyboxRendererComponent(GameObject* parent) : Component
     _mesh = new GLMesh("../Game-Engine/misc/plane.obj");
 }
 
+///Draws a skybox with the depth buffer set to 1 (bellow everything)
 void SkyboxRendererComponent::Draw() {
     _material->program.bind();
 

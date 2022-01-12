@@ -5,6 +5,7 @@ RotatorComponent::RotatorComponent(GameObject* parent, float xspeed, float yspee
     this->_name = "RotatorComponent";
 }
 
+///slowly rotates a gameobject, a relic of the solar system
 void RotatorComponent::Update(float delta) {
     GetParent()->GetTransform()->RotateAround(_xspeed * delta, QVector3D(1, 0, 0));
     GetParent()->GetTransform()->RotateAround(_yspeed * delta, QVector3D(0, 1, 0));

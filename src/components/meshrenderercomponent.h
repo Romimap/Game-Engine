@@ -1,3 +1,7 @@
+/*
+    MESHRENDERERCOMPONENT.H
+    Renders a mesh using a material.
+*/
 #ifndef MESHRENDERERCOMPONENT_H
 #define MESHRENDERERCOMPONENT_H
 

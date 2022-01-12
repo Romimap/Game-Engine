@@ -1,10 +1,11 @@
 #include "meshrenderercomponent.h"
 
-
+///Creates a MeshRendererComponent with <mesh> as a mesh, and <material> as material.
 MeshRendererComponent::MeshRendererComponent(GLMesh* mesh, Material* material, GameObject* parent) : Component(parent), _mesh(mesh), _material(material) {
     this->_name = "MeshRendererComponent";
 }
 
+///Draws the mesh (_mesh) with the material (_material)
 void MeshRendererComponent::Draw() {
     _material->_TexSlot0->bind(0);
     _material->program.bind();

@@ -1,3 +1,7 @@
+/*
+    PLAYERCONTROLLERCOMPONENT.H
+    Handles the player movements, physics and interactions
+*/
 #ifndef PLAYERCONTROLLERCOMPONENT_H
 #define PLAYERCONTROLLERCOMPONENT_H
 

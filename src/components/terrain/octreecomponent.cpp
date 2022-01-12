@@ -1,5 +1,6 @@
 #include "octreecomponent.h"
 
+///Creates an octree <x, y z> of size.
 OctreeComponent::OctreeComponent(int xSize, int ySize, int zSize, int nbOfLayers, int layerSizeReductionFactor, GameObject* parent)
     : Component(parent) {
 
@@ -43,6 +44,7 @@ OctreeComponent::OctreeComponent(int xSize, int ySize, int zSize, int nbOfLayers
     }
 }
 
+//Gets the voxel at <x, y, z>
 unsigned char OctreeComponent::getVoxelType(int x, int y, int z, int layerID) {
     int _currentLayerSizeReductionFactor = pow(_layerSizeReductionFactor, layerID);
     int xSize = _xSize / _currentLayerSizeReductionFactor;
@@ -159,7 +161,7 @@ std::vector<std::vector<std::vector<std::vector<unsigned char>>>>* OctreeCompone
     return &_layers;
 }
 
-
+///Sends changes that happened during this frame to the renderer.
 void OctreeComponent::Update(float delta) {
     if (list4.size() > 0 || list16.size() > 0 || list64.size() > 0) {
         OctreeRendererComponent* octreeRendererComponent = GetParent()->GetComponent<OctreeRendererComponent>();

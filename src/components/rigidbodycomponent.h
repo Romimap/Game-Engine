@@ -1,3 +1,7 @@
+/*
+    RIGIDBODYCOMPONENT.H
+    Handles movements & collisions betweed physics objects
+*/
 #ifndef RIGIDBODYCOMPONENT_H
 #define RIGIDBODYCOMPONENT_H
 

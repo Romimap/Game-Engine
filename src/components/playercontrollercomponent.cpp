@@ -10,12 +10,14 @@ PlayerControllerComponent::~PlayerControllerComponent() {
         delete _cubeRb;
 }
 
+///Inits our PlayerController
 void PlayerControllerComponent::Start() {
     QQuaternion rotation = GetParent()->GetTransform()->GetRotation();
     _elevation = rotation.toEulerAngles().x();
     _azimuth = rotation.toEulerAngles().y();
 }
 
+///Updates our PlayerController, handles simple physics, movements & interactions.
 void PlayerControllerComponent::Update(float delta) {
     //Mouse Capture
     if (InputManager::Key('P')) InputManager::SetCaptureMouse(true);
@@ -151,6 +153,7 @@ void PlayerControllerComponent::Update(float delta) {
     //+ " (playercontrollercomponent.cpp)").c_str());
 }
 
+///Sets the player state (floating or on the ground)
 void PlayerControllerComponent::setIsFloating(bool isFloating) {
     this->_isFloating = isFloating;
 }

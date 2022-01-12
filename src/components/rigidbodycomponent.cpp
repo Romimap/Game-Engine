@@ -6,7 +6,7 @@ QVector3D RigidBodyComponent::gravity(0, -9.8, 0);
 float RigidBodyComponent::bounceTreshold = 0.001;
 float RigidBodyComponent::frictionTreshold = 0.02;
 
-
+///Creates a new RigidBodyComponent
 RigidBodyComponent::RigidBodyComponent(float weight, float drag, float bounciness, float friction, GameObject* parent) : Component(parent), _weight(weight), _drag(1 - drag), _bounciness(bounciness), _friction(1 - friction) {
     this->_name = "RigidBodyComponent";
 }
@@ -16,6 +16,7 @@ RigidBodyComponent::~RigidBodyComponent() {
         delete _previousTransform;
 }
 
+///Apply velocity & drag to our RigidBody
 void RigidBodyComponent::FixedUpdate(float delta) {
     if (_previousTransform != nullptr)
         delete _previousTransform;
@@ -27,6 +28,7 @@ void RigidBodyComponent::FixedUpdate(float delta) {
     _momentum *= _drag;
 }
 
+///Called when a collision is detected.
 void RigidBodyComponent::Collision(Collider *other) {
     Collider *mine = GetParent()->GetCollider();
 
@@ -36,6 +38,7 @@ void RigidBodyComponent::Collision(Collider *other) {
     }
 }
 
+///Resolves a collision, setting the velocity based on all sort of complicated things
 void RigidBodyComponent::ResolveAABBAABB(AABBCollider *mine, AABBCollider *other) {
     qDebug("RESOLVE AABB AABB");
     //Store velocity
