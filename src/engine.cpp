@@ -12,6 +12,7 @@ Engine::Engine(int width, int height) {
     Singleton = this;
 }
 
+///Inits the engine, here OpenGL, the InputManager and the timers are initialized
 void Engine::initializeGL() {
     qDebug("initializeGL <-");
     initializeOpenGLFunctions();
@@ -40,10 +41,12 @@ void Engine::initializeGL() {
     _fixedDeltaTime = 0;
 }
 
+///Called on window resize. Tells the active camera.
 void Engine::resizeGL(int w, int h) {
     Camera::ActiveCamera->ResizeGL(w, h);
 }
 
+///Called on refresh. This function is used as our gameloop.
 void Engine::paintGL() {
     //Could be ignored (colors anyways)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -80,6 +83,7 @@ void Engine::paintGL() {
     update();
 }
 
+///Emits a Draw event on all GameObjects.
 void Engine::Draw(GameObject* current) {
     current->Draw();
     std::map<std::string, GameObject*> children = current->GetChildren();
@@ -89,6 +93,8 @@ void Engine::Draw(GameObject* current) {
     }
 }
 
+
+///Emits a Start event on all GameObjects
 void Engine::Start(GameObject* current) {
     if (!current->Enabled()) return;
 
@@ -101,6 +107,7 @@ void Engine::Start(GameObject* current) {
     }
 }
 
+///Emits an Update event on all GameObjects
 void Engine::Update(GameObject* current, double deltaTime) {
     if (!current->Enabled()) return;
 
@@ -113,6 +120,7 @@ void Engine::Update(GameObject* current, double deltaTime) {
     }
 }
 
+///Emits a FixedUpdate event on all GameObjects
 void Engine::FixedUpdate(GameObject* current, double deltaTime) {
     if (!current->Enabled()) return;
 
@@ -125,6 +133,7 @@ void Engine::FixedUpdate(GameObject* current, double deltaTime) {
     }
 }
 
+///Emits a Collision check event on all GameObjects
 void Engine::Collisions(GameObject* current) {
     if (current->Enabled()) {
         if (current->GetPersonalGlobalAABB() != nullptr) current->Collisions(GameObject::Root);
@@ -137,23 +146,27 @@ void Engine::Collisions(GameObject* current) {
     }
 }
 
+///Called when a key is pressed, forwards that event to the InputManager
 void Engine::keyPressEvent(QKeyEvent *event) {
     if (!event->isAutoRepeat()){
         InputManager::Press(event->key());
     }
 }
 
+///Called when a key is released, forwards that event to the InputManager
 void Engine::keyReleaseEvent(QKeyEvent *event) {
     if (!event->isAutoRepeat()){
         InputManager::Resease(event->key());
     }
 }
 
+///Comparator used in the Engine::RayCast() function
 bool cmp(std::pair<GameObject*, float> &a,
          std::pair<GameObject*, float> &b) {
     return a.second < b.second;
 }
 
+///Casts a ray to our scene. Returns either data about a collision, or an "Empty" RayCastHit
 RayCastHit Engine::RayCast(QVector3D origin, QVector3D direction) {
     std::vector<std::pair<GameObject*, float>> gameObjectDistance;
 
