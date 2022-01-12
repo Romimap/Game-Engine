@@ -1,3 +1,8 @@
+/*
+ENGINE.H
+This is the core of the engine, where the game loop is located.
+*/
+
 #ifndef ENGINE_H
 #define ENGINE_H
 
