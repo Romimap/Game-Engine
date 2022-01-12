@@ -1,6 +1,6 @@
 /*
     PERLIN2DTERRAINCOMPONENT.H
-    a component used to initialize an OctreeComponent
+    a component used to initialize an OctreeComponent with a Perlin2D
 */
 #ifndef PERLIN2DTERRAINCOMPONENT_H
 #define PERLIN2DTERRAINCOMPONENT_H
