@@ -41,7 +41,7 @@ void Engine::initializeGL() {
     _fixedDeltaTime = 0;
 }
 
-///Called on window resize. Tells the active camera.
+///Called on window resize. Tells the active camera about the changes.
 void Engine::resizeGL(int w, int h) {
     Camera::ActiveCamera->ResizeGL(w, h);
 }

@@ -1,3 +1,8 @@
+/*
+    LINKEDQUEUE.H
+    Queue implemented as a linked list. Used so the Push, Pop & Merge are O(1)
+*/
+
 #ifndef LINKEDQUEUE_H
 #define LINKEDQUEUE_H
 
@@ -28,6 +33,7 @@ public:
         push_back(value);
     }
 
+    ///Pushes the element <value> on the end of the queue
     void push_back(T value) {
         LinkedQueueNode<T>* node = new LinkedQueueNode<T>(value);
         if (empty()) {
@@ -40,6 +46,7 @@ public:
         _size++;
     }
 
+    ///Pops the front of the queue
     T pop_front() {
         if (_front == nullptr) return nullptr;
         T value = _front->_data;
@@ -50,14 +57,17 @@ public:
         return value;
     }
 
+    ///Returns true if the queue is empty
     bool empty() {
         return _size == 0;
     }
 
+    ///Returns the number of elements currently waiting in the queu
     int size() {
         return _size;
     }
 
+    ///Empties <queue> into this queue
     void push_back_clear(LinkedQueue<T> &queue) {
         if (queue.empty()) return;
 

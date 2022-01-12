@@ -1,3 +1,8 @@
+/*
+    COMPONENT.H
+    Base class for components, used to modify the behaviour of gameobjects.
+*/
+
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
@@ -24,6 +29,7 @@ public:
     Component(GameObject* parent);
     virtual ~Component(){}
 
+    /*** EVENTS ***/
     virtual void Start(){}
     virtual void Update(float delta){}
     virtual void FixedUpdate(float delta){}

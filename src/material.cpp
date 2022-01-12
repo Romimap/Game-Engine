@@ -1,6 +1,6 @@
 #include "material.h"
 
-
+///Makes a new material with vertex shader <vshaderPath> & fragment shader <fshaderPath>
 Material::Material(std::string vshaderPath, std::string fshaderPath) {
 
     // Compile vertex shader
@@ -27,12 +27,14 @@ Material::~Material() {
     if (_TexSlot7 != nullptr) delete _TexSlot7;
 }
 
+///Sets the texture2D <path> for Slot <slot>
 void Material::SetSlot2D(std::string path, int slot) {
     QOpenGLTexture* tex = new QOpenGLTexture(QImage(path.c_str()));
     tex->setMinMagFilters(QOpenGLTexture::Filter::Nearest, QOpenGLTexture::Filter::Nearest);
     ApplyToSlot(tex, slot);
 }
 
+///Sets the texture3D <path> for Slot <slot>
 QOpenGLTexture* Material::SetSlot3D(int slot, int sizeX, int sizeY, int sizeZ, unsigned char* data) {
     if (slot < 0 || slot > 7)
         return nullptr;

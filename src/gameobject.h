@@ -1,3 +1,8 @@
+/*
+    GAMEOBJECT.H
+    A scene graph node. Stores a transform, a collider, BVH data (AABB of the branch, AABB of self), Components and a few other things.
+*/
+
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 

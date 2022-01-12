@@ -1,3 +1,8 @@
+/*
+    INPUTMANAGER.H
+    Manages Inputs so we can easely check states (Key Presses, Mouse motion...)
+*/
+
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
 

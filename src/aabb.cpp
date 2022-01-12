@@ -8,12 +8,14 @@ AABB::AABB(QVector3D min, QVector3D max) {
     _max = max;
 }
 
+///Checks if AABB b intersects with this AABB
 bool AABB::intersect(AABB& b) {
     return (_min.x() <= b._max.x() && _max.x() >= b._min.x()) &&
            (_min.y() <= b._max.y() && _max.y() >= b._min.y()) &&
            (_min.z() <= b._max.z() && _max.z() >= b._min.z());
 }
 
+///Checks if the ray origin, direction intersects with this AABB
 float AABB::RayIntersect(QVector3D origin, QVector3D direction) {
     float tmax = (_max.x() - origin.x()) / direction.x();
     float tmin = (_min.x() - origin.x()) / direction.x();

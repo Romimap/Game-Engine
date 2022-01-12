@@ -1,3 +1,8 @@
+/*
+    CAMERA.H
+    A gameobject specialisation to handle cameras.
+*/
+
 #ifndef CAMERA_H
 #define CAMERA_H
 

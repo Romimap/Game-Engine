@@ -1,3 +1,7 @@
+/*
+    OCTREECOLLIDER.H
+    Collider using an OctreeComponent as data to evaluate when Rays and Colliders intersects with it
+*/
 #ifndef OCTREECOLLIDER_H
 #define OCTREECOLLIDER_H
 

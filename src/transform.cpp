@@ -13,36 +13,44 @@ Transform::Transform (Transform* transform, GameObject* gameObject) : _gameObjec
     _scaleMatrix = transform->_scaleMatrix;
 }
 
+///Returns the Forward Vector
 QVector3D Transform::Forward() {
     return _rotationMatrix * QVector3D(0, 0, 1);
 }
 
+///Returns the Up Vector
 QVector3D Transform::Up() {
     return _rotationMatrix * QVector3D(0, 1, 0);
 }
 
+///Returns the LeftVector
 QVector3D Transform::Left() {
     return _rotationMatrix * QVector3D(1, 0, 0);
 }
 
+///Translates by <t>
 void Transform::Translate (QVector3D t) {
     _positionMatrix.translate(t);
 }
 
+///Translates in global space by <t>
 void Transform::GlobalTranslate (QVector3D t) {
     t = (GlobalTransformMatrix().inverted() * QVector4D(t, 0)).toVector3D(); //Not sure about that
     Translate(t);
 }
 
+///Sets the position to <t>
 void Transform::SetPosition (QVector3D t) {
     _positionMatrix.setToIdentity();
     Translate(t);
 }
 
+///Sets the position to <x, y, z>
 void Transform::SetPosition (float x, float y, float z) {
     SetPosition(QVector3D(x, y, z));
 }
 
+///Returns the local position
 QVector3D Transform::GetPosition() {
     float m30 = _positionMatrix.column(3).x();
     float m31 = _positionMatrix.column(3).y();
@@ -51,6 +59,7 @@ QVector3D Transform::GetPosition() {
     return QVector3D(m30, m31, m32);
 }
 
+///Returns the global position
 QVector3D Transform::GetGlobalPosition() {
     QMatrix4x4 globalMatrix = GlobalTransformMatrix();
     float m30 = globalMatrix.column(3).x();
@@ -59,10 +68,12 @@ QVector3D Transform::GetGlobalPosition() {
     return QVector3D(m30, m31, m32);
 }
 
+///Rotates by <t>
 void Transform::Rotate (QQuaternion t) {
     _rotationMatrix.rotate(t);
 }
 
+///Rotates around the <a> axis by <t> rad
 void Transform::RotateAround (float t, QVector3D a) {
     QMatrix4x4 r;
     r.setToIdentity();
@@ -70,15 +81,18 @@ void Transform::RotateAround (float t, QVector3D a) {
     _rotationMatrix = r * _rotationMatrix;
 }
 
+///Sets the rotation to <t>
 void Transform::SetRotation (QQuaternion t) {
     _rotationMatrix.setToIdentity();
     _rotationMatrix.rotate(t);
 }
 
+///Sets the rotation to <x, y, z>
 void Transform::SetRotation (float x, float y, float z) {
     SetRotation(QQuaternion::fromEulerAngles(x, y, z));
 }
 
+///Returns the current rotation as a Quat
 QQuaternion Transform::GetRotation() {
     float m00 = _rotationMatrix.column(0).x();
     float m01 = _rotationMatrix.column(0).y();
@@ -122,27 +136,33 @@ QQuaternion Transform::GetRotation() {
     return QQuaternion(qw, qx, qy, qz);
 }
 
+///Scales by <t>
 void Transform::Scale (QVector3D t) {
     _scaleMatrix.scale(t);
 }
 
+///Scales by <x, y, z>
 void Transform::Scale (float x, float y, float z) {
     Scale(QVector3D(x, y, z));
 }
 
+///Sets the scale to <t>
 void Transform::SetScale (QVector3D t) {
     _scaleMatrix.setToIdentity();
     Scale(t);
 }
 
+///Sets the scale to <x, y, z>
 void Transform::SetScale (float x, float y, float z) {
     SetScale(QVector3D(x, y, z));
 }
 
+///Returns the Local Transformation Matrix
 QMatrix4x4 Transform::LocalTransformMatrix () {
     return _positionMatrix * _rotationMatrix * _scaleMatrix;
 }
 
+///Recursively process the Global Transformation Matrix
 QMatrix4x4 Transform::GlobalTransformMatrix () {
     QMatrix4x4 transform = LocalTransformMatrix();
 
@@ -152,6 +172,7 @@ QMatrix4x4 Transform::GlobalTransformMatrix () {
     return _gameObject->GetParent()->GetTransform()->GlobalTransformMatrix() * transform;
 }
 
+///Returns a view matrix, should only be used by the camera
 QMatrix4x4 Transform::ViewMatrix() {
     QMatrix4x4 viewMatrix = GlobalTransformMatrix().inverted();
     return viewMatrix;

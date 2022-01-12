@@ -10,11 +10,13 @@ void OctreeCollider::Init() {
     SetAABB();
 }
 
+///Sets the GameObject Collider
 void OctreeCollider::SetAABB() {
     _localAABB._min = QVector3D(0, 0, 0);
     _localAABB._max = QVector3D(_octreeComponent->getXSize(), _octreeComponent->getYSize(), _octreeComponent->getZSize());
 }
 
+///Returns a hit if the Ray (origin, direction) hits this Octree
 RayCastHit OctreeCollider::RayCast(QVector3D origin, QVector3D direction) {
     std::vector<RayCastHit> hits;
     hits.push_back(GridTreeIntersect(origin, direction, GetParent()->GetTransform()->GetPosition() + QVector3D(0, 0, 0)     , QVector3D(0, 0, 0)    , QVector3D(4, 4, 4), 16, 2));
@@ -35,7 +37,7 @@ RayCastHit OctreeCollider::RayCast(QVector3D origin, QVector3D direction) {
     return hits[minIndex];
 }
 
-
+///Used by the function bellow. Returns true if the ray (origin, direction) intersects with the box (min, max). Fills tmin & tmax, the intersection distances.
 bool OctreeCollider::BoxIntersect(QVector3D origin, QVector3D direction, QVector3D min, QVector3D max, float &tmin, float &tmax) {
     tmax = (max.x() - origin.x()) / direction.x();
     tmin = (min.x() - origin.x()) / direction.x();
@@ -90,7 +92,7 @@ bool OctreeCollider::BoxIntersect(QVector3D origin, QVector3D direction, QVector
     return false;
 }
 
-
+///Recursively tests if the ray intersects with that collider. Uses an DDA Algorithm to run through our 3D Grid
 RayCastHit OctreeCollider::GridTreeIntersect (QVector3D O, QVector3D D, QVector3D gridPos, QVector3D offset, QVector3D gridSize, float voxelSize, int layer) {
 
 

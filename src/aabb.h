@@ -1,3 +1,8 @@
+/*
+    AABB.H
+    defines an AABB using two vectors
+*/
+
 #ifndef AABB_H
 #define AABB_H
 

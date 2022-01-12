@@ -1,3 +1,8 @@
+/*
+    COLLIDER.H
+    Base class for colliders.
+*/
+
 #ifndef COLLIDER_H
 #define COLLIDER_H
 

@@ -1,3 +1,8 @@
+/*
+    CONSTS.H
+    Here lies constants used all over the place, if you want to change water into wine, simply swap the values
+*/
+
 #ifndef CONSTS_H
 #define CONSTS_H
 
