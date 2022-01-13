@@ -19,6 +19,19 @@ void PlayerControllerComponent::Start() {
 
 ///Updates our PlayerController, handles simple physics, movements & interactions.
 void PlayerControllerComponent::Update(float delta) {
+
+    //Fly
+    if (InputManager::Key(' ')) {
+        if (_isFloating) {
+            _isFloating = false;
+            _speed /= 3.0f;
+        }
+        else {
+            _isFloating = true;
+            _speed *= 3.0f;
+        }
+    }
+
     //Mouse Capture
     if (InputManager::Key('P')) InputManager::HideMouse(true);
     if (InputManager::Key('M')) InputManager::HideMouse(false);
@@ -78,14 +91,16 @@ void PlayerControllerComponent::Update(float delta) {
 
     //Ground
     _onGround -= delta;
-    //if (_momentum.y() <= 0) {
-    //    RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition(), QVector3D(0.01, -1, 0.01));
-    //    if (hit._gameobject != nullptr && hit._distance <= _playerHeight + 1.5) { //We are going down to the ground
-    //        _momentum.setY(0);
-    //        _onGround = _coyoteTime;
-    //        GetParent()->GetTransform()->Translate(QVector3D(0, (_playerHeight - hit._distance) / 8, 0));
-    //    }
-    //}
+    if (!_isFloating) {
+        if (_momentum.y() <= 0) {
+            RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition(), QVector3D(0.01, -1, 0.01));
+            if (hit._gameobject != nullptr && hit._distance <= _playerHeight + 1.5) { //We are going down to the ground
+                _momentum.setY(0);
+                _onGround = _coyoteTime;
+                GetParent()->GetTransform()->Translate(QVector3D(0, (_playerHeight - hit._distance) / 8, 0));
+            }
+        }
+    }
 
     //Movement & Orientation
     float x = InputManager::Key('D') - InputManager::Key('Q');
@@ -116,28 +131,30 @@ void PlayerControllerComponent::Update(float delta) {
 
 
     ////Wall collision test
-    //if (_momentum.x() > 0) {
-    //    RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition() + QVector3D(0, 0.9, 0), QVector3D(1, 0.01, 0.01));
-    //    if (hit._gameobject != nullptr && hit._distance <= _playerWidth) { //We are going down to the ground
-    //        GetParent()->GetTransform()->Translate(QVector3D(-(_playerWidth - hit._distance) / 2,  0, 0));
-    //    }
-    //} else {
-    //    RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition() + QVector3D(0, 0.9, 0), QVector3D(-1, 0.01, 0.01));
-    //    if (hit._gameobject != nullptr && hit._distance <= _playerWidth) { //We are going down to the ground
-    //        GetParent()->GetTransform()->Translate(QVector3D((_playerWidth - hit._distance) / 2,  0, 0));
-    //    }
-    //}
-    //if (_momentum.z() > 0) {
-    //    RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition() + QVector3D(0, 0.9, 0), QVector3D(0.01, 0.01, 1));
-    //    if (hit._gameobject != nullptr && hit._distance <= _playerWidth) { //We are going down to the ground
-    //        GetParent()->GetTransform()->Translate(QVector3D(0, 0, -(_playerWidth - hit._distance) / 2));
-    //    }
-    //} else {
-    //    RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition() + QVector3D(0, 0.9, 0), QVector3D(0.01, 0.01, -1));
-    //    if (hit._gameobject != nullptr && hit._distance <= _playerWidth) { //We are going down to the ground
-    //        GetParent()->GetTransform()->Translate(QVector3D(0, 0, (_playerWidth - hit._distance) / 2));
-    //    }
-    //}
+    if (!_isFloating) {
+        if (_momentum.x() > 0) {
+            RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition() + QVector3D(0, 0.9, 0), QVector3D(1, 0.01, 0.01));
+            if (hit._gameobject != nullptr && hit._distance <= _playerWidth) { //We are going down to the ground
+                GetParent()->GetTransform()->Translate(QVector3D(-(_playerWidth - hit._distance) / 2,  0, 0));
+            }
+        } else {
+            RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition() + QVector3D(0, 0.9, 0), QVector3D(-1, 0.01, 0.01));
+            if (hit._gameobject != nullptr && hit._distance <= _playerWidth) { //We are going down to the ground
+                GetParent()->GetTransform()->Translate(QVector3D((_playerWidth - hit._distance) / 2,  0, 0));
+            }
+        }
+        if (_momentum.z() > 0) {
+            RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition() + QVector3D(0, 0.9, 0), QVector3D(0.01, 0.01, 1));
+            if (hit._gameobject != nullptr && hit._distance <= _playerWidth) { //We are going down to the ground
+                GetParent()->GetTransform()->Translate(QVector3D(0, 0, -(_playerWidth - hit._distance) / 2));
+            }
+        } else {
+            RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition() + QVector3D(0, 0.9, 0), QVector3D(0.01, 0.01, -1));
+            if (hit._gameobject != nullptr && hit._distance <= _playerWidth) { //We are going down to the ground
+                GetParent()->GetTransform()->Translate(QVector3D(0, 0, (_playerWidth - hit._distance) / 2));
+            }
+        }
+    }
 
 
 
