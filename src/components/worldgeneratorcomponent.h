@@ -35,9 +35,9 @@ public:
     siv::PerlinNoise::seed_type _seed = 123456u;  // [0 ... 2^32-1]
 
     const int _octaves = 8;             // [1 ... 16]
-    const float _frequency = .8f;      // [0.1 ... 64.0]
+    const float _frequency = .8f;       // [0.1 ... 64.0]
     const float _persistence = 0.5f;    // [0.0 ... 1.0]
-    const float _roughness = .3f;      // [0.0 ... 10.0]
+    const float _roughness = .3f;       // [0.0 ... 10.0]
 
 protected:
     /** World gen related **/
