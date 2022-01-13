@@ -6,6 +6,7 @@ Engine* Engine::Singleton = nullptr;
 Engine::Engine(int width, int height) {
     this->_width = width;
     this->_height = height;
+    this->_lastWindowModeChange = std::chrono::high_resolution_clock::now();
 
     if (Singleton != nullptr)
         delete Singleton;
@@ -49,10 +50,14 @@ void Engine::resizeGL(int w, int h) {
 ///Called on refresh. This function is used as our gameloop.
 void Engine::paintGL() {
     if (InputManager::Key('W')) {
-        if (isMaximized())
-            showNormal();
-        else
-            showMaximized();
+        std::chrono::duration<double> elapsed = std::chrono::high_resolution_clock::now() - _lastWindowModeChange;
+        if (elapsed.count() > 0.5) {
+            if (isMaximized())
+                showNormal();
+            else
+                showMaximized();
+            _lastWindowModeChange = std::chrono::high_resolution_clock::now();
+        }
     }
 
     //Could be ignored (colors anyways)

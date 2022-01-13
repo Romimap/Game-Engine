@@ -45,6 +45,8 @@ private:
     int _width;
     int _height;
 
+    std::chrono::system_clock::time_point _lastWindowModeChange;
+
     QMatrix4x4 _projection;
     std::chrono::time_point<std::chrono::system_clock> _beginTime;
     std::chrono::time_point<std::chrono::system_clock> _lastTime;
