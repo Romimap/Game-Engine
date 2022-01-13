@@ -1,7 +1,7 @@
 #include "inputmanager.h"
 
 
-bool InputManager::captureMouse = false;
+bool InputManager::mouseIsHidden = false;
 std::map<int, bool> InputManager::pressed;
 std::map<int, bool> InputManager::active;
 std::map<int, bool> InputManager::released;
@@ -30,7 +30,7 @@ void InputManager::Resease(int keyCode) {
 
 ///Samples the mouse position every frames
 void InputManager::SampleMousePosition() {
-    if (captureMouse) {
+    if (mouseIsHidden) {
         previous = QVector2D(100, 100);
         current = QVector2D(QCursor::pos().x(), QCursor::pos().y());
         Engine::Singleton->cursor().setPos(100, 100);
@@ -77,9 +77,21 @@ QVector2D InputManager::MousePosition() {
     return current;
 }
 
-///Captures/Releases the mouse, usefull for FPS controls
-void InputManager::SetCaptureMouse(bool capture) {
-    captureMouse = capture;
+///Hides/shows the mouse, usefull for FPS controls
+void InputManager::HideMouse(bool doHide) {
+    if (mouseIsHidden != doHide) {
+        if (doHide) {
+            QCursor cursor(Qt::BlankCursor);
+            QApplication::setOverrideCursor(cursor);
+            QApplication::changeOverrideCursor(cursor);
+        }
+        else {
+            QCursor cursor(Qt::ArrowCursor);
+            QApplication::setOverrideCursor(cursor);
+            QApplication::changeOverrideCursor(cursor);
+        }
+    }
+    mouseIsHidden = doHide;
 }
 
 InputManager::InputManager() {

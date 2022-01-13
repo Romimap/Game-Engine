@@ -20,8 +20,8 @@ void PlayerControllerComponent::Start() {
 ///Updates our PlayerController, handles simple physics, movements & interactions.
 void PlayerControllerComponent::Update(float delta) {
     //Mouse Capture
-    if (InputManager::Key('P')) InputManager::SetCaptureMouse(true);
-    if (InputManager::Key('M')) InputManager::SetCaptureMouse(false);
+    if (InputManager::Key('P')) InputManager::HideMouse(true);
+    if (InputManager::Key('M')) InputManager::HideMouse(false);
 
     //Dig
     if (InputManager::Key('E')) {

@@ -48,6 +48,13 @@ void Engine::resizeGL(int w, int h) {
 
 ///Called on refresh. This function is used as our gameloop.
 void Engine::paintGL() {
+    if (InputManager::Key('W')) {
+        if (isMaximized())
+            showNormal();
+        else
+            showMaximized();
+    }
+
     //Could be ignored (colors anyways)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

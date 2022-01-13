@@ -19,7 +19,7 @@
 class InputManager {
     /*** ATTRIBUTES ***/
 private:
-    static bool captureMouse;
+    static bool mouseIsHidden;
     static std::map<int, bool> active;
     static std::map<int, bool> pressed;
     static std::map<int, bool> released;
@@ -41,7 +41,7 @@ public:
     static int MouseDY();
     static QVector2D MousePosition();
     static void SampleMousePosition();
-    static void SetCaptureMouse(bool capture);
+    static void HideMouse(bool doHide);
 };
 
 #endif // INPUTMANAGER_H
