@@ -3,9 +3,22 @@
 uniform sampler3D colorlod4;
 uniform sampler3D colorlod16;
 uniform sampler3D colorlod64;
+
 uniform sampler2D materials;
 
+//TODO, implement DDA on a for loop, using those uniforms
+//format: - chunk[(lod * x) + ((renderDistance * lod) * y) + lod] //NOTE: check if it works
+//        - voxelsN[lod]
+//        - voxelSize[lod]
+uniform ivec2 renderDistance;
+uniform int lods;
+uniform int voxelsX[];
+uniform int voxelsY[];
+uniform int voxelsZ[];
+uniform float voxelSize[];
 uniform sampler3D chunks[];
+//--------------------------
+// maybe use a first DDA to know witch chunk to check, then do a DDA on the chunk.
 
 uniform mat4 projection_matrix;
 uniform mat4 view_matrix;
@@ -138,13 +151,16 @@ vec3 getColor(int material, vec3 coord, vec3 n) {
     vec2 uv;
     if (n.x != 0) {
         uv =  mod((coord.yz * 0.015625 * vec2(0.25, 1)), vec2(.25, 1)) + vec2(0.25 * material, 0);
-        shading = max(AMBIENTFORCE, n.x * 0.5);
+        //shading = max(AMBIENTFORCE, n.x * 0.5);
+        shading = abs(n.x) * 0.5;
     } else if (n.y != 0) {
         uv =  mod((coord.xz * 0.015625 * vec2(0.25, 1)), vec2(1, 1)) + vec2(0.25 * material, 0);
-        shading = max(AMBIENTFORCE, n.y);
+        //shading = max(AMBIENTFORCE, n.y);
+        shading = abs(n.y);
     } else {
         uv =  mod((coord.yx * 0.015625 * vec2(0.25, 1)), vec2(.25, 1)) + vec2(0.25 * material, 0);
-        shading = max(AMBIENTFORCE, n.z * 0.7);
+        //shading = max(AMBIENTFORCE, n.z * 0.7);
+        shading = abs(n.z) * 0.7;
     }
     return texture(materials,uv).rgb * shading;
 }
@@ -512,18 +528,30 @@ CollisionData sceneSDF (vec3 O, vec3 D) {
 }
 
 float shadows (vec3 O) {
-    CollisionData cdata = sceneSDF(O + SUNDIR * EPSILON, SUNDIR);
+    int s = 1;
+    float f = 0.12;
+    float d = 0.05;
+    vec3 dx = cross(vec3(0, 1, 0), SUNDIR);
+    vec3 dy = cross(dx, SUNDIR);
 
-    if (cdata.distance < INFINITY) return 0.;
-    return 1.0;
+    float ans = 1;
+    for (int x = -s; x <= s; x++) {
+        for (int y = -s; y <= s; y++) {
+            CollisionData cdata = sceneSDF(O + SUNDIR * EPSILON, SUNDIR + (dx * x * d) + (dy * y * d));
+            ans -= f * float(cdata.distance < INFINITY);
+        }
+    }
+
+    return ans;
 }
 
-vec3 shading (vec3 O, vec3 N) {
-    return SUNCOLOR * SUNFORCE * clamp(dot(N, -SUNDIR), 0, 1);
+float shading (vec3 O, vec3 N) {
+    return float((N.x * SUNDIR.x < 0 || N.y * SUNDIR.y < 0 || N.z * SUNDIR.z < 0));
+    //return SUNCOLOR * SUNFORCE * clamp(dot(N, -SUNDIR), 0, 1);
 }
 
-vec3 ambient() {
-    return AMBIENTCOLOR * AMBIENTFORCE;
+float ambient() {
+    return AMBIENTFORCE;
 }
 
 vec3 applyFog( in vec3  rgb,      // original color of the pixel
@@ -552,12 +580,12 @@ void main () {
     CollisionData cdata = sceneSDF(O, D);
     if (cdata.distance < INFINITY) {
         vec3 hitPoint = O + D * cdata.distance;
-        //vec3 light = vec3(1);
+        float light = 1;
         Color = cdata.color.rgb;
-        //light *= shadows(hitPoint);
         //light *= shading(hitPoint, cdata.normal);
-        //light += ambient();
-        //Color *= light;
+        //light *= shadows(hitPoint);
+        //light += AMBIENTFORCE;
+        Color *= light;
         Color = applyFog(Color.rgb, cdata.distance, D, SUNDIR);
 
         gl_FragDepth = distance(O, hitPoint) / FARPLANE;
