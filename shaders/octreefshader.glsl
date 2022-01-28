@@ -272,6 +272,11 @@ CollisionData ChunkDDA (vec3 O, vec3 D, int x, int z) {
     CollisionData cdata;
     int currentlod = lods - 1;
     vec3 currentPosition = vec3(x * voxelsXArray[0] * voxelSizeArray[0], 0, z * voxelsZArray[0] * voxelSizeArray[0]);
+
+    vec3 offsetStack[16];
+    vec3 offsetStackIndex = 0;
+    vec3 offsetStack[0] = currentPosition;
+
     while (true) {
         cdata = DDA(O, D, voxelsXArray[currentlod], voxelsYArray[currentlod], voxelsZArray[currentlod], voxelSizeArray[currentlod], currentPosition);
 
@@ -280,7 +285,7 @@ CollisionData ChunkDDA (vec3 O, vec3 D, int x, int z) {
         if (cdata.distance < INFINITY && currentlod == 0) break; //We hit an atomic voxel
 
 
-        //TODO: Evaluate currentPosition on both cases (maybe by rounding down coords ?)
+        //TODO: Evaluate currentPosition & offsetStack on both cases (maybe by rounding down coords ?)
         if (cdata.distance < INFINITY) { //Going down a level
             currentlod -= 1;
             O += D * (cdata.distance + EPSILON); //Move forward
