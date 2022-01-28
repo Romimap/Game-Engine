@@ -268,6 +268,33 @@ CollisionData DDA (vec3 O, vec3 D, int voxelsX, int voxelsY, int voxelsZ, float 
     return cdata;
 }
 
+CollisionData ChunkDDA (vec3 O, vec3 D, int x, int z) {
+    CollisionData cdata;
+    int currentlod = lods - 1;
+    vec3 currentPosition = vec3(x * voxelsXArray[0] * voxelSizeArray[0], 0, z * voxelsZArray[0] * voxelSizeArray[0]);
+    while (true) {
+        cdata = DDA(O, D, voxelsXArray[currentlod], voxelsYArray[currentlod], voxelsZArray[currentlod], voxelSizeArray[currentlod], currentPosition);
+
+        //Exit conditions
+        if (cdata.distance == INFINITY && currentlod == lods - 1) break; //We did not hit anything on the top level
+        if (cdata.distance < INFINITY && currentlod == 0) break; //We hit an atomic voxel
+
+
+        //TODO: Evaluate currentPosition on both cases (maybe by rounding down coords ?)
+        if (cdata.distance < INFINITY) { //Going down a level
+            currentlod -= 1;
+            O += D * (cdata.distance + EPSILON); //Move forward
+        } else { //Going up a level
+            currentlod += 1;
+            //TODO: determine the necessary dt to jump over 1 voxel at that LOD
+            float dt = 0;
+            O += D * (dt + EPSILON);
+        }
+    }
+    return cdata;
+}
+
+
 CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
     CollisionData cdata;
     cdata.distance = INFINITY;
