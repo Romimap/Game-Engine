@@ -18,6 +18,7 @@ This is the core of the engine, where the game loop is located.
 #include <QObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLFunctions_3_1>
+#include <qopenglfunctions_4_5_core.h>
 #include <QOpenGLWidget>
 #include <QOpenGLShaderProgram>
 #include <QVector2D>
@@ -39,7 +40,7 @@ struct VertexData {
 class GameObject;
 
 
-class Engine : public QOpenGLWidget, protected QOpenGLFunctions_3_1 {
+class Engine : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core {
     /*** ATTRIBUTES ***/
 private:
     int _width;

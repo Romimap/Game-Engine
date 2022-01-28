@@ -1,9 +1,11 @@
-#version 130
+#version 430
 
 uniform sampler3D colorlod4;
 uniform sampler3D colorlod16;
 uniform sampler3D colorlod64;
 uniform sampler2D materials;
+
+uniform sampler3D chunks[];
 
 uniform mat4 projection_matrix;
 uniform mat4 view_matrix;
@@ -17,6 +19,8 @@ uniform vec2 screen_ratios;
 uniform vec2 screen_size;
 
 uniform int lod;
+
+out vec4 fragColor;
 
 //VALUES
 const float EPSILON = 0.0001;
@@ -125,7 +129,7 @@ TMinMax boxFarDistance (vec3 O, vec3 D, vec3 min, vec3 max) {
 }
 
 vec4 getTexture3D(sampler3D sampler, vec3 coords) {
-    return texture3D(sampler, clamp(vec3(1 - EPSILON) - coords, vec3(0), vec3(1)));
+    return texture(sampler, clamp(vec3(1 - EPSILON) - coords, vec3(0), vec3(1)));
 }
 
 vec3 getColor(int material, vec3 coord, vec3 n) {
@@ -142,7 +146,7 @@ vec3 getColor(int material, vec3 coord, vec3 n) {
         uv =  mod((coord.yx * 0.015625 * vec2(0.25, 1)), vec2(.25, 1)) + vec2(0.25 * material, 0);
         shading = max(AMBIENTFORCE, n.z * 0.7);
     }
-    return texture2D(materials,uv).rgb * shading;
+    return texture(materials,uv).rgb * shading;
 }
 
 CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
@@ -561,6 +565,6 @@ void main () {
        gl_FragDepth = 1.;
     }
 
-    gl_FragColor = vec4(tanh(Color), 1);
+    fragColor = vec4(tanh(Color), 1);
 }
 

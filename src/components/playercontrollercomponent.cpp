@@ -94,10 +94,10 @@ void PlayerControllerComponent::Update(float delta) {
     if (!_isFloating) {
         if (_momentum.y() <= 0) {
             RayCastHit hit =  Engine::Singleton->RayCast(GetParent()->GetTransform()->GetGlobalPosition(), QVector3D(0.01, -1, 0.01));
-            if (hit._gameobject != nullptr && hit._distance <= _playerHeight + 1.5) { //We are going down to the ground
+            if (hit._gameobject != nullptr && hit._distance <= _playerHeight * 2) { //We are going down to the ground
                 _momentum.setY(0);
                 _onGround = _coyoteTime;
-                GetParent()->GetTransform()->Translate(QVector3D(0, (_playerHeight - hit._distance) / 8, 0));
+                GetParent()->GetTransform()->Translate(QVector3D(0, (_playerHeight - hit._distance) / 4, 0));
             }
         }
     }
