@@ -12,11 +12,11 @@ uniform sampler2D materials;
 //        - voxelSize[lod]
 uniform ivec2 renderDistance;
 uniform int lods;
-uniform int voxelsX[];
-uniform int voxelsY[];
-uniform int voxelsZ[];
-uniform float voxelSize[];
-uniform sampler3D chunks[];
+uniform int voxelsXArray[];
+uniform int voxelsYArray[];
+uniform int voxelsZArray[];
+uniform float voxelSizeArray[];
+uniform sampler3D chunkArray[];
 //--------------------------
 // maybe use a first DDA to know witch chunk to check, then do a DDA on the chunk.
 
@@ -48,20 +48,20 @@ const int DIRT_ID = 2;
 const int GRASS_ID = 3;
 
 //VOXELS
-const float VOXEL4 = 16;
-const int VOXEL4X = 4;
-const int VOXEL4Y = 16;
-const int VOXEL4Z = 4;
-
-const float VOXEL16 = 4;
-const int VOXEL16X = 4;
-const int VOXEL16Y = 4;
-const int VOXEL16Z = 4;
-
-const float VOXEL64 = 1;
-const int VOXEL64X = 4;
-const int VOXEL64Y = 4;
-const int VOXEL64Z = 4;
+//const float VOXEL4 = 16;
+//const int VOXEL4X = 4;
+//const int VOXEL4Y = 16;
+//const int VOXEL4Z = 4;
+//
+//const float VOXEL16 = 4;
+//const int VOXEL16X = 4;
+//const int VOXEL16Y = 4;
+//const int VOXEL16Z = 4;
+//
+//const float VOXEL64 = 1;
+//const int VOXEL64X = 4;
+//const int VOXEL64Y = 4;
+//const int VOXEL64Z = 4;
 
 //LIGHTING
 const vec3 SUNDIR = vec3(-0.234, -0.801, -0.567);
@@ -163,6 +163,109 @@ vec3 getColor(int material, vec3 coord, vec3 n) {
         shading = abs(n.z) * 0.7;
     }
     return texture(materials,uv).rgb * shading;
+}
+
+//TODO: Test that func
+CollisionData DDA (vec3 O, vec3 D, int voxelsX, int voxelsY, int voxelsZ, float voxelSize, vec3 gridPos) {
+    CollisionData cdata;
+    cdata.distance = INFINITY;
+
+    TMinMax tminmax = boxFarDistance(O, D, gridPos, gridPos + (vec3(voxelsX, voxelsY, voxelsZ) * voxelSize));
+    if (tminmax.tmax == INFINITY) return cdata;
+
+    vec3 hitPos = O;
+    if (tminmax.tmin > 0) {
+        hitPos += D * (tminmax.tmin - EPSILON);
+    }
+
+    float X, Y, Z;
+
+    X = floor((hitPos - gridPos) / voxelSize).x;
+    Y = floor((hitPos - gridPos) / voxelSize).y;
+    Z = floor((hitPos - gridPos) / voxelSize).z;
+
+    cdata.color = getTexture3D(colorlod4, vec3(X, Y, Z) / vec3(4, 16, 4));
+    if (cdata.color.r > 0 && lod < 2) {
+        cdata.distance = 0;
+        cdata.normal = vec3(0, 1, 0);
+        return cdata;
+    }
+
+    float tx, ty, tz;
+
+    tx = length(D.xyz / D.x);
+    ty = length(D.xyz / D.y);
+    tz = length(D.xyz / D.z);
+
+    float tmaxx, tmaxy, tmaxz;
+
+    tmaxx = ((hitPos - gridPos) / voxelSize).x - X;
+    if (D.x > 0) tmaxx = 1 - tmaxx;
+    tmaxy = ((hitPos - gridPos) / voxelSize).y - Y;
+    if (D.y > 0) tmaxy = 1 - tmaxy;
+    tmaxz = ((hitPos - gridPos) / voxelSize).z - Z;
+    if (D.z > 0) tmaxz = 1 - tmaxz;
+    tmaxx = tmaxx * tx;
+    tmaxy = tmaxy * ty;
+    tmaxz = tmaxz * tz;
+
+    float Xstep, Ystep, Zstep;
+
+    if (D.x > 0) Xstep = 1;
+    else Xstep = -1;
+    if (D.y > 0) Ystep = 1;
+    else Ystep = -1;
+    if (D.z > 0) Zstep = 1;
+    else Zstep = -1;
+
+    while (true) {
+        if (tmaxx < tmaxy && tmaxx < tmaxz) {
+            X += Xstep;
+            if (X >= 0 && X < voxelsX) {
+                cdata.color = getTexture3D(colorlod4, vec3(X, Y, Z) / vec3(4, 16, 4));
+                if (cdata.color.r > 0) {
+                    cdata.distance = length(O.xyz - hitPos.xyz) + (tmaxx * voxelSize);
+                    cdata.normal = vec3(normalize(D.x), 0, 0);
+                    cdata.color.rgb = getColor(int(cdata.color.r * 255), vec3(X, Y, Z), cdata.normal);
+                    return cdata;
+                }
+            } else {
+                break;
+            }
+            tmaxx += tx;
+        } else if (tmaxy < tmaxz) {
+            Y += Ystep;
+            if (Y >= 0 && Y < voxelsY) {
+                cdata.color = getTexture3D(colorlod4, vec3(X, Y, Z) / vec3(4, 16, 4));
+                if (cdata.color.r > 0) {
+                    cdata.distance = length(O - hitPos) + (tmaxy * voxelSize);
+                    cdata.normal = vec3(0, normalize(D.y), 0);
+                    cdata.color.rgb = getColor(int(cdata.color.r * 255), vec3(X, Y, Z), cdata.normal);
+                    return cdata;
+                }
+            } else {
+                break;
+            }
+            tmaxy += ty;
+        } else {
+            Z += Zstep;
+            if (Z >= 0 && Z < voxelsZ) {
+                cdata.color = getTexture3D(colorlod4, vec3(X, Y, Z) / vec3(4, 16, 4));
+                if (cdata.color.r > 0) {
+                    cdata.distance = length(O - hitPos) + (tmaxz * voxelSize);
+                    cdata.normal = vec3(0, 0, normalize(D.z));
+                    cdata.color.rgb = getColor(int(cdata.color.r * 255), vec3(X, Y, Z), cdata.normal);
+                    return cdata;
+                }
+            } else {
+                break;
+            }
+            tmaxz += tz;
+        }
+    }
+
+    cdata.distance = INFINITY;
+    return cdata;
 }
 
 CollisionData gridDF64 (vec3 O, vec3 D, vec3 gridPos, vec3 offset) {
